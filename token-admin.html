@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Token Admin | Dr. Harikrishna – KIN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <style>
+    :root{
+      --green:#1a6b4a;--green-d:#0e4730;--green-l:#2a8c62;
+      --gold:#c8963e;--gold-l:#f5d08a;
+      --cream:#faf7f2;--dark:#1a1a1a;--text:#3a3a3a;--muted:#7a7a7a;
+      --sidebar:260px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:#f0f4f1;color:var(--text);display:flex;min-height:100vh;}
+    h1,h2,h3,h4,h5{font-family:'Playfair Display',serif;}
+
+    /* SIDEBAR */
+    .sidebar{width:var(--sidebar);background:linear-gradient(180deg,var(--green-d) 0%,var(--green) 100%);min-height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:200;}
+    .sidebar-brand{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.1);}
+    .sidebar-brand .name{font-family:'Playfair Display',serif;color:#fff;font-size:1rem;font-weight:700;}
+    .sidebar-brand .sub{font-size:.65rem;color:var(--gold-l);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+    .sidebar-brand .badge{background:rgba(200,150,62,.25);color:var(--gold-l);font-size:.65rem;font-weight:700;padding:.2rem .6rem;border-radius:50px;border:1px solid rgba(200,150,62,.4);display:inline-block;margin-top:.5rem;}
+    .nav-section{padding:.75rem 1rem .25rem;font-size:.62rem;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.35);font-weight:600;}
+    .nav-item{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.2rem;color:rgba(255,255,255,.65);text-decoration:none;font-size:.88rem;font-weight:500;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all .2s;border-radius:8px;margin:1px .5rem;width:calc(100% - 1rem);}
+    .nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+    .nav-item.active{background:rgba(255,255,255,.12);color:#fff;font-weight:600;}
+    .nav-item i{font-size:1.1rem;width:20px;text-align:center;}
+    .nav-item .badge-count{margin-left:auto;background:var(--gold);color:#fff;font-size:.65rem;font-weight:700;padding:.1rem .45rem;border-radius:50px;min-width:20px;text-align:center;}
+    .sidebar-footer{margin-top:auto;padding:1rem;border-top:1px solid rgba(255,255,255,.1);}
+    .sidebar-footer a{display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.5);font-size:.82rem;text-decoration:none;}
+    .sidebar-footer a:hover{color:#fff;}
+
+    /* MAIN */
+    .main-content{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column;}
+    .topbar{background:#fff;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e5e5e5;position:sticky;top:0;z-index:100;}
+    .topbar h2{font-size:1.1rem;color:var(--dark);}
+    .topbar-right{display:flex;align-items:center;gap:1rem;}
+    .time-display{font-size:.85rem;color:var(--muted);}
+    .time-display strong{color:var(--green);font-size:.95rem;}
+    .btn-sm{padding:.4rem .9rem;border-radius:50px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem;}
+    .btn-green{background:var(--green);color:#fff;}
+    .btn-green:hover{background:var(--green-l);}
+    .btn-red{background:#dc2626;color:#fff;}
+    .btn-red:hover{background:#b91c1c;}
+    .btn-gold{background:var(--gold);color:#fff;}
+    .btn-gold:hover{background:#d4a24a;}
+    .btn-gray{background:#e5e5e5;color:var(--text);}
+    .btn-gray:hover{background:#d5d5d5;}
+
+    .content-area{padding:1.5rem;flex:1;}
+
+    /* STAT CARDS */
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;}
+    .stat-card{background:#fff;border-radius:14px;padding:1.2rem;border:1px solid #eee;box-shadow:0 2px 12px rgba(0,0,0,.04);}
+    .stat-card .stat-val{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;line-height:1;margin-bottom:.3rem;}
+    .stat-card .stat-lbl{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600;}
+    .stat-card .stat-icon{float:right;font-size:1.6rem;opacity:.18;margin-top:-2rem;}
+    .stat-card.green .stat-val{color:var(--green);}
+    .stat-card.gold  .stat-val{color:var(--gold);}
+    .stat-card.blue  .stat-val{color:#3b82f6;}
+    .stat-card.red   .stat-val{color:#dc2626;}
+    .stat-card.gray  .stat-val{color:#6b7280;}
+
+    /* NOW SERVING */
+    .now-serving-block{background:linear-gradient(135deg,var(--green-d),var(--green));border-radius:16px;padding:1.5rem;display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+    .now-token-big{background:rgba(255,255,255,.15);border:2px solid rgba(200,150,62,.5);border-radius:14px;width:90px;height:90px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--gold-l);flex-shrink:0;}
+    .now-info h3{color:#fff;font-size:1.2rem;margin-bottom:.3rem;}
+    .now-info p{color:rgba(255,255,255,.7);font-size:.85rem;line-height:1.6;}
+    .now-actions{margin-left:auto;display:flex;gap:.6rem;flex-wrap:wrap;}
+
+    /* QUEUE TABLE */
+    .queue-wrap{background:#fff;border-radius:16px;border:1px solid #eee;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.04);}
+    .queue-header{padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;gap:.75rem;}
+    .queue-header h4{font-size:1rem;}
+    .queue-filters{display:flex;gap:.5rem;flex-wrap:wrap;}
+    .filter-btn{border:1.5px solid #e5e5e5;background:#fff;border-radius:50px;padding:.3rem .9rem;font-size:.78rem;font-weight:600;cursor:pointer;color:var(--muted);transition:all .2s;}
+    .filter-btn.active{border-color:var(--green);background:var(--green);color:#fff;}
+    .search-input{border:1.5px solid #e5e5e5;border-radius:50px;padding:.35rem 1rem;font-size:.82rem;font-family:'DM Sans',sans-serif;min-width:180px;}
+    .search-input:focus{outline:none;border-color:var(--green);}
+
+    table{width:100%;border-collapse:collapse;}
+    th{background:#fafafa;padding:.7rem 1rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;font-weight:700;color:var(--muted);text-align:left;border-bottom:1px solid #f0f0f0;}
+    td{padding:.75rem 1rem;font-size:.88rem;border-bottom:1px solid #f8f8f8;vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:#fafffe;}
+
+    .token-badge{display:inline-flex;align-items:center;font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;background:var(--cream);border:1.5px solid rgba(26,107,74,.2);border-radius:8px;padding:.25rem .6rem;color:var(--green);}
+    .status-badge{display:inline-flex;align-items:center;gap:.35rem;border-radius:50px;padding:.2rem .7rem;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+    .status-waiting{background:#fef3c7;color:#d97706;}
+    .status-serving{background:#dcfce7;color:#16a34a;}
+    .status-done{background:#f0f9ff;color:#0284c7;}
+    .status-skipped{background:#fee2e2;color:#dc2626;}
+    .priority-tag{display:inline-flex;align-items:center;gap:.25rem;font-size:.72rem;background:#fef9ec;color:#c8963e;border:1px solid #f5d08a;border-radius:50px;padding:.15rem .55rem;font-weight:600;}
+
+    .action-btns{display:flex;gap:.4rem;flex-wrap:wrap;}
+    .icon-btn{width:30px;height:30px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .15s;}
+    .icon-btn.serve{background:#dcfce7;color:#16a34a;}
+    .icon-btn.serve:hover{background:#16a34a;color:#fff;}
+    .icon-btn.done{background:#e0f2fe;color:#0284c7;}
+    .icon-btn.done:hover{background:#0284c7;color:#fff;}
+    .icon-btn.skip{background:#fee2e2;color:#dc2626;}
+    .icon-btn.skip:hover{background:#dc2626;color:#fff;}
+    .icon-btn.del{background:#f3f4f6;color:#6b7280;}
+    .icon-btn.del:hover{background:#dc2626;color:#fff;}
+    .icon-btn.undo{background:#fef3c7;color:#d97706;}
+    .icon-btn.undo:hover{background:#d97706;color:#fff;}
+
+    /* CALL NEXT */
+    .call-next-bar{background:#fff;border-top:1px solid #e5e5e5;padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+    .call-next-bar p{font-size:.88rem;color:var(--muted);flex:1;}
+
+    /* SESSION SELECTOR */
+    .session-tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+    .sess-tab{border:1.5px solid #e5e5e5;background:#fff;border-radius:10px;padding:.6rem 1rem;cursor:pointer;transition:all .2s;text-align:center;min-width:130px;}
+    .sess-tab:hover{border-color:var(--green);}
+    .sess-tab.active{border-color:var(--green);background:var(--green);color:#fff;}
+    .sess-tab .tname{font-weight:700;font-size:.88rem;}
+    .sess-tab .ttime{font-size:.72rem;opacity:.75;margin-top:2px;}
+    .sess-tab .tcount{font-size:.72rem;opacity:.75;}
+
+    /* SETTINGS PANEL */
+    .settings-panel{display:none;}
+    .settings-panel.visible{display:block;}
+    .setting-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+    @media(max-width:600px){.setting-row{grid-template-columns:1fr;}}
+    .form-group{display:flex;flex-direction:column;gap:.35rem;}
+    label.flabel{font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text);}
+    input.finput,select.finput{border:1.5px solid #e5e5e5;border-radius:10px;padding:.6rem .9rem;font-size:.88rem;font-family:'DM Sans',sans-serif;color:var(--text);}
+    input.finput:focus,select.finput:focus{outline:none;border-color:var(--green);}
+
+    /* TOAST */
+    .toast{position:fixed;top:80px;right:1.5rem;background:var(--green);color:#fff;padding:.75rem 1.2rem;border-radius:12px;font-size:.88rem;font-weight:600;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.2);display:flex;align-items:center;gap:.6rem;transform:translateX(200%);transition:transform .3s;}
+    .toast.show{transform:translateX(0);}
+    .toast.red{background:#dc2626;}
+    .toast.gold{background:var(--gold);}
+
+    /* MOBILE */
+    @media(max-width:768px){
+      .sidebar{transform:translateX(-100%);transition:transform .3s;}
+      .sidebar.open{transform:translateX(0);}
+      .main-content{margin-left:0;}
+      .stats-grid{grid-template-columns:repeat(2,1fr);}
+    }
+    .mob-toggle{display:none;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text);}
+    @media(max-width:768px){.mob-toggle{display:block;}}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150;}
+    .overlay.show{display:block;}
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="name">KIN Admin Panel</div>
+    <div class="sub">Dr. Harikrishna · Token System</div>
+    <div class="badge"><i class="bi bi-shield-lock-fill me-1"></i>Doctor Dashboard</div>
+  </div>
+  <div style="overflow-y:auto;flex:1;padding:.5rem 0;">
+    <div class="nav-section">Queue</div>
+    <button class="nav-item active" onclick="showView('queue')"><i class="bi bi-list-ol"></i>Live Queue <span class="badge-count" id="nav-waiting">0</span></button>
+    <button class="nav-item" onclick="showView('history')"><i class="bi bi-clock-history"></i>Today's History</button>
+    <div class="nav-section">Management</div>
+    <button class="nav-item" onclick="showView('sessions')"><i class="bi bi-calendar3"></i>Session Settings</button>
+    <button class="nav-item" onclick="showView('display')"><i class="bi bi-display"></i>Display Screen</button>
+    <div class="nav-section">Tools</div>
+    <button class="nav-item" onclick="exportCSV()"><i class="bi bi-download"></i>Export Today's Data</button>
+    <button class="nav-item" onclick="if(confirm('Reset ALL tokens for today?'))resetToday()"><i class="bi bi-arrow-counterclockwise"></i>Reset Today</button>
+  </div>
+  <div class="sidebar-footer">
+    <a href="index.html"><i class="bi bi-house"></i>Back to Website</a>
+  </div>
+</aside>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- MAIN -->
+<div class="main-content">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:.75rem;">
+      <button class="mob-toggle" onclick="openSidebar()"><i class="bi bi-list"></i></button>
+      <h2 id="view-title">Live Queue</h2>
+    </div>
+    <div class="topbar-right">
+      <div class="time-display">Today: <strong id="todayDate">—</strong></div>
+      <button class="btn-sm btn-green" onclick="callNext()"><i class="bi bi-megaphone"></i> Call Next</button>
+    </div>
+  </div>
+
+  <div class="content-area">
+
+    <!-- ── QUEUE VIEW ── -->
+    <div id="view-queue">
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card green">
+          <div class="stat-val" id="s-total">0</div>
+          <div class="stat-lbl">Total Today</div>
+          <i class="bi bi-ticket stat-icon"></i>
+        </div>
+        <div class="stat-card gold">
+          <div class="stat-val" id="s-waiting">0</div>
+          <div class="stat-lbl">Waiting</div>
+          <i class="bi bi-hourglass-split stat-icon"></i>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-val" id="s-done">0</div>
+          <div class="stat-lbl">Completed</div>
+          <i class="bi bi-check-circle stat-icon"></i>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-val" id="s-skipped">0</div>
+          <div class="stat-lbl">Skipped</div>
+          <i class="bi bi-skip-forward stat-icon"></i>
+        </div>
+        <div class="stat-card gray">
+          <div class="stat-val" id="s-avgwait">—</div>
+          <div class="stat-lbl">Avg Wait</div>
+          <i class="bi bi-clock stat-icon"></i>
+        </div>
+      </div>
+
+      <!-- Now Serving -->
+      <div class="now-serving-block" id="nowServingBlock">
+        <div class="now-token-big" id="ns-token">—</div>
+        <div class="now-info">
+          <h3 id="ns-name">No active patient</h3>
+          <p id="ns-details">Press "Call Next" to begin consultation</p>
+        </div>
+        <div class="now-actions">
+          <button class="btn-sm btn-green" onclick="markCurrentDone()"><i class="bi bi-check-lg"></i> Done</button>
+          <button class="btn-sm btn-red"   onclick="skipCurrent()"><i class="bi bi-skip-forward"></i> Skip</button>
+          <button class="btn-sm btn-green" onclick="callNext()"><i class="bi bi-megaphone"></i> Call Next</button>
+        </div>
+      </div>
+
+      <!-- Session Tabs -->
+      <div class="session-tabs" id="sessionTabs"></div>
+
+      <!-- Queue Table -->
+      <div class="queue-wrap">
+        <div class="queue-header">
+          <h4><i class="bi bi-list-ol me-2" style="color:var(--green);"></i>Queue List</h4>
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;">
+            <input class="search-input" type="text" id="searchInput" placeholder="Search name / token..." oninput="renderQueue()"/>
+            <div class="queue-filters">
+              <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+              <button class="filter-btn" onclick="setFilter('waiting',this)">Waiting</button>
+              <button class="filter-btn" onclick="setFilter('serving',this)">Serving</button>
+              <button class="filter-btn" onclick="setFilter('done',this)">Done</button>
+              <button class="filter-btn" onclick="setFilter('skipped',this)">Skipped</button>
+            </div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Patient</th>
+                <th>Condition</th>
+                <th>Session</th>
+                <th>Priority</th>
+                <th>Est. Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="queueBody"></tbody>
+          </table>
+        </div>
+        <div id="emptyState" style="display:none;text-align:center;padding:3rem;color:var(--muted);">
+          <i class="bi bi-inbox" style="font-size:2.5rem;display:block;margin-bottom:.5rem;"></i>
+          No tokens found.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HISTORY VIEW ── -->
+    <div id="view-history" style="display:none;">
+      <div class="queue-wrap">
+        <div class="queue-header">
+          <h4><i class="bi bi-clock-history me-2" style="color:var(--green);"></i>Today's Completed & Skipped</h4>
+          <button class="btn-sm btn-green" onclick="exportCSV()"><i class="bi bi-download"></i> Export CSV</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr><th>Token</th><th>Patient</th><th>Phone</th><th>Condition</th><th>Visit</th><th>Session</th><th>Priority</th><th>Status</th><th>Notes</th></tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+        <div id="historyEmpty" style="display:none;text-align:center;padding:3rem;color:var(--muted);">
+          <i class="bi bi-inbox" style="font-size:2.5rem;display:block;margin-bottom:.5rem;"></i>No history yet.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SESSIONS VIEW ── -->
+    <div id="view-sessions" style="display:none;">
+      <div style="background:#fff;border-radius:16px;border:1px solid #eee;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.04);">
+        <h4 style="margin-bottom:1.2rem;"><i class="bi bi-calendar3 me-2" style="color:var(--green);"></i>Session Configuration</h4>
+        <div id="sessionsConfig"></div>
+        <div style="margin-top:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap;">
+          <button class="btn-sm btn-green" onclick="saveSessions()"><i class="bi bi-save"></i> Save Sessions</button>
+          <button class="btn-sm btn-gray" onclick="resetSessions()"><i class="bi bi-arrow-counterclockwise"></i> Reset Defaults</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DISPLAY VIEW ── -->
+    <div id="view-display" style="display:none;">
+      <div style="background:#fff;border-radius:16px;border:1px solid #eee;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.04);text-align:center;">
+        <h4 style="margin-bottom:.75rem;"><i class="bi bi-display me-2" style="color:var(--green);"></i>Queue Display Screen</h4>
+        <p style="color:var(--muted);margin-bottom:1.5rem;font-size:.9rem;">Open this on a TV or monitor in the waiting room for patients to see their queue status.</p>
+        <a href="token-display.html" target="_blank">
+          <button class="btn-sm btn-green" style="padding:.7rem 1.5rem;font-size:.9rem;"><i class="bi bi-box-arrow-up-right"></i> Open Display Screen</button>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY='kin_tokens';
+const SESSION_KEY='kin_sessions';
+let currentFilter='all';
+let currentSession='ALL';
+
+const DEFAULT_SESSIONS=[
+  {id:'AM1',name:'Morning Session 1',time:'9:00 AM – 11:00 AM',capacity:30,avgMin:4},
+  {id:'AM2',name:'Morning Session 2',time:'11:00 AM – 1:00 PM',capacity:25,avgMin:5},
+  {id:'PM1',name:'Afternoon Session', time:'2:00 PM – 4:00 PM',capacity:25,avgMin:5},
+  {id:'PM2',name:'Evening Session',   time:'4:00 PM – 6:00 PM',capacity:20,avgMin:6},
+];
+
+function getSessions(){return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')||DEFAULT_SESSIONS;}
+function getTokens(){return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}
+function saveTokens(t){localStorage.setItem(STORAGE_KEY,JSON.stringify(t));}
+function today(){return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+function todayTokens(){return getTokens().filter(t=>t.date===today());}
+
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.className='toast show'+(type?' '+type:'');
+  t.innerHTML=`<i class="bi bi-${type==='red'?'x-circle':type==='gold'?'exclamation-triangle':'check-circle'}"></i> ${msg}`;
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ─── VIEWS ───────────────────────────────────
+const views=['queue','history','sessions','display'];
+function showView(v){
+  views.forEach(id=>{
+    const el=document.getElementById('view-'+id);
+    if(el) el.style.display=id===v?'block':'none';
+  });
+  document.getElementById('view-title').textContent={
+    queue:'Live Queue',history:"Today's History",sessions:'Session Settings',display:'Display Screen'
+  }[v]||'';
+  document.querySelectorAll('.nav-item').forEach(b=>{
+    b.classList.toggle('active',b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+v+"'"));
+  });
+  if(v==='history') renderHistory();
+  if(v==='sessions') renderSessionsConfig();
+  closeSidebar();
+}
+
+// ─── STATS ───────────────────────────────────
+function updateStats(){
+  const t=todayTokens();
+  const waiting=t.filter(x=>x.status==='waiting').length;
+  const done=t.filter(x=>x.status==='done').length;
+  const skipped=t.filter(x=>x.status==='skipped').length;
+  document.getElementById('s-total').textContent=t.length;
+  document.getElementById('s-waiting').textContent=waiting;
+  document.getElementById('s-done').textContent=done;
+  document.getElementById('s-skipped').textContent=skipped;
+  const sess=getSessions()[0];
+  document.getElementById('s-avgwait').textContent=waiting?`~${waiting*sess.avgMin}m`:'—';
+  document.getElementById('nav-waiting').textContent=waiting;
+  document.getElementById('banner-waiting')?document.getElementById('banner-waiting').textContent=waiting:'';
+
+  const serving=t.find(x=>x.status==='serving');
+  document.getElementById('ns-token').textContent=serving?serving.tokenNum:'—';
+  document.getElementById('ns-name').textContent=serving?serving.name:'No active patient';
+  document.getElementById('ns-details').textContent=serving
+    ?`${serving.condition} · ${serving.visitType} · ${serving.sessionName}`
+    :'Press "Call Next" to begin consultation';
+}
+
+// ─── SESSION TABS ─────────────────────────────
+function renderSessionTabs(){
+  const sessions=getSessions();
+  const t=todayTokens();
+  const el=document.getElementById('sessionTabs');
+  el.innerHTML='<button class="sess-tab'+(currentSession==='ALL'?' active':'')+'" onclick="filterSession(\'ALL\',this)"><div class="tname">All Sessions</div><div class="tcount">'+t.length+' tokens</div></button>';
+  sessions.forEach(s=>{
+    const cnt=t.filter(x=>x.sessionId===s.id).length;
+    el.innerHTML+=`<button class="sess-tab${currentSession===s.id?' active':''}" onclick="filterSession('${s.id}',this)">
+      <div class="tname">${s.name}</div><div class="ttime">${s.time}</div><div class="tcount">${cnt} tokens</div>
+    </button>`;
+  });
+}
+
+function filterSession(id,btn){
+  currentSession=id;
+  document.querySelectorAll('.sess-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderQueue();
+}
+
+// ─── QUEUE RENDER ─────────────────────────────
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderQueue();
+}
+
+function renderQueue(){
+  let tokens=todayTokens();
+  if(currentSession!=='ALL') tokens=tokens.filter(t=>t.sessionId===currentSession);
+  if(currentFilter!=='all') tokens=tokens.filter(t=>t.status===currentFilter);
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  if(q) tokens=tokens.filter(t=>t.name.toLowerCase().includes(q)||t.tokenNum.toLowerCase().includes(q));
+
+  // Sort: critical first, then priority, then by id
+  const pOrder={Critical:0,'Senior Citizen':1,Pregnant:2,'Differently Abled':3,Child:4,None:99};
+  tokens.sort((a,b)=>{
+    if(a.status==='serving') return -1;
+    if(b.status==='serving') return 1;
+    if(a.status==='waiting'&&b.status!=='waiting') return -1;
+    if(b.status==='waiting'&&a.status!=='waiting') return 1;
+    const pa=pOrder[a.priority]??99, pb=pOrder[b.priority]??99;
+    if(pa!==pb) return pa-pb;
+    return a.id-b.id;
+  });
+
+  const tbody=document.getElementById('queueBody');
+  const empty=document.getElementById('emptyState');
+  if(!tokens.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  tbody.innerHTML=tokens.map(t=>{
+    const sc={'waiting':'status-waiting','serving':'status-serving','done':'status-done','skipped':'status-skipped'}[t.status]||'';
+    const isWaiting=t.status==='waiting';
+    const isServing=t.status==='serving';
+    const isDone=t.status==='done';
+    const isSkipped=t.status==='skipped';
+    return `<tr>
+      <td><span class="token-badge">${t.tokenNum}</span></td>
+      <td>
+        <div style="font-weight:600;font-size:.9rem;">${t.name}</div>
+        <div style="font-size:.75rem;color:var(--muted);">${t.phone}${t.age?' · '+t.age+'y':''} ${t.gender||''}</div>
+      </td>
+      <td>
+        <div style="font-size:.88rem;">${t.condition}</div>
+        <div style="font-size:.75rem;color:var(--muted);">${t.visitType}</div>
+      </td>
+      <td style="font-size:.82rem;">${t.sessionName.replace(' Session','')}</td>
+      <td>${t.priority&&t.priority!=='None'?`<span class="priority-tag"><i class="bi bi-star-fill"></i>${t.priority}</span>`:'-'}</td>
+      <td style="font-size:.82rem;">${t.estimatedTime||'—'}</td>
+      <td><span class="status-badge ${sc}">${t.status}</span></td>
+      <td>
+        <div class="action-btns">
+          ${isWaiting?`<button class="icon-btn serve" title="Mark Serving" onclick="markServing(${t.id})"><i class="bi bi-play-fill"></i></button>`:''}
+          ${isServing?`<button class="icon-btn done" title="Mark Done" onclick="markDone(${t.id})"><i class="bi bi-check-lg"></i></button>`:''}
+          ${(isWaiting||isServing)?`<button class="icon-btn skip" title="Skip" onclick="skipToken(${t.id})"><i class="bi bi-skip-forward-fill"></i></button>`:''}
+          ${(isDone||isSkipped)?`<button class="icon-btn undo" title="Move back to Waiting" onclick="undoToken(${t.id})"><i class="bi bi-arrow-counterclockwise"></i></button>`:''}
+          <button class="icon-btn del" title="Delete" onclick="deleteToken(${t.id})"><i class="bi bi-trash3"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── ACTIONS ─────────────────────────────────
+function markServing(id){
+  let tokens=getTokens();
+  tokens.forEach(t=>{ if(t.status==='serving') t.status='waiting'; });
+  const t=tokens.find(t=>t.id===id); if(t){ t.status='serving'; t.servedAt=new Date().toISOString(); }
+  saveTokens(tokens); refresh(); showToast(`Serving ${t?.tokenNum}`);
+}
+function markDone(id){
+  let tokens=getTokens();
+  const t=tokens.find(t=>t.id===id); if(t){ t.status='done'; t.doneAt=new Date().toISOString(); }
+  saveTokens(tokens); refresh(); showToast(`${t?.tokenNum} marked done`);
+}
+function skipToken(id){
+  let tokens=getTokens();
+  const t=tokens.find(t=>t.id===id); if(t){ t.status='skipped'; }
+  saveTokens(tokens); refresh(); showToast(`${t?.tokenNum} skipped`,'gold');
+}
+function undoToken(id){
+  let tokens=getTokens();
+  const t=tokens.find(t=>t.id===id); if(t){ t.status='waiting'; delete t.servedAt; delete t.doneAt; }
+  saveTokens(tokens); refresh(); showToast(`${t?.tokenNum} moved back to waiting`);
+}
+function deleteToken(id){
+  if(!confirm('Delete this token?')) return;
+  saveTokens(getTokens().filter(t=>t.id!==id));
+  refresh(); showToast('Token deleted','red');
+}
+function callNext(){
+  let tokens=getTokens();
+  const cur=tokens.find(t=>t.status==='serving');
+  if(cur){ cur.status='done'; cur.doneAt=new Date().toISOString(); }
+  const pOrder={Critical:0,'Senior Citizen':1,Pregnant:2,'Differently Abled':3,Child:4,None:99};
+  const waiting=tokens.filter(t=>t.status==='waiting'&&t.date===today())
+    .sort((a,b)=>{
+      const pa=pOrder[a.priority]??99,pb=pOrder[b.priority]??99;
+      if(pa!==pb) return pa-pb; return a.id-b.id;
+    });
+  if(!waiting.length){ saveTokens(tokens); refresh(); showToast('No more waiting patients','gold'); return; }
+  const next=waiting[0]; next.status='serving'; next.servedAt=new Date().toISOString();
+  saveTokens(tokens); refresh(); showToast(`Now serving ${next.tokenNum} – ${next.name}`);
+}
+function markCurrentDone(){
+  const tokens=getTokens();
+  const cur=tokens.find(t=>t.status==='serving'&&t.date===today());
+  if(cur){ markDone(cur.id); } else showToast('No patient is currently being served','gold');
+}
+function skipCurrent(){
+  const tokens=getTokens();
+  const cur=tokens.find(t=>t.status==='serving'&&t.date===today());
+  if(cur){ skipToken(cur.id); } else showToast('No patient is currently being served','gold');
+}
+
+// ─── HISTORY ─────────────────────────────────
+function renderHistory(){
+  const tokens=todayTokens().filter(t=>t.status==='done'||t.status==='skipped'||t.status==='waiting');
+  const tbody=document.getElementById('historyBody');
+  const empty=document.getElementById('historyEmpty');
+  if(!tokens.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  tbody.innerHTML=tokens.map(t=>{
+    const sc={'waiting':'status-waiting','serving':'status-serving','done':'status-done','skipped':'status-skipped'}[t.status]||'';
+    return `<tr>
+      <td><span class="token-badge">${t.tokenNum}</span></td>
+      <td style="font-weight:600;">${t.name}</td>
+      <td style="font-size:.82rem;">${t.phone}</td>
+      <td style="font-size:.82rem;">${t.condition}</td>
+      <td style="font-size:.82rem;">${t.visitType}</td>
+      <td style="font-size:.82rem;">${t.sessionName}</td>
+      <td>${t.priority&&t.priority!=='None'?`<span class="priority-tag">${t.priority}</span>`:'-'}</td>
+      <td><span class="status-badge ${sc}">${t.status}</span></td>
+      <td style="font-size:.78rem;color:var(--muted);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.notes||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── SESSION CONFIG ───────────────────────────
+function renderSessionsConfig(){
+  const sessions=getSessions();
+  document.getElementById('sessionsConfig').innerHTML=sessions.map((s,i)=>`
+    <div style="background:#fafafa;border-radius:12px;padding:1.2rem;border:1px solid #eee;margin-bottom:1rem;">
+      <div style="font-weight:700;margin-bottom:1rem;font-size:.95rem;color:var(--green);">Session ${i+1}: ${s.name}</div>
+      <div class="setting-row">
+        <div class="form-group"><label class="flabel">Session Name</label><input class="finput" data-sid="${s.id}" data-field="name" value="${s.name}"/></div>
+        <div class="form-group"><label class="flabel">Time Range</label><input class="finput" data-sid="${s.id}" data-field="time" value="${s.time}"/></div>
+        <div class="form-group"><label class="flabel">Capacity (patients)</label><input class="finput" type="number" data-sid="${s.id}" data-field="capacity" value="${s.capacity}" min="1" max="200"/></div>
+        <div class="form-group"><label class="flabel">Avg Time per Patient (min)</label><input class="finput" type="number" data-sid="${s.id}" data-field="avgMin" value="${s.avgMin}" min="1" max="60"/></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function saveSessions(){
+  const sessions=getSessions();
+  document.querySelectorAll('.finput[data-sid]').forEach(inp=>{
+    const s=sessions.find(x=>x.id===inp.dataset.sid);
+    if(s){ const v=inp.dataset.field; s[v]=inp.type==='number'?parseInt(inp.value):inp.value; }
+  });
+  localStorage.setItem(SESSION_KEY,JSON.stringify(sessions));
+  showToast('Sessions saved!'); renderSessionsConfig();
+}
+function resetSessions(){
+  localStorage.removeItem(SESSION_KEY);
+  showToast('Sessions reset to defaults'); renderSessionsConfig();
+}
+
+// ─── EXPORT ──────────────────────────────────
+function exportCSV(){
+  const tokens=todayTokens();
+  const headers=['Token','Name','Phone','Age','Gender','Condition','Visit Type','Session','Priority','Est. Time','Status','Notes','Booked At'];
+  const rows=tokens.map(t=>[t.tokenNum,t.name,t.phone,t.age,t.gender,t.condition,t.visitType,t.sessionName,t.priority,t.estimatedTime,t.status,t.notes,t.bookedAt].map(v=>`"${(v||'').toString().replace(/"/g,'""')}"`).join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`KIN_tokens_${today().replace(/ /g,'_')}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV exported!');
+}
+
+function resetToday(){
+  const tokens=getTokens().filter(t=>t.date!==today());
+  saveTokens(tokens); refresh(); showToast('Today reset','red');
+}
+
+// ─── REFRESH ─────────────────────────────────
+function refresh(){
+  updateStats(); renderSessionTabs(); renderQueue();
+  const v=['history','sessions','display'].find(id=>document.getElementById('view-'+id)?.style.display==='block');
+  if(v==='history') renderHistory();
+}
+
+// ─── MOBILE ──────────────────────────────────
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
+
+// ─── INIT ────────────────────────────────────
+document.getElementById('todayDate').textContent=today();
+refresh();
+setInterval(refresh, 8000);
+</script>
+</body>
+</html>

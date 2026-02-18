@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Get Your Token | Dr. Harikrishna – KIN</title>
+  <meta name="description" content="Book your queue token for Dr. Harikrishna's clinic online. See live queue status."/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <style>
+    :root {
+      --green:#1a6b4a; --green-d:#0e4730; --green-l:#2a8c62;
+      --gold:#c8963e; --gold-l:#f5d08a;
+      --cream:#faf7f2; --dark:#1a1a1a; --text:#3a3a3a; --muted:#7a7a7a;
+      --radius:16px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+    h1,h2,h3,h4{font-family:'Playfair Display',serif;}
+
+    /* TOP BAR */
+    .topbar{background:linear-gradient(135deg,var(--green-d),var(--green));padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.2);}
+    .topbar .brand{font-family:'Playfair Display',serif;color:#fff;font-size:1.1rem;font-weight:700;text-decoration:none;}
+    .topbar .brand span{display:block;font-family:'DM Sans',sans-serif;font-weight:400;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-l);margin-top:1px;}
+    .topbar .nav-links a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem;font-weight:500;margin-left:1.2rem;transition:color .2s;}
+    .topbar .nav-links a:hover{color:#fff;}
+    .topbar .nav-links a.active{color:var(--gold-l);font-weight:600;}
+
+    /* LIVE QUEUE BANNER */
+    .queue-banner{background:#fff;border-bottom:1px solid rgba(26,107,74,.1);padding:.9rem 1.5rem;}
+    .queue-banner .inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+    .live-dot{width:10px;height:10px;background:#22c55e;border-radius:50%;animation:pulse 1.5s infinite;}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5);}50%{box-shadow:0 0 0 6px rgba(34,197,94,0);}}
+    .queue-stat{display:flex;align-items:center;gap:.5rem;font-size:.88rem;}
+    .queue-stat .val{font-weight:700;font-size:1.1rem;color:var(--green);font-family:'Playfair Display',serif;}
+    .queue-stat .lbl{color:var(--muted);}
+    .divider-v{width:1px;height:28px;background:#e5e5e5;}
+    .now-serving{display:flex;align-items:center;gap:.6rem;}
+    .now-token{background:var(--green);color:#fff;font-weight:700;font-size:1.2rem;font-family:'Playfair Display',serif;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+    .now-text{font-size:.8rem;color:var(--muted);}
+    .now-text strong{display:block;font-size:1rem;color:var(--dark);}
+
+    /* MAIN */
+    main{max-width:900px;margin:2rem auto;padding:0 1.5rem 4rem;}
+    .page-title{font-size:clamp(1.8rem,4vw,2.4rem);line-height:1.2;margin-bottom:.4rem;}
+    .page-sub{color:var(--muted);font-size:.95rem;margin-bottom:2rem;}
+
+    /* STEP INDICATOR */
+    .steps{display:flex;gap:0;margin-bottom:2.5rem;position:relative;}
+    .steps::before{content:'';position:absolute;top:20px;left:20px;right:20px;height:2px;background:#e5e5e5;z-index:0;}
+    .step{flex:1;text-align:center;position:relative;z-index:1;}
+    .step-circle{width:40px;height:40px;border-radius:50%;border:2px solid #e5e5e5;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;font-weight:700;font-size:.85rem;color:var(--muted);transition:all .3s;}
+    .step.active .step-circle{border-color:var(--green);background:var(--green);color:#fff;}
+    .step.done .step-circle{border-color:var(--green);background:var(--green);color:#fff;}
+    .step.done .step-circle::after{content:'✓';}
+    .step.done .step-circle span{display:none;}
+    .step-label{font-size:.75rem;color:var(--muted);font-weight:500;}
+    .step.active .step-label{color:var(--green);font-weight:600;}
+
+    /* CARDS */
+    .card{background:#fff;border-radius:var(--radius);border:1px solid rgba(26,107,74,.1);padding:2rem;box-shadow:0 4px 24px rgba(26,107,74,.06);margin-bottom:1.5rem;}
+    .card-title{font-size:1.1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.6rem;}
+    .card-title i{color:var(--green);font-size:1.2rem;}
+
+    /* SESSION SLOTS */
+    .session-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;}
+    .session-btn{border:1.5px solid #e5e5e5;background:#fff;border-radius:12px;padding:1rem;cursor:pointer;transition:all .2s;text-align:left;width:100%;}
+    .session-btn:hover{border-color:var(--green);background:var(--cream);}
+    .session-btn.selected{border-color:var(--green);background:linear-gradient(135deg,rgba(26,107,74,.08),rgba(26,107,74,.03));box-shadow:0 0 0 3px rgba(26,107,74,.12);}
+    .session-btn.full{opacity:.5;cursor:not-allowed;background:#f5f5f5;}
+    .session-name{font-weight:700;font-size:.9rem;color:var(--dark);margin-bottom:.25rem;}
+    .session-time{font-size:.78rem;color:var(--muted);}
+    .session-slots{font-size:.75rem;margin-top:.4rem;font-weight:600;}
+    .session-slots.ok{color:#16a34a;}
+    .session-slots.low{color:#d97706;}
+    .session-slots.full{color:#dc2626;}
+    .session-check{float:right;color:var(--green);font-size:1.1rem;opacity:0;transition:opacity .2s;}
+    .session-btn.selected .session-check{opacity:1;}
+
+    /* FORM */
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    @media(max-width:600px){.form-row{grid-template-columns:1fr;}}
+    .form-group{display:flex;flex-direction:column;gap:.35rem;}
+    label{font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text);}
+    input,select,textarea{border:1.5px solid #e5e5e5;border-radius:10px;padding:.65rem 1rem;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--text);transition:border-color .2s,box-shadow .2s;background:#fff;}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(26,107,74,.1);}
+    .input-icon{position:relative;}
+    .input-icon i{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.95rem;}
+    .input-icon input,.input-icon select{padding-left:2.4rem;}
+
+    /* PRIORITY BADGES */
+    .priority-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.6rem;}
+    .priority-btn{border:1.5px solid #e5e5e5;background:#fff;border-radius:10px;padding:.7rem .9rem;cursor:pointer;transition:all .2s;text-align:center;font-size:.82rem;font-weight:600;color:var(--muted);}
+    .priority-btn:hover{border-color:var(--green);}
+    .priority-btn.selected{border-color:var(--green);background:var(--green);color:#fff;}
+    .priority-btn i{display:block;font-size:1.3rem;margin-bottom:.3rem;}
+
+    /* REVIEW BOX */
+    .review-box{background:linear-gradient(135deg,var(--green-d),var(--green));border-radius:var(--radius);padding:2rem;color:#fff;}
+    .review-box h3{color:#fff;font-size:1.3rem;margin-bottom:1.2rem;}
+    .review-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.1);}
+    .review-row:last-child{border:none;}
+    .review-row .key{font-size:.82rem;color:rgba(255,255,255,.65);}
+    .review-row .val{font-weight:600;font-size:.92rem;}
+    .token-preview{background:rgba(255,255,255,.12);border:2px solid rgba(200,150,62,.5);border-radius:12px;padding:1.2rem;text-align:center;margin-top:1rem;}
+    .token-num-big{font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:var(--gold-l);line-height:1;}
+    .token-label{font-size:.75rem;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.1em;margin-top:.3rem;}
+
+    /* BUTTONS */
+    .btn-primary{background:var(--green);color:#fff;border:none;border-radius:50px;padding:.8rem 2rem;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:.5rem;}
+    .btn-primary:hover{background:var(--green-l);transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,107,74,.3);}
+    .btn-outline{background:transparent;color:var(--green);border:2px solid var(--green);border-radius:50px;padding:.75rem 2rem;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:.5rem;}
+    .btn-outline:hover{background:var(--green);color:#fff;}
+    .btn-row{display:flex;gap:1rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1.5rem;}
+
+    /* SUCCESS */
+    #step-success{display:none;}
+    .success-card{background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 8px 64px rgba(26,107,74,.12);border:1px solid rgba(26,107,74,.1);}
+    .success-header{background:linear-gradient(135deg,var(--green-d),var(--green));padding:3rem 2rem;text-align:center;}
+    .success-icon{width:80px;height:80px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2rem;color:#fff;}
+    .success-header h2{color:#fff;font-size:1.8rem;margin-bottom:.5rem;}
+    .success-header p{color:rgba(255,255,255,.75);font-size:.9rem;}
+    .big-token{font-family:'Playfair Display',serif;font-size:5rem;font-weight:700;color:var(--gold-l);line-height:1;margin:.5rem 0;}
+    .success-body{padding:2rem;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+    @media(max-width:500px){.info-grid{grid-template-columns:1fr;}}
+    .info-cell{background:var(--cream);border-radius:12px;padding:1rem;}
+    .info-cell .cell-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.3rem;}
+    .info-cell .cell-val{font-size:.95rem;font-weight:600;color:var(--dark);}
+    .wait-estimate{background:linear-gradient(135deg,rgba(26,107,74,.08),rgba(26,107,74,.03));border:1px solid rgba(26,107,74,.15);border-radius:12px;padding:1rem 1.2rem;display:flex;align-items:center;gap:.8rem;margin-bottom:1.5rem;}
+    .wait-estimate i{font-size:1.5rem;color:var(--green);}
+    .wait-estimate .wait-text{font-size:.85rem;color:var(--muted);}
+    .wait-estimate .wait-time{font-size:1.1rem;font-weight:700;color:var(--green);}
+    .action-row{display:flex;gap:.75rem;flex-wrap:wrap;}
+    .btn-print{background:var(--green);color:#fff;border:none;border-radius:50px;padding:.75rem 1.5rem;font-size:.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;transition:all .2s;}
+    .btn-print:hover{background:var(--green-l);}
+    .btn-new{background:transparent;color:var(--green);border:2px solid var(--green);border-radius:50px;padding:.7rem 1.5rem;font-size:.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;transition:all .2s;}
+    .btn-new:hover{background:var(--green);color:#fff;}
+
+    /* PRINT TOKEN SLIP */
+    .print-slip{display:none;}
+    @media print{
+      body>*{display:none!important;}
+      .print-slip{display:block!important;font-family:'DM Sans',sans-serif;padding:2cm;}
+      .slip-border{border:3px solid #1a6b4a;border-radius:12px;padding:1.5rem;max-width:320px;margin:0 auto;}
+      .slip-header{text-align:center;border-bottom:2px dashed #ccc;padding-bottom:1rem;margin-bottom:1rem;}
+      .slip-big{font-size:4rem;font-weight:700;color:#1a6b4a;font-family:serif;}
+      .slip-row{display:flex;justify-content:space-between;font-size:.85rem;padding:.25rem 0;border-bottom:1px solid #eee;}
+      .slip-footer{text-align:center;margin-top:1rem;font-size:.75rem;color:#888;}
+    }
+
+    /* TRACK TOKEN */
+    .track-form{display:flex;gap:.5rem;flex-wrap:wrap;}
+    .track-form input{flex:1;min-width:140px;}
+    .track-result{background:var(--cream);border:1.5px solid rgba(26,107,74,.2);border-radius:12px;padding:1.2rem;margin-top:1rem;display:none;}
+
+    @media(max-width:600px){
+      main{padding:0 1rem 3rem;}
+      .card{padding:1.5rem;}
+      .btn-row{justify-content:stretch;}
+      .btn-primary,.btn-outline{width:100%;justify-content:center;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <a class="brand" href="index.html">
+    KIN
+    <span>Krishna Institute of Naturopathy</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="token-patient.html" class="active">Get Token</a>
+    <a href="token-display.html">Queue Display</a>
+  </div>
+</nav>
+
+<!-- LIVE QUEUE BANNER -->
+<div class="queue-banner">
+  <div class="inner">
+    <div style="display:flex;align-items:center;gap:.6rem;">
+      <div class="live-dot"></div>
+      <span style="font-size:.8rem;font-weight:600;color:var(--green);">LIVE QUEUE</span>
+    </div>
+    <div class="queue-stat">
+      <div class="now-serving">
+        <div class="now-token" id="banner-current">—</div>
+        <div class="now-text">
+          Now Serving
+          <strong id="banner-name">—</strong>
+        </div>
+      </div>
+    </div>
+    <div class="divider-v"></div>
+    <div class="queue-stat">
+      <div>
+        <div class="val" id="banner-waiting">0</div>
+        <div class="lbl">Waiting</div>
+      </div>
+    </div>
+    <div class="divider-v"></div>
+    <div class="queue-stat">
+      <div>
+        <div class="val" id="banner-next">—</div>
+        <div class="lbl">Next Token</div>
+      </div>
+    </div>
+    <div class="divider-v"></div>
+    <div class="queue-stat">
+      <div>
+        <div class="val" id="banner-wait">0 min</div>
+        <div class="lbl">Est. Wait</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT SLIP (hidden, shown on print) -->
+<div class="print-slip" id="printSlip">
+  <div class="slip-border">
+    <div class="slip-header">
+      <div style="font-size:1rem;font-weight:700;">Krishna Institute of Naturopathy</div>
+      <div style="font-size:.75rem;color:#666;">Dr. Harikrishna | Mangalore</div>
+      <div class="slip-big" id="slip-token">—</div>
+      <div style="font-size:.8rem;color:#1a6b4a;font-weight:600;">YOUR TOKEN NUMBER</div>
+    </div>
+    <div class="slip-row"><span>Patient</span><span id="slip-name">—</span></div>
+    <div class="slip-row"><span>Session</span><span id="slip-session">—</span></div>
+    <div class="slip-row"><span>Date</span><span id="slip-date">—</span></div>
+    <div class="slip-row"><span>Est. Time</span><span id="slip-time">—</span></div>
+    <div class="slip-row"><span>Condition</span><span id="slip-condition">—</span></div>
+    <div class="slip-footer">Please arrive 10 mins before your estimated slot.<br/>+91 96114 11652</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <h1 class="page-title">Get Your Queue Token</h1>
+  <p class="page-sub">Book your slot in 3 simple steps. No waiting at the reception.</p>
+
+  <!-- STEPS -->
+  <div class="steps">
+    <div class="step active" id="s1">
+      <div class="step-circle"><span>1</span></div>
+      <div class="step-label">Session</div>
+    </div>
+    <div class="step" id="s2">
+      <div class="step-circle"><span>2</span></div>
+      <div class="step-label">Details</div>
+    </div>
+    <div class="step" id="s3">
+      <div class="step-circle"><span>3</span></div>
+      <div class="step-label">Confirm</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: SESSION -->
+  <div id="step-1">
+    <!-- Track existing token -->
+    <div class="card" style="border-color:rgba(200,150,62,.3);background:rgba(200,150,62,.04);">
+      <div class="card-title"><i class="bi bi-search"></i> Already have a token? Track it</div>
+      <div class="track-form">
+        <div class="input-icon" style="flex:1;min-width:160px;">
+          <i class="bi bi-ticket-perforated"></i>
+          <input type="text" id="trackInput" placeholder="Enter token number e.g. T-042" maxlength="6"/>
+        </div>
+        <button class="btn-primary" onclick="trackToken()" style="padding:.65rem 1.5rem;">
+          <i class="bi bi-search"></i> Track
+        </button>
+      </div>
+      <div class="track-result" id="trackResult"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="bi bi-calendar3"></i> Select a Session</div>
+      <div class="session-grid" id="sessionGrid"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" onclick="goStep(2)"><i class="bi bi-arrow-right"></i> Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: PATIENT DETAILS -->
+  <div id="step-2" style="display:none;">
+    <div class="card">
+      <div class="card-title"><i class="bi bi-person-lines-fill"></i> Patient Information</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="patName">Full Name *</label>
+          <div class="input-icon">
+            <i class="bi bi-person"></i>
+            <input type="text" id="patName" placeholder="Patient's full name" required/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="patPhone">Phone Number *</label>
+          <div class="input-icon">
+            <i class="bi bi-telephone"></i>
+            <input type="tel" id="patPhone" placeholder="+91 00000 00000" required/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="patAge">Age</label>
+          <div class="input-icon">
+            <i class="bi bi-calendar-event"></i>
+            <input type="number" id="patAge" placeholder="Age" min="1" max="120"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="patGender">Gender</label>
+          <div class="input-icon">
+            <i class="bi bi-gender-ambiguous"></i>
+            <select id="patGender">
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="patCondition">Primary Condition *</label>
+          <div class="input-icon">
+            <i class="bi bi-clipboard2-pulse"></i>
+            <select id="patCondition" required>
+              <option value="">Select condition</option>
+              <option>Cancer Treatment</option>
+              <option>Parkinson's Disease</option>
+              <option>Kidney Disease / CKD</option>
+              <option>Kidney Stones</option>
+              <option>Dementia / Neurological</option>
+              <option>General Consultation</option>
+              <option>Follow-up Visit</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="patType">Visit Type</label>
+          <div class="input-icon">
+            <i class="bi bi-arrow-repeat"></i>
+            <select id="patType">
+              <option>New Patient</option>
+              <option>Follow-up</option>
+              <option>Emergency</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="bi bi-star"></i> Priority Status <span style="font-size:.78rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;">(optional)</span></div>
+      <div class="priority-grid">
+        <button class="priority-btn" onclick="togglePriority(this,'None')"><i class="bi bi-dash-circle"></i>None</button>
+        <button class="priority-btn" onclick="togglePriority(this,'Senior Citizen')"><i class="bi bi-person-fill"></i>Senior 60+</button>
+        <button class="priority-btn" onclick="togglePriority(this,'Differently Abled')"><i class="bi bi-wheelchair"></i>Differently Abled</button>
+        <button class="priority-btn" onclick="togglePriority(this,'Pregnant')"><i class="bi bi-heart-fill"></i>Pregnant</button>
+        <button class="priority-btn" onclick="togglePriority(this,'Child')"><i class="bi bi-emoji-smile"></i>Child &lt;12</button>
+        <button class="priority-btn" onclick="togglePriority(this,'Critical')"><i class="bi bi-exclamation-triangle-fill"></i>Critical</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="bi bi-chat-text"></i> Brief Notes <span style="font-size:.78rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;">(optional)</span></div>
+      <textarea id="patNotes" rows="3" placeholder="Any additional information for the doctor..."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-outline" onclick="goStep(1)"><i class="bi bi-arrow-left"></i> Back</button>
+      <button class="btn-primary" onclick="goStep(3)"><i class="bi bi-arrow-right"></i> Review & Confirm</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: REVIEW -->
+  <div id="step-3" style="display:none;">
+    <div class="review-box">
+      <h3><i class="bi bi-clipboard2-check me-2"></i>Review Your Booking</h3>
+      <div class="review-row"><span class="key">Patient Name</span><span class="val" id="rv-name">—</span></div>
+      <div class="review-row"><span class="key">Phone</span><span class="val" id="rv-phone">—</span></div>
+      <div class="review-row"><span class="key">Age / Gender</span><span class="val" id="rv-age">—</span></div>
+      <div class="review-row"><span class="key">Session</span><span class="val" id="rv-session">—</span></div>
+      <div class="review-row"><span class="key">Condition</span><span class="val" id="rv-condition">—</span></div>
+      <div class="review-row"><span class="key">Visit Type</span><span class="val" id="rv-type">—</span></div>
+      <div class="review-row"><span class="key">Priority</span><span class="val" id="rv-priority">—</span></div>
+      <div class="review-row"><span class="key">Estimated Time</span><span class="val" id="rv-time">—</span></div>
+      <div class="token-preview">
+        <div style="font-size:.7rem;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.1em;">Your token will be</div>
+        <div class="token-num-big" id="rv-token">—</div>
+        <div class="token-label">Token Number</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-outline" onclick="goStep(2)"><i class="bi bi-arrow-left"></i> Back</button>
+      <button class="btn-primary" onclick="confirmBooking()"><i class="bi bi-check-circle"></i> Confirm & Get Token</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="step-success">
+    <div class="success-card">
+      <div class="success-header">
+        <div class="success-icon"><i class="bi bi-check-lg"></i></div>
+        <h2>Token Confirmed!</h2>
+        <div class="big-token" id="suc-token">—</div>
+        <p>Show this number at the reception</p>
+      </div>
+      <div class="success-body">
+        <div class="wait-estimate">
+          <i class="bi bi-clock-history"></i>
+          <div>
+            <div class="wait-text">Estimated wait time</div>
+            <div class="wait-time" id="suc-wait">Calculating…</div>
+          </div>
+        </div>
+        <div class="info-grid">
+          <div class="info-cell"><div class="cell-label">Patient</div><div class="cell-val" id="suc-name">—</div></div>
+          <div class="info-cell"><div class="cell-label">Session</div><div class="cell-val" id="suc-session">—</div></div>
+          <div class="info-cell"><div class="cell-label">Condition</div><div class="cell-val" id="suc-condition">—</div></div>
+          <div class="info-cell"><div class="cell-label">Est. Slot</div><div class="cell-val" id="suc-time">—</div></div>
+        </div>
+        <div class="action-row">
+          <button class="btn-print" onclick="printToken()"><i class="bi bi-printer"></i> Print Token</button>
+          <button class="btn-new" onclick="newBooking()"><i class="bi bi-plus-circle"></i> New Token</button>
+          <a href="token-display.html" style="text-decoration:none;">
+            <button class="btn-outline" style="border-radius:50px;padding:.7rem 1.5rem;font-size:.88rem;"><i class="bi bi-display"></i> Live Queue</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ─── STATE ───────────────────────────────────
+const STORAGE_KEY = 'kin_tokens';
+const SESSION_KEY = 'kin_sessions';
+let selectedSession = null;
+let selectedPriority = 'None';
+
+const DEFAULT_SESSIONS = [
+  { id:'AM1', name:'Morning Session 1', time:'9:00 AM – 11:00 AM', capacity:30, avgMin:4 },
+  { id:'AM2', name:'Morning Session 2', time:'11:00 AM – 1:00 PM', capacity:25, avgMin:5 },
+  { id:'PM1', name:'Afternoon Session', time:'2:00 PM – 4:00 PM', capacity:25, avgMin:5 },
+  { id:'PM2', name:'Evening Session',   time:'4:00 PM – 6:00 PM', capacity:20, avgMin:6 },
+];
+
+function getSessions(){ return JSON.parse(localStorage.getItem(SESSION_KEY)||'null') || DEFAULT_SESSIONS; }
+function getTokens(){  return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }
+function saveTokens(t){ localStorage.setItem(STORAGE_KEY, JSON.stringify(t)); }
+
+function countBySession(sid){
+  return getTokens().filter(t=>t.sessionId===sid && t.date===today()).length;
+}
+function today(){
+  return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+function nextTokenNum(sid){
+  const tokens = getTokens().filter(t=>t.sessionId===sid && t.date===today());
+  const nums = tokens.map(t=>parseInt(t.tokenNum.replace(/\D/g,''))|| 0);
+  return (nums.length ? Math.max(...nums) : 0) + 1;
+}
+
+// ─── RENDER SESSIONS ─────────────────────────
+function renderSessions(){
+  const grid = document.getElementById('sessionGrid');
+  const sessions = getSessions();
+  grid.innerHTML = sessions.map(s=>{
+    const used = countBySession(s.id);
+    const rem  = s.capacity - used;
+    const full = rem <= 0;
+    const slotsClass = full?'full': rem<=5?'low':'ok';
+    const slotsText  = full?'Full': rem<=5?`Only ${rem} left`:`${rem} slots`;
+    return `<button class="session-btn${full?' full':''}" onclick="selectSession('${s.id}')" ${full?'disabled':''} id="sbtn-${s.id}">
+      <i class="bi bi-check-circle-fill session-check"></i>
+      <div class="session-name">${s.name}</div>
+      <div class="session-time">${s.time}</div>
+      <div class="session-slots ${slotsClass}">${slotsText}</div>
+    </button>`;
+  }).join('');
+}
+
+function selectSession(id){
+  selectedSession = getSessions().find(s=>s.id===id);
+  document.querySelectorAll('.session-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('sbtn-'+id)?.classList.add('selected');
+}
+
+// ─── PRIORITY ────────────────────────────────
+function togglePriority(btn, val){
+  document.querySelectorAll('.priority-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedPriority = val;
+}
+
+// ─── STEPS ───────────────────────────────────
+function goStep(n){
+  if(n===2 && !selectedSession){ alert('Please select a session first.'); return; }
+  if(n===3){
+    const name = document.getElementById('patName').value.trim();
+    const phone = document.getElementById('patPhone').value.trim();
+    const cond  = document.getElementById('patCondition').value;
+    if(!name||!phone||!cond){ alert('Please fill in Name, Phone and Condition.'); return; }
+    fillReview();
+  }
+  document.querySelectorAll('[id^="step-"]').forEach(el=>el.style.display='none');
+  const target = document.getElementById('step-'+n) || document.getElementById('step-success');
+  if(target) target.style.display='block';
+  [1,2,3].forEach(i=>{
+    const el=document.getElementById('s'+i);
+    el.classList.remove('active','done');
+    if(i<n) el.classList.add('done');
+    if(i===n) el.classList.add('active');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function fillReview(){
+  const s = selectedSession;
+  const used = countBySession(s.id);
+  const tokNum = nextTokenNum(s.id);
+  const waitMins = used * s.avgMin;
+  // Estimate slot time
+  const [startH, startM] = parseTime(s.time.split('–')[0].trim());
+  const slotDate = new Date(); slotDate.setHours(startH, startM + waitMins);
+  const estTime = slotDate.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+
+  document.getElementById('rv-name').textContent     = document.getElementById('patName').value;
+  document.getElementById('rv-phone').textContent    = document.getElementById('patPhone').value;
+  const age = document.getElementById('patAge').value;
+  const gen = document.getElementById('patGender').value;
+  document.getElementById('rv-age').textContent      = [age?age+'yrs':'',gen].filter(Boolean).join(' / ')||'—';
+  document.getElementById('rv-session').textContent  = `${s.name} (${s.time})`;
+  document.getElementById('rv-condition').textContent= document.getElementById('patCondition').value;
+  document.getElementById('rv-type').textContent     = document.getElementById('patType').value;
+  document.getElementById('rv-priority').textContent = selectedPriority;
+  document.getElementById('rv-time').textContent     = estTime;
+  document.getElementById('rv-token').textContent    = 'T-'+String(tokNum).padStart(3,'0');
+}
+
+function parseTime(str){
+  const m = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if(!m) return [9,0];
+  let h=parseInt(m[1]), mn=parseInt(m[2]);
+  if(m[3].toUpperCase()==='PM'&&h!==12) h+=12;
+  if(m[3].toUpperCase()==='AM'&&h===12) h=0;
+  return [h,mn];
+}
+
+// ─── CONFIRM ─────────────────────────────────
+function confirmBooking(){
+  const s = selectedSession;
+  const used = countBySession(s.id);
+  const tokNum = nextTokenNum(s.id);
+  const waitMins = used * s.avgMin;
+  const [startH, startM] = parseTime(s.time.split('–')[0].trim());
+  const slotDate = new Date(); slotDate.setHours(startH, startM + waitMins);
+  const estTime = slotDate.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+
+  const token = {
+    id: Date.now(),
+    tokenNum: 'T-'+String(tokNum).padStart(3,'0'),
+    sessionId: s.id,
+    sessionName: s.name,
+    sessionTime: s.time,
+    date: today(),
+    name: document.getElementById('patName').value.trim(),
+    phone: document.getElementById('patPhone').value.trim(),
+    age: document.getElementById('patAge').value,
+    gender: document.getElementById('patGender').value,
+    condition: document.getElementById('patCondition').value,
+    visitType: document.getElementById('patType').value,
+    priority: selectedPriority,
+    notes: document.getElementById('patNotes').value.trim(),
+    estimatedTime: estTime,
+    status: 'waiting',
+    bookedAt: new Date().toISOString()
+  };
+
+  // Priority boost — re-sort later in admin
+  const tokens = getTokens();
+  tokens.push(token);
+  saveTokens(tokens);
+
+  // Fill success
+  document.getElementById('suc-token').textContent    = token.tokenNum;
+  document.getElementById('suc-name').textContent     = token.name;
+  document.getElementById('suc-session').textContent  = token.sessionName;
+  document.getElementById('suc-condition').textContent= token.condition;
+  document.getElementById('suc-time').textContent     = token.estimatedTime;
+  document.getElementById('suc-wait').textContent     = waitMins > 0 ? `~${waitMins} minutes` : 'You are first!';
+
+  // Fill print slip
+  document.getElementById('slip-token').textContent   = token.tokenNum;
+  document.getElementById('slip-name').textContent    = token.name;
+  document.getElementById('slip-session').textContent = token.sessionName;
+  document.getElementById('slip-date').textContent    = token.date;
+  document.getElementById('slip-time').textContent    = token.estimatedTime;
+  document.getElementById('slip-condition').textContent= token.condition;
+
+  document.querySelectorAll('[id^="step-"]').forEach(el=>el.style.display='none');
+  document.getElementById('step-success').style.display='block';
+  [1,2,3].forEach(i=>{ const el=document.getElementById('s'+i); el.classList.remove('active'); el.classList.add('done'); });
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateBanner();
+}
+
+function printToken(){ window.print(); }
+
+function newBooking(){
+  selectedSession=null; selectedPriority='None';
+  document.querySelectorAll('.session-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('.priority-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('patName').value='';
+  document.getElementById('patPhone').value='';
+  document.getElementById('patAge').value='';
+  document.getElementById('patGender').value='';
+  document.getElementById('patCondition').value='';
+  document.getElementById('patNotes').value='';
+  renderSessions(); goStep(1);
+}
+
+// ─── TRACK TOKEN ─────────────────────────────
+function trackToken(){
+  const q = document.getElementById('trackInput').value.trim().toUpperCase();
+  const res = document.getElementById('trackResult');
+  if(!q){ alert('Enter a token number.'); return; }
+  const token = getTokens().find(t=>t.tokenNum.toUpperCase()===q && t.date===today());
+  if(!token){
+    res.style.display='block';
+    res.innerHTML=`<i class="bi bi-exclamation-circle" style="color:#dc2626;"></i> Token <strong>${q}</strong> not found for today. Check the number and try again.`;
+    return;
+  }
+  const statusColors={waiting:'#d97706',serving:'#16a34a',done:'#6b7280',skipped:'#dc2626'};
+  const col=statusColors[token.status]||'#888';
+  const tokens=getTokens().filter(t=>t.date===today()&&t.sessionId===token.sessionId&&t.status==='waiting');
+  const myPos=tokens.findIndex(t=>t.id===token.id)+1;
+  const waitLeft=myPos*((getSessions().find(s=>s.id===token.sessionId)||{avgMin:5}).avgMin);
+  res.style.display='block';
+  res.innerHTML=`
+    <div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;">
+      <div style="background:${col};color:#fff;border-radius:10px;padding:.6rem 1rem;font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;">${token.tokenNum}</div>
+      <div>
+        <div style="font-weight:700;font-size:.95rem;">${token.name}</div>
+        <div style="font-size:.8rem;color:var(--muted);">${token.sessionName} · ${token.condition}</div>
+        <div style="font-size:.82rem;margin-top:.3rem;">Status: <strong style="color:${col};text-transform:capitalize;">${token.status}</strong>
+          ${token.status==='waiting'?`· Position <strong>${myPos}</strong> in queue · Est. wait <strong>~${waitLeft} min</strong>`:''}
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─── BANNER ──────────────────────────────────
+function updateBanner(){
+  const tokens = getTokens().filter(t=>t.date===today());
+  const serving = tokens.find(t=>t.status==='serving');
+  const waiting  = tokens.filter(t=>t.status==='waiting').length;
+  const next     = tokens.find(t=>t.status==='waiting');
+  document.getElementById('banner-current').textContent = serving ? serving.tokenNum : '—';
+  document.getElementById('banner-name').textContent    = serving ? serving.name.split(' ')[0] : '—';
+  document.getElementById('banner-waiting').textContent = waiting;
+  document.getElementById('banner-next').textContent    = next ? next.tokenNum : '—';
+  const sess = selectedSession || getSessions()[0];
+  document.getElementById('banner-wait').textContent    = waiting ? `~${waiting*sess.avgMin} min` : '0 min';
+}
+
+// ─── INIT ─────────────────────────────────────
+renderSessions();
+updateBanner();
+setInterval(()=>{ updateBanner(); renderSessions(); }, 10000);
+</script>
+</body>
+</html>

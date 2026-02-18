@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Queue Display | Dr. Harikrishna – KIN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <style>
+    :root{
+      --green:#1a6b4a;--green-d:#0e4730;--green-l:#2a8c62;
+      --gold:#c8963e;--gold-l:#f5d08a;
+      --dark:#0d0d0d;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:var(--dark);
+      color:#fff;
+      min-height:100vh;
+      overflow:hidden;
+    }
+    h1,h2,h3,h4{font-family:'Playfair Display',serif;}
+
+    /* LAYOUT */
+    .screen{display:grid;grid-template-rows:auto 1fr auto;height:100vh;gap:0;}
+
+    /* HEADER */
+    header{
+      background:linear-gradient(135deg,var(--green-d) 0%,var(--green) 100%);
+      padding:1.2rem 2rem;
+      display:flex;align-items:center;justify-content:space-between;
+      border-bottom:3px solid var(--gold);
+    }
+    .clinic-brand .name{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;}
+    .clinic-brand .sub{font-size:.75rem;color:rgba(255,255,255,.65);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
+    .header-right{text-align:right;}
+    .live-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:50px;padding:.3rem .9rem;font-size:.8rem;font-weight:600;}
+    .dot{width:8px;height:8px;background:#22c55e;border-radius:50%;animation:pulse 1.5s infinite;}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5);}50%{box-shadow:0 0 0 5px rgba(34,197,94,0);}}
+    .clock{font-size:1.8rem;font-weight:700;font-family:'Playfair Display',serif;color:var(--gold-l);line-height:1;}
+    .date-disp{font-size:.78rem;color:rgba(255,255,255,.6);margin-top:2px;}
+
+    /* MAIN CONTENT */
+    .content{display:grid;grid-template-columns:1fr 340px;gap:0;overflow:hidden;}
+
+    /* LEFT: NOW SERVING */
+    .left-panel{
+      background:linear-gradient(160deg,#111 0%,#0e2018 50%,#0e4730 100%);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:2rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .left-panel::before{
+      content:'';position:absolute;top:-100px;right:-100px;
+      width:400px;height:400px;
+      background:radial-gradient(circle,rgba(200,150,62,.12) 0%,transparent 70%);
+      border-radius:50%;
+    }
+    .left-panel::after{
+      content:'';position:absolute;bottom:-80px;left:-80px;
+      width:300px;height:300px;
+      background:radial-gradient(circle,rgba(26,107,74,.2) 0%,transparent 70%);
+      border-radius:50%;
+    }
+    .now-label{
+      font-size:.85rem;text-transform:uppercase;letter-spacing:.2em;
+      color:rgba(255,255,255,.5);font-weight:600;margin-bottom:1rem;
+      display:flex;align-items:center;gap:.5rem;
+    }
+    .big-token{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(6rem,15vw,10rem);
+      font-weight:700;
+      color:var(--gold-l);
+      line-height:1;
+      text-shadow:0 0 60px rgba(200,150,62,.4);
+      position:relative;z-index:1;
+      animation:tokenIn .5s ease;
+    }
+    @keyframes tokenIn{from{transform:scale(.8);opacity:0;}to{transform:scale(1);opacity:1;}}
+    .patient-name{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(1.5rem,4vw,2.5rem);
+      font-weight:600;
+      color:#fff;
+      margin-top:.5rem;
+      position:relative;z-index:1;
+    }
+    .patient-info{
+      font-size:1rem;color:rgba(255,255,255,.5);
+      margin-top:.4rem;position:relative;z-index:1;
+      display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;justify-content:center;
+    }
+    .patient-info span{display:flex;align-items:center;gap:.3rem;}
+    .next-hint{
+      margin-top:2rem;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:12px;padding:.75rem 1.5rem;
+      display:flex;align-items:center;gap:.75rem;
+      position:relative;z-index:1;
+    }
+    .next-hint .next-label{font-size:.72rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;}
+    .next-hint .next-val{font-size:1.1rem;font-weight:700;color:#fff;}
+    .empty-state{text-align:center;position:relative;z-index:1;}
+    .empty-state i{font-size:4rem;color:rgba(255,255,255,.1);display:block;margin-bottom:1rem;}
+    .empty-state p{color:rgba(255,255,255,.3);font-size:1.1rem;}
+
+    /* RIGHT: QUEUE LIST */
+    .right-panel{
+      background:#111;
+      border-left:1px solid rgba(255,255,255,.06);
+      display:flex;flex-direction:column;
+      overflow:hidden;
+    }
+    .panel-title{
+      padding:1rem 1.2rem;
+      font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;
+      color:rgba(255,255,255,.4);font-weight:600;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .panel-title .count{
+      background:rgba(26,107,74,.3);color:var(--gold-l);
+      font-size:.7rem;font-weight:700;
+      padding:.1rem .5rem;border-radius:50px;
+    }
+    .queue-list{overflow-y:auto;flex:1;padding:.5rem;}
+    .queue-list::-webkit-scrollbar{width:4px;}
+    .queue-list::-webkit-scrollbar-track{background:transparent;}
+    .queue-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+
+    .queue-item{
+      display:flex;align-items:center;gap:.75rem;
+      padding:.75rem .9rem;border-radius:10px;
+      margin-bottom:.4rem;
+      transition:all .3s;
+    }
+    .queue-item.waiting{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);}
+    .queue-item.serving{background:rgba(26,107,74,.25);border:1px solid rgba(26,107,74,.4);}
+    .queue-item.done{background:rgba(255,255,255,.02);opacity:.45;}
+    .queue-item.skipped{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.15);opacity:.5;}
+    .qi-token{
+      font-family:'Playfair Display',serif;
+      font-size:1.1rem;font-weight:700;
+      min-width:52px;text-align:center;
+      padding:.3rem .4rem;border-radius:8px;
+    }
+    .qi-token.serving{background:var(--green);color:#fff;}
+    .qi-token.waiting{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);}
+    .qi-token.done{background:rgba(255,255,255,.05);color:rgba(255,255,255,.3);}
+    .qi-token.skipped{background:rgba(220,38,38,.15);color:rgba(255,255,255,.3);}
+    .qi-info{flex:1;min-width:0;}
+    .qi-name{font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .queue-item.waiting .qi-name{color:#fff;}
+    .queue-item.serving .qi-name{color:#fff;}
+    .queue-item.done .qi-name,.queue-item.skipped .qi-name{color:rgba(255,255,255,.3);}
+    .qi-sub{font-size:.72rem;color:rgba(255,255,255,.35);margin-top:1px;}
+    .qi-badge{font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:50px;flex-shrink:0;}
+    .badge-wait{background:rgba(217,119,6,.15);color:#fbbf24;border:1px solid rgba(217,119,6,.2);}
+    .badge-serve{background:rgba(22,163,74,.2);color:#4ade80;border:1px solid rgba(22,163,74,.3);}
+    .badge-done{background:rgba(255,255,255,.05);color:rgba(255,255,255,.3);}
+    .badge-skip{background:rgba(220,38,38,.1);color:rgba(220,38,38,.5);}
+
+    /* FOOTER */
+    footer{
+      background:#0a0a0a;
+      border-top:1px solid rgba(255,255,255,.06);
+      padding:.85rem 2rem;
+      display:flex;align-items:center;justify-content:space-between;
+      flex-wrap:wrap;gap:.75rem;
+    }
+    .footer-stat{text-align:center;}
+    .footer-stat .fval{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;line-height:1;}
+    .footer-stat .flbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-top:2px;font-weight:600;}
+    .footer-stat.green .fval{color:var(--gold-l);}
+    .footer-stat.blue .fval{color:#60a5fa;}
+    .footer-stat.gray .fval{color:rgba(255,255,255,.5);}
+    .divider-v{width:1px;height:36px;background:rgba(255,255,255,.08);}
+    .marquee-wrap{flex:1;min-width:0;overflow:hidden;}
+    .marquee{white-space:nowrap;animation:scroll 30s linear infinite;display:inline-block;font-size:.8rem;color:rgba(255,255,255,.35);}
+    @keyframes scroll{from{transform:translateX(100%);}to{transform:translateX(-100%);}  }
+
+    /* CONTROLS */
+    .controls{position:fixed;bottom:1rem;right:1rem;display:flex;gap:.5rem;z-index:100;}
+    .ctrl-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.6);border-radius:8px;padding:.4rem .8rem;font-size:.75rem;cursor:pointer;backdrop-filter:blur(8px);font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:.3rem;transition:all .2s;}
+    .ctrl-btn:hover{background:rgba(255,255,255,.15);color:#fff;}
+
+    @media(max-width:900px){
+      .content{grid-template-columns:1fr;}
+      .right-panel{max-height:280px;}
+    }
+    @media(max-width:600px){
+      header{padding:.8rem 1rem;}
+      .clock{font-size:1.3rem;}
+      .left-panel{padding:1.2rem;}
+      footer{padding:.6rem 1rem;}
+    }
+  </style>
+</head>
+<body>
+<div class="screen">
+
+  <!-- HEADER -->
+  <header>
+    <div class="clinic-brand">
+      <div class="name"><i class="bi bi-hospital me-2" style="color:var(--gold-l);"></i>Krishna Institute of Naturopathy</div>
+      <div class="sub">Dr. Harikrishna · Naturopathy &amp; Traditional Medicine · Mangalore</div>
+    </div>
+    <div class="header-right">
+      <div class="live-badge"><div class="dot"></div>Live Queue</div>
+      <div class="clock" id="clock">—</div>
+      <div class="date-disp" id="dateDisp">—</div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- LEFT: Now Serving -->
+    <div class="left-panel" id="leftPanel">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- RIGHT: Queue List -->
+    <div class="right-panel">
+      <div class="panel-title">
+        Waiting Queue
+        <span class="count" id="waitCount">0</span>
+      </div>
+      <div class="queue-list" id="queueList"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-stat green">
+      <div class="fval" id="f-waiting">0</div>
+      <div class="flbl">Waiting</div>
+    </div>
+    <div class="divider-v"></div>
+    <div class="footer-stat blue">
+      <div class="fval" id="f-done">0</div>
+      <div class="flbl">Completed</div>
+    </div>
+    <div class="divider-v"></div>
+    <div class="footer-stat gray">
+      <div class="fval" id="f-total">0</div>
+      <div class="flbl">Total Today</div>
+    </div>
+    <div class="divider-v"></div>
+    <div class="marquee-wrap">
+      <div class="marquee" id="marquee">
+        Welcome to Krishna Institute of Naturopathy &nbsp;·&nbsp; Please maintain silence in the waiting area &nbsp;·&nbsp; Kindly keep your token number ready &nbsp;·&nbsp; For emergencies contact reception &nbsp;·&nbsp; +91 96114 11652 &nbsp;·&nbsp; Mangalore | Bangalore
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <a href="token-patient.html"><button class="ctrl-btn"><i class="bi bi-ticket-perforated"></i> Get Token</button></a>
+  <a href="token-admin.html"><button class="ctrl-btn"><i class="bi bi-shield-lock"></i> Admin</button></a>
+  <button class="ctrl-btn" onclick="toggleFullscreen()"><i class="bi bi-fullscreen" id="fsIcon"></i> Fullscreen</button>
+</div>
+
+<script>
+const STORAGE_KEY='kin_tokens';
+function getTokens(){return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}
+function today(){return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+
+// ─── CLOCK ───────────────────────────────────
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('dateDisp').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+// ─── DISPLAY ─────────────────────────────────
+let lastServing=null;
+
+function render(){
+  const tokens=getTokens().filter(t=>t.date===today());
+  const serving=tokens.find(t=>t.status==='serving');
+  const waiting=tokens.filter(t=>t.status==='waiting');
+  const done=tokens.filter(t=>t.status==='done').length;
+  const skipped=tokens.filter(t=>t.status==='skipped').length;
+  const next=waiting[0];
+
+  // Left panel
+  const left=document.getElementById('leftPanel');
+  if(!serving && !waiting.length){
+    left.innerHTML=`
+      <div class="now-label"><div class="dot"></div> Queue Status</div>
+      <div class="empty-state">
+        <i class="bi bi-calendar2-check"></i>
+        <p>No patients currently in queue</p>
+        <p style="font-size:.85rem;margin-top:.5rem;">Please check back soon</p>
+      </div>`;
+  } else if(serving){
+    const changed=!lastServing||lastServing!==serving.tokenNum;
+    if(changed) lastServing=serving.tokenNum;
+    const prio=serving.priority&&serving.priority!=='None';
+    left.innerHTML=`
+      <div class="now-label"><div class="dot"></div> Now Serving</div>
+      <div class="big-token" ${changed?'style="animation:tokenIn .5s ease;"':''}>${serving.tokenNum}</div>
+      <div class="patient-name">${serving.name}</div>
+      <div class="patient-info">
+        <span><i class="bi bi-clipboard2-pulse"></i>${serving.condition}</span>
+        <span><i class="bi bi-arrow-repeat"></i>${serving.visitType}</span>
+        ${prio?`<span style="color:var(--gold-l);"><i class="bi bi-star-fill"></i>${serving.priority}</span>`:''}
+      </div>
+      ${next?`<div class="next-hint">
+        <div><div class="next-label">Next Token</div><div class="next-val">${next.tokenNum} &nbsp;·&nbsp; ${next.name.split(' ')[0]}</div></div>
+      </div>`:''}
+    `;
+  } else {
+    left.innerHTML=`
+      <div class="now-label"><div class="dot"></div> Queue Ready</div>
+      <div class="empty-state">
+        <i class="bi bi-hourglass-split" style="color:rgba(200,150,62,.3);font-size:3rem;"></i>
+        <div class="patient-name" style="margin-top:1rem;">Please Wait</div>
+        <p>Doctor will call the next patient shortly</p>
+      </div>
+      ${next?`<div class="next-hint">
+        <div><div class="next-label">Next Up</div><div class="next-val">${next.tokenNum} &nbsp;·&nbsp; ${next.name.split(' ')[0]}</div></div>
+      </div>`:''}
+    `;
+  }
+
+  // Right queue list
+  const pOrder={Critical:0,'Senior Citizen':1,Pregnant:2,'Differently Abled':3,Child:4,None:99};
+  const sorted=[...waiting].sort((a,b)=>{
+    const pa=pOrder[a.priority]??99,pb=pOrder[b.priority]??99;
+    if(pa!==pb) return pa-pb; return a.id-b.id;
+  });
+
+  const allDisplay=[
+    ...(serving?[serving]:[]),
+    ...sorted,
+    ...tokens.filter(t=>t.status==='done'||t.status==='skipped').slice(-5)
+  ];
+
+  const ql=document.getElementById('queueList');
+  ql.innerHTML=allDisplay.map(t=>{
+    const sc=t.status;
+    const badgeClass={waiting:'badge-wait',serving:'badge-serve',done:'badge-done',skipped:'badge-skip'}[sc]||'';
+    const badgeText={waiting:'Waiting',serving:'Now',done:'Done',skipped:'Skipped'}[sc]||sc;
+    return `<div class="queue-item ${sc}">
+      <div class="qi-token ${sc}">${t.tokenNum}</div>
+      <div class="qi-info">
+        <div class="qi-name">${t.name}</div>
+        <div class="qi-sub">${t.condition}</div>
+      </div>
+      <span class="qi-badge ${badgeClass}">${badgeText}</span>
+    </div>`;
+  }).join('')||'<div style="text-align:center;padding:2rem;color:rgba(255,255,255,.2);font-size:.85rem;">Queue is empty</div>';
+
+  // Stats
+  document.getElementById('waitCount').textContent=waiting.length;
+  document.getElementById('f-waiting').textContent=waiting.length;
+  document.getElementById('f-done').textContent=done;
+  document.getElementById('f-total').textContent=tokens.length;
+}
+
+// ─── FULLSCREEN ──────────────────────────────
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen();
+    document.getElementById('fsIcon').className='bi bi-fullscreen-exit';
+  } else {
+    document.exitFullscreen();
+    document.getElementById('fsIcon').className='bi bi-fullscreen';
+  }
+}
+
+// ─── INIT ────────────────────────────────────
+render();
+updateClock();
+setInterval(render,4000);
+setInterval(updateClock,1000);
+</script>
+</body>
+</html>

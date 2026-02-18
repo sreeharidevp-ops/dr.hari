@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Dr. Harikrishna – Naturopathy & Traditional Medicine specialist treating Cancer, Parkinson's Disease, and Kidney Disorders at Krishna Institute of Naturopathy, Mangalore." />
+  <meta name="keywords" content="Dr Harikrishna, naturopathy, Ayurveda, cancer treatment, Parkinson disease, kidney disease, BNYS, Traditional Chinese Medicine, Mangalore, Karnataka" />
+  <meta name="author" content="Dr. Harikrishna" />
+  <meta property="og:title" content="Dr. Harikrishna | Krishna Institute of Naturopathy" />
+  <meta property="og:description" content="Expert naturopathy & traditional herbal medicine for Cancer, Parkinson's, and Kidney Disorders." />
+  <meta property="og:type" content="website" />
+  <title>Dr. Harikrishna | Krishna Institute of Naturopathy – Mangalore</title>
+
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+  <style>
+    :root {
+      --green: #1a6b4a;
+      --green-light: #2a8c62;
+      --green-pale: #e8f5ee;
+      --gold: #c8963e;
+      --cream: #faf7f2;
+      --dark: #1a1a1a;
+      --text: #3a3a3a;
+      --muted: #7a7a7a;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: #fff;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5 {
+      font-family: 'Playfair Display', serif;
+      color: var(--dark);
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(26,107,74,0.12);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1050;
+    }
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--green) !important;
+      line-height: 1.2;
+    }
+    .navbar-brand span {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .nav-link {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text) !important;
+      letter-spacing: 0.03em;
+      padding: 0.5rem 1rem !important;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--green) !important; }
+    .btn-appt-nav {
+      background: var(--green);
+      color: #fff !important;
+      border-radius: 50px;
+      padding: 0.45rem 1.4rem !important;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-appt-nav:hover {
+      background: var(--green-light);
+      transform: translateY(-1px);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0e4730 0%, #1a6b4a 55%, #2a8c62 100%);
+      min-height: 92vh;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-leaf {
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(200,150,62,0.18) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(4px);
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 em {
+      color: #f5d08a;
+      font-style: italic;
+    }
+    .hero p {
+      color: rgba(255,255,255,0.8);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 480px;
+      margin-bottom: 2rem;
+    }
+    .btn-hero-primary {
+      background: var(--gold);
+      color: #fff;
+      font-weight: 600;
+      padding: 0.85rem 2rem;
+      border-radius: 50px;
+      border: none;
+      font-size: 0.95rem;
+      transition: all 0.25s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-hero-primary:hover {
+      background: #d4a24a;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(200,150,62,0.4);
+    }
+    .btn-hero-outline {
+      border: 2px solid rgba(255,255,255,0.5);
+      color: #fff;
+      font-weight: 600;
+      padding: 0.85rem 2rem;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      transition: all 0.25s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+    }
+    .btn-hero-outline:hover {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border-color: #fff;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .hero-stat-item {
+      text-align: left;
+    }
+    .hero-stat-item .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f5d08a;
+      line-height: 1;
+    }
+    .hero-stat-item .label {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.2rem;
+    }
+    .hero-stat-divider {
+      width: 1px;
+      background: rgba(255,255,255,0.2);
+      align-self: stretch;
+    }
+    .hero-img-wrap {
+      position: relative;
+    }
+    .hero-img-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero-img-card .doc-avatar {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(200,150,62,0.3), rgba(255,255,255,0.1));
+      border: 3px solid rgba(200,150,62,0.5);
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      color: rgba(255,255,255,0.4);
+      overflow: hidden;
+    }
+    .hero-img-card .doc-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: #fff;
+      font-weight: 700;
+    }
+    .hero-img-card .doc-title {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.25rem;
+    }
+    .float-badge {
+      position: absolute;
+      background: #fff;
+      border-radius: 12px;
+      padding: 0.6rem 1rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+    }
+    .float-badge.top-right {
+      top: -12px;
+      right: -20px;
+    }
+    .float-badge.bottom-left {
+      bottom: 20px;
+      left: -20px;
+    }
+    .float-badge i { color: var(--gold); }
+
+    /* ── SECTION HEADERS ── */
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 0.5rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      line-height: 1.25;
+      margin-bottom: 0;
+    }
+    .title-underline {
+      width: 50px;
+      height: 3px;
+      background: var(--gold);
+      border-radius: 2px;
+      margin: 1rem 0 1.5rem;
+    }
+    .title-underline.center { margin-left: auto; margin-right: auto; }
+
+    /* ── ABOUT ── */
+    .about-section {
+      background: var(--cream);
+      padding: 6rem 0;
+    }
+    .about-img-wrap {
+      position: relative;
+    }
+    .about-accent-box {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, var(--green), var(--green-light));
+      border-radius: 16px;
+      z-index: 0;
+      opacity: 0.12;
+    }
+    .about-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2.5rem;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 4px 40px rgba(26,107,74,0.08);
+      border: 1px solid rgba(26,107,74,0.1);
+    }
+    .credential-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--green-pale);
+      color: var(--green);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      margin: 0.2rem;
+    }
+    .heritage-block {
+      background: linear-gradient(135deg, var(--green), #0e4730);
+      border-radius: 16px;
+      padding: 1.5rem;
+      color: #fff;
+      margin-top: 1.5rem;
+    }
+    .heritage-block h5 {
+      color: #f5d08a;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .heritage-block p {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.8);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* ── SPECIALTIES ── */
+    .specialties-section { padding: 6rem 0; }
+    .specialty-card {
+      background: #fff;
+      border: 1px solid rgba(26,107,74,0.1);
+      border-radius: 20px;
+      padding: 2rem;
+      height: 100%;
+      transition: all 0.3s;
+      cursor: default;
+    }
+    .specialty-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(26,107,74,0.12);
+      border-color: var(--green);
+    }
+    .specialty-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--green-pale);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      color: var(--green);
+      margin-bottom: 1.2rem;
+      transition: all 0.3s;
+    }
+    .specialty-card:hover .specialty-icon {
+      background: var(--green);
+      color: #fff;
+    }
+    .specialty-card h4 {
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+    }
+    .specialty-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* ── WHY CHOOSE ── */
+    .why-section {
+      background: linear-gradient(135deg, #0e4730 0%, #1a6b4a 100%);
+      padding: 6rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .why-section::before {
+      content: '';
+      position: absolute;
+      right: -100px;
+      top: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(200,150,62,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .why-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 1.5rem;
+      height: 100%;
+      transition: all 0.3s;
+    }
+    .why-card:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(200,150,62,0.4);
+    }
+    .why-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(200,150,62,0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #f5d08a;
+      margin-bottom: 1rem;
+    }
+    .why-card h5 {
+      color: #fff;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .why-card p {
+      color: rgba(255,255,255,0.65);
+      font-size: 0.87rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ── APPOINTMENT ── */
+    .appointment-section {
+      background: var(--cream);
+      padding: 6rem 0;
+    }
+    .appt-card {
+      background: #fff;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 64px rgba(26,107,74,0.1);
+      border: 1px solid rgba(26,107,74,0.1);
+    }
+    .appt-info {
+      background: linear-gradient(160deg, var(--green), #0e4730);
+      padding: 3rem;
+      color: #fff;
+      height: 100%;
+    }
+    .appt-info h3 {
+      color: #fff;
+      font-size: 1.6rem;
+      margin-bottom: 0.75rem;
+    }
+    .appt-info p {
+      color: rgba(255,255,255,0.75);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .appt-contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .appt-contact-item .icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #f5d08a;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .appt-contact-item .info-text {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.5;
+    }
+    .appt-contact-item .info-text strong {
+      color: #fff;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .appt-form-wrap { padding: 3rem; }
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+    .form-control, .form-select {
+      border: 1.5px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 0.65rem 1rem;
+      font-size: 0.9rem;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(26,107,74,0.1);
+    }
+    textarea.form-control { resize: none; }
+    .btn-submit {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.85rem 2.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      width: 100%;
+      transition: all 0.25s;
+    }
+    .btn-submit:hover {
+      background: var(--green-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(26,107,74,0.3);
+    }
+
+    /* ── NEWSLETTER ── */
+    .newsletter-section {
+      background: var(--gold);
+      padding: 4rem 0;
+    }
+    .newsletter-section h3 {
+      color: #fff;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .newsletter-section p {
+      color: rgba(255,255,255,0.85);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+    .newsletter-form {
+      display: flex;
+      gap: 0.5rem;
+      max-width: 440px;
+    }
+    .newsletter-form input {
+      flex: 1;
+      border: 2px solid rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border-radius: 50px;
+      padding: 0.7rem 1.3rem;
+      font-size: 0.9rem;
+      backdrop-filter: blur(4px);
+    }
+    .newsletter-form input::placeholder { color: rgba(255,255,255,0.65); }
+    .newsletter-form input:focus {
+      outline: none;
+      border-color: #fff;
+      background: rgba(255,255,255,0.2);
+    }
+    .newsletter-form button {
+      background: #fff;
+      color: var(--gold);
+      font-weight: 700;
+      border: none;
+      border-radius: 50px;
+      padding: 0.7rem 1.5rem;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .newsletter-form button:hover {
+      background: var(--green);
+      color: #fff;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      padding: 4rem 0 2rem;
+    }
+    footer .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: #fff;
+      font-weight: 700;
+    }
+    footer .brand-sub {
+      font-size: 0.75rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    footer p {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.88rem;
+      line-height: 1.7;
+    }
+    footer h6 {
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.2rem;
+    }
+    footer ul { list-style: none; padding: 0; margin: 0; }
+    footer ul li a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 0.88rem;
+      line-height: 2;
+      transition: color 0.2s;
+    }
+    footer ul li a:hover { color: var(--gold); }
+    .footer-divider {
+      border-color: rgba(255,255,255,0.08);
+      margin: 2.5rem 0 1.5rem;
+    }
+    .footer-bottom {
+      color: rgba(255,255,255,0.35);
+      font-size: 0.8rem;
+    }
+    .social-link {
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      transition: all 0.2s;
+      margin-right: 0.4rem;
+    }
+    .social-link:hover {
+      background: var(--green);
+      color: #fff;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.35s; }
+    .delay-4 { animation-delay: 0.5s; }
+
+    /* ── RESPONSIVE TWEAKS ── */
+    @media (max-width: 767.98px) {
+      .hero { min-height: auto; padding: 5rem 0 3rem; }
+      .hero-stats { gap: 1.2rem; }
+      .appt-info { padding: 2rem; }
+      .appt-form-wrap { padding: 2rem; }
+      .float-badge.top-right { top: -10px; right: 0; }
+      .float-badge.bottom-left { display: none; }
+      .newsletter-form { flex-direction: column; }
+    }
+
+    /* Toast confirmation */
+    .toast-container { z-index: 9999; }
+  </style>
+</head>
+<body>
+
+  <!-- ───────────────────────── NAVBAR ───────────────────────── -->
+  <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        KIN
+        <span>Krishna Institute of Naturopathy</span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#specialties">Specialties</a></li>
+          <li class="nav-item"><a class="nav-link" href="#appointment">Appointment</a></li>
+          <li class="nav-item ms-lg-2">
+            <a class="nav-link btn-appt-nav" href="#appointment">Book Now</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ───────────────────────── HERO ───────────────────────── -->
+  <section class="hero" id="home">
+    <div class="hero-leaf"></div>
+    <div class="container position-relative" style="z-index:2;">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+          <div class="hero-badge fade-up">
+            <i class="bi bi-patch-check-fill"></i> Trusted Traditional &amp; Naturopathy Care
+          </div>
+          <h1 class="fade-up delay-1">
+            Ancient Wisdom.<br/><em>Modern Healing.</em>
+          </h1>
+          <p class="fade-up delay-2">
+            With an 800-year family legacy in Ayurveda and 12+ years of clinical practice, Dr. Harikrishna specialises in treating Cancer, Parkinson's Disease, and Kidney Disorders using time-tested herbal medicine.
+          </p>
+          <div class="d-flex flex-wrap gap-3 fade-up delay-3">
+            <a href="#appointment" class="btn-hero-primary">
+              <i class="bi bi-calendar3"></i> Book an Appointment
+            </a>
+            <a href="#specialties" class="btn-hero-outline">
+              <i class="bi bi-arrow-right-circle"></i> Our Specialties
+            </a>
+          </div>
+          <div class="hero-stats fade-up delay-4">
+            <div class="hero-stat-item">
+              <div class="num">12+</div>
+              <div class="label">Years of Practice</div>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat-item">
+              <div class="num">1000+</div>
+              <div class="label">Cases Treated</div>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat-item">
+              <div class="num">800</div>
+              <div class="label">Year Family Legacy</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-5 offset-lg-1 fade-up delay-2">
+          <div class="hero-img-wrap">
+            <div class="hero-img-card">
+              <div class="doc-avatar">
+                <i class="bi bi-person-circle"></i>
+              </div>
+              <div class="doc-name">Dr. Harikrishna</div>
+              <div class="doc-title">BNYS · Masters TCM · Naturopathy Specialist</div>
+              <div style="margin-top:1.2rem; display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap;">
+                <span style="background:rgba(255,255,255,0.1);color:#f5d08a;font-size:0.75rem;padding:0.25rem 0.7rem;border-radius:50px; border:1px solid rgba(200,150,62,0.3);">Cancer Care</span>
+                <span style="background:rgba(255,255,255,0.1);color:#f5d08a;font-size:0.75rem;padding:0.25rem 0.7rem;border-radius:50px; border:1px solid rgba(200,150,62,0.3);">Parkinson's</span>
+                <span style="background:rgba(255,255,255,0.1);color:#f5d08a;font-size:0.75rem;padding:0.25rem 0.7rem;border-radius:50px; border:1px solid rgba(200,150,62,0.3);">Kidney Disorders</span>
+              </div>
+            </div>
+            <div class="float-badge top-right">
+              <i class="bi bi-shield-check"></i> Licensed Pan-India
+            </div>
+            <div class="float-badge bottom-left">
+              <i class="bi bi-star-fill"></i> 800-Year Family Tradition
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── ABOUT ───────────────────────── -->
+  <section class="about-section" id="about">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-5">
+          <div class="about-img-wrap">
+            <div class="about-card">
+              <div class="section-label">Who I Am</div>
+              <h2 class="section-title">Dr. Harikrishna</h2>
+              <div class="title-underline"></div>
+              <p style="font-size:0.95rem; line-height:1.75; color:var(--muted);">
+                I completed my <strong style="color:var(--text);">BNYS</strong> from Rajiv Gandhi University of Health Sciences, Bangalore, followed by a <strong style="color:var(--text);">Masters in Traditional Chinese Medicine</strong>. I hold both a Karnataka state license and a centralized licence to practice across India.
+              </p>
+              <div class="mb-3">
+                <span class="credential-pill"><i class="bi bi-mortarboard-fill"></i> BNYS – RGUHS Bangalore</span>
+                <span class="credential-pill"><i class="bi bi-mortarboard-fill"></i> Masters in TCM</span>
+                <span class="credential-pill"><i class="bi bi-geo-alt-fill"></i> Karnataka State License</span>
+                <span class="credential-pill"><i class="bi bi-award-fill"></i> Pan-India Centralized License</span>
+              </div>
+              <p style="font-size:0.92rem; line-height:1.75; color:var(--muted); margin:0;">
+                Currently operating the <strong style="color:var(--text);">Krishna Institute of Naturopathy</strong> near the Western Ghats in Mangalore and a city clinic in Bangalore.
+              </p>
+            </div>
+            <div class="about-accent-box"></div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 offset-lg-1">
+          <div class="section-label">Heritage &amp; Legacy</div>
+          <h2 class="section-title">800 Years of Healing Tradition</h2>
+          <div class="title-underline"></div>
+          <p style="color:var(--muted); line-height:1.8; font-size:0.95rem;">
+            I come from a Kerala family where my father's lineage has practiced Ayurveda for over 800 years, with deep expertise in Cancer, Mental Disorders, and Kidney Disorders. My mother's family brings centuries of knowledge in <em>Agatatantra</em> (toxicology), a rare branch of traditional medicine.
+          </p>
+          <p style="color:var(--muted); line-height:1.8; font-size:0.95rem;">
+            In 2010, I relocated to Karnataka's Dakshina Kannada district to be near the Western Ghats, where our pharmacy sources rare wild herbs with the help of local villagers — herbs that are essential to the efficacy and purity of our medicines.
+          </p>
+
+          <div class="heritage-block">
+            <h5><i class="bi bi-tree-fill me-2"></i>Our Pharmacy & Medicine Philosophy</h5>
+            <p>Our medicines are 100% pure herbs, prepared using the traditional <em>Suvarna Udweepani</em> technique — no bhasma, no heavy metals, no synthetic chemicals or preservatives. Every preparation follows the ancestral methods refined over generations of Arbuta Chikilsa (cancer treatment).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── SPECIALTIES ───────────────────────── -->
+  <section class="specialties-section" id="specialties">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-label">What We Treat</div>
+        <h2 class="section-title">Our Areas of Speciality</h2>
+        <div class="title-underline center"></div>
+        <p class="text-muted mx-auto" style="max-width:540px; font-size:0.95rem;">
+          Combining ancestral herbal knowledge with integrative medicine, we offer proven treatment pathways for complex, chronic conditions.
+        </p>
+      </div>
+      <div class="row g-4">
+
+        <!-- Cancer -->
+        <div class="col-lg-4 col-md-6">
+          <article class="specialty-card">
+            <div class="specialty-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+            <h4>Cancer Treatment (Arbuta Chikilsa)</h4>
+            <p>
+              A generations-old tradition of cancer care using the <em>Suvarna Udweepani</em> technique — pure herbal preparations with no heavy metals. We support modern treatment by reducing chemotherapy & radiation side effects, boosting immunity, and preventing relapse.
+            </p>
+          </article>
+        </div>
+
+        <!-- Parkinson's -->
+        <div class="col-lg-4 col-md-6">
+          <article class="specialty-card">
+            <div class="specialty-icon"><i class="bi bi-brain"></i></div>
+            <h4>Parkinson's Disease (Kamba Vata)</h4>
+            <p>
+              Our unique multi-generational herbal formula aims to prevent neuron damage in the substantia nigra, reduce oxidative stress in mitochondria, and enhance natural dopamine secretion — helping patients reduce reliance on Levodopa over time.
+            </p>
+          </article>
+        </div>
+
+        <!-- Kidney -->
+        <div class="col-lg-4 col-md-6">
+          <article class="specialty-card">
+            <div class="specialty-icon"><i class="bi bi-droplet-half"></i></div>
+            <h4>Kidney Disorders</h4>
+            <p>
+              Treating kidney stones, CKD, diabetic nephropathy, nephritis, and nephrotic syndromes. Our structured 105-day treatment course with test-dose monitoring (21, 45 days) ensures safety and measurable creatinine, urea, and electrolyte improvements.
+            </p>
+          </article>
+        </div>
+
+        <!-- Dementia -->
+        <div class="col-lg-4 col-md-6">
+          <article class="specialty-card">
+            <div class="specialty-icon"><i class="bi bi-activity"></i></div>
+            <h4>Dementia &amp; Neurological Disorders</h4>
+            <p>
+              Drawing on ancestral knowledge in mental disorders, we support patients with memory decline and neurological conditions using traditional neuroprotective herbs tailored to the individual's condition and stage.
+            </p>
+          </article>
+        </div>
+
+        <!-- Integrative -->
+        <div class="col-lg-4 col-md-6">
+          <article class="specialty-card">
+            <div class="specialty-icon"><i class="bi bi-intersect"></i></div>
+            <h4>Integrative &amp; Preventive Care</h4>
+            <p>
+              We adopt an integrative approach — traditional treatments run parallel to modern medicine. Prevention of relapse, immunity enhancement, and holistic recovery are core pillars of every patient's plan.
+            </p>
+          </article>
+        </div>
+
+        <!-- Toxicology -->
+        <div class="col-lg-4 col-md-6">
+          <article class="specialty-card">
+            <div class="specialty-icon"><i class="bi bi-flower3"></i></div>
+            <h4>Agatatantra (Toxicology)</h4>
+            <p>
+              Rooted in centuries of expertise from my mother's family, Agatatantra addresses toxic conditions in the body using traditional detoxification methods and rare wild herb formulations sourced from the Western Ghats.
+            </p>
+          </article>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── WHY CHOOSE ───────────────────────── -->
+  <section class="why-section">
+    <div class="container position-relative" style="z-index:1;">
+      <div class="text-center mb-5">
+        <div class="section-label" style="color:#f5d08a;">Why Choose Us</div>
+        <h2 class="section-title" style="color:#fff;">The KIN Difference</h2>
+        <div class="title-underline center" style="background:var(--gold);"></div>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="why-card">
+            <div class="why-icon"><i class="bi bi-shield-lock-fill"></i></div>
+            <h5>100% Pure Herbal</h5>
+            <p>No bhasma, no heavy metals, no chemicals. Pure wild herbs with traditional preservation techniques.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="why-card">
+            <div class="why-icon"><i class="bi bi-graph-up-arrow"></i></div>
+            <h5>Measurable Results</h5>
+            <p>Structured treatment plans with regular lab monitoring to track creatinine, electrolytes, and immunity markers.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="why-card">
+            <div class="why-icon"><i class="bi bi-tree"></i></div>
+            <h5>Wild Herb Sourcing</h5>
+            <p>Rare medicinal herbs collected from the Western Ghats with the help of local villagers — fresh, potent, authentic.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="why-card">
+            <div class="why-icon"><i class="bi bi-people-fill"></i></div>
+            <h5>Integrative Approach</h5>
+            <p>We complement modern treatments, not replace them — enhancing outcomes for chemotherapy and Parkinson's patients.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="why-card">
+            <div class="why-icon"><i class="bi bi-house-heart-fill"></i></div>
+            <h5>800-Year Legacy</h5>
+            <p>A multigenerational healing tradition from Kerala, refined continuously by each generation of physicians.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="why-card">
+            <div class="why-icon"><i class="bi bi-geo-alt-fill"></i></div>
+            <h5>Two Clinic Locations</h5>
+            <p>Hospital & pharmacy in Mangalore; city clinic in Bangalore for patients from across India and abroad.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="why-card">
+            <div class="why-icon"><i class="bi bi-clock-history"></i></div>
+            <h5>12+ Years Practice</h5>
+            <p>Over 1,000 cases treated successfully across cancer, Parkinson's, neurological, and kidney conditions.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="why-card">
+            <div class="why-icon"><i class="bi bi-person-check-fill"></i></div>
+            <h5>Personalised Plans</h5>
+            <p>Every patient receives a treatment plan tailored to their condition, stage, and existing medical history.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── APPOINTMENT ───────────────────────── -->
+  <section class="appointment-section" id="appointment">
+    <div class="container">
+      <div class="text-center mb-5">
+        <div class="section-label">Get in Touch</div>
+        <h2 class="section-title">Book an Appointment</h2>
+        <div class="title-underline center"></div>
+        <p class="text-muted" style="font-size:0.95rem;">Fill in the form below and we'll confirm your appointment at the earliest.</p>
+      </div>
+
+      <div class="appt-card">
+        <div class="row g-0">
+          <!-- Info side -->
+          <div class="col-lg-4">
+            <div class="appt-info">
+              <h3>Dr. Harikrishna</h3>
+              <p>BNYS · Masters TCM<br/>Naturopathy & Herbal Medicine Specialist<br/>12+ Years · 1000+ Cases</p>
+
+              <div class="appt-contact-item">
+                <div class="icon"><i class="bi bi-hospital"></i></div>
+                <div class="info-text">
+                  <strong>Main Hospital & Pharmacy</strong>
+                  Nadigudde, Valpady Post,<br/>Mangalore, Karnataka – 574107
+                </div>
+              </div>
+              <div class="appt-contact-item">
+                <div class="icon"><i class="bi bi-building"></i></div>
+                <div class="info-text">
+                  <strong>Bangalore City Clinic</strong>
+                  Available on request
+                </div>
+              </div>
+              <div class="appt-contact-item">
+                <div class="icon"><i class="bi bi-telephone-fill"></i></div>
+                <div class="info-text">
+                  <strong>Phone / WhatsApp</strong>
+                  <a href="tel:+919611411652" style="color:rgba(255,255,255,0.75); text-decoration:none;">+91 96114 11652</a>
+                </div>
+              </div>
+              <div class="appt-contact-item">
+                <div class="icon"><i class="bi bi-clock-fill"></i></div>
+                <div class="info-text">
+                  <strong>Clinic Hours</strong>
+                  Mon–Sat: 9:00 AM – 6:00 PM
+                </div>
+              </div>
+              <div style="margin-top:2rem; padding:1rem; background:rgba(255,255,255,0.08); border-radius:12px; border:1px solid rgba(255,255,255,0.12);">
+                <p style="font-size:0.8rem; color:rgba(255,255,255,0.65); margin:0; line-height:1.6;">
+                  <i class="bi bi-info-circle me-1" style="color:#f5d08a;"></i>
+                  Patients from outside Karnataka are welcome. Online consultations may be arranged.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form side -->
+          <div class="col-lg-8">
+            <div class="appt-form-wrap">
+              <form id="appointmentForm" novalidate>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label" for="fullName">Full Name</label>
+                    <input type="text" class="form-control" id="fullName" placeholder="Your full name" required />
+                    <div class="invalid-feedback">Please enter your name.</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="phone">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" placeholder="+91 00000 00000" required />
+                    <div class="invalid-feedback">Please enter a valid phone number.</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" placeholder="you@email.com" />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="location">Your Location</label>
+                    <input type="text" class="form-control" id="location" placeholder="City, State" />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="condition">Condition / Concern</label>
+                    <select class="form-select" id="condition" required>
+                      <option value="" disabled selected>Select a condition</option>
+                      <option>Cancer Treatment</option>
+                      <option>Parkinson's Disease</option>
+                      <option>Kidney Disease / CKD</option>
+                      <option>Kidney Stones</option>
+                      <option>Dementia / Memory Loss</option>
+                      <option>Neurological Disorder</option>
+                      <option>General Consultation</option>
+                      <option>Other</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a condition.</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="preferredDate">Preferred Date</label>
+                    <input type="date" class="form-control" id="preferredDate" />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="clinic">Preferred Clinic</label>
+                    <select class="form-select" id="clinic">
+                      <option>Mangalore Hospital</option>
+                      <option>Bangalore City Clinic</option>
+                      <option>Online Consultation</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="referral">How did you hear about us?</label>
+                    <select class="form-select" id="referral">
+                      <option value="" disabled selected>Select</option>
+                      <option>Doctor Referral</option>
+                      <option>Family / Friend</option>
+                      <option>Search Engine</option>
+                      <option>Social Media</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="message">Brief Description of Condition</label>
+                    <textarea class="form-control" id="message" rows="4" placeholder="Please briefly describe your medical history or current condition..."></textarea>
+                  </div>
+                  <div class="col-12">
+                    <button type="submit" class="btn-submit">
+                      <i class="bi bi-calendar-check me-2"></i>Submit Appointment Request
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── NEWSLETTER ───────────────────────── -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-6">
+          <h3>Stay Informed on Natural Health</h3>
+          <p>Subscribe for wellness tips, treatment insights, and updates from Dr. Harikrishna.</p>
+        </div>
+        <div class="col-lg-6 d-flex justify-content-lg-end">
+          <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+            <input type="email" placeholder="Enter your email address" required aria-label="Email for newsletter" />
+            <button type="submit">Subscribe</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── FOOTER ───────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-lg-4">
+          <div class="brand-name mb-1">Krishna Institute of Naturopathy</div>
+          <div class="brand-sub mb-3">Dr. Harikrishna · BNYS · TCM</div>
+          <p>Combining an 800-year Ayurvedic family heritage with modern integrative medicine to provide compassionate, effective, and safe herbal care.</p>
+          <div class="mt-3">
+            <a href="#" class="social-link" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="social-link" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="social-link" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+            <a href="https://wa.me/919611411652" class="social-link" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-6">
+          <h6>Quick Links</h6>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Dr. Harikrishna</a></li>
+            <li><a href="#specialties">Specialties</a></li>
+            <li><a href="#appointment">Appointment</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-6">
+          <h6>Treatments</h6>
+          <ul>
+            <li><a href="#specialties">Cancer Care</a></li>
+            <li><a href="#specialties">Parkinson's Disease</a></li>
+            <li><a href="#specialties">Kidney Disorders</a></li>
+            <li><a href="#specialties">Dementia Care</a></li>
+            <li><a href="#specialties">Detox &amp; Toxicology</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h6>Contact &amp; Locations</h6>
+          <p style="margin-bottom:0.5rem;">
+            <i class="bi bi-geo-alt-fill me-2" style="color:var(--gold);"></i>
+            Nadigudde, Valpady Post, Mangalore, Karnataka – 574107
+          </p>
+          <p style="margin-bottom:0.5rem;">
+            <i class="bi bi-telephone-fill me-2" style="color:var(--gold);"></i>
+            <a href="tel:+919611411652" style="color:rgba(255,255,255,0.5); text-decoration:none;">+91 96114 11652</a>
+          </p>
+          <p style="margin-bottom:0.5rem;">
+            <i class="bi bi-building me-2" style="color:var(--gold);"></i>
+            Also available at Bangalore City Clinic
+          </p>
+          <p style="margin:0;">
+            <i class="bi bi-clock me-2" style="color:var(--gold);"></i>
+            Mon–Sat · 9 AM – 6 PM
+          </p>
+        </div>
+      </div>
+      <hr class="footer-divider" />
+      <div class="row">
+        <div class="col-md-8">
+          <p class="footer-bottom mb-0">
+            © 2024 Krishna Institute of Naturopathy (KIN). All rights reserved.<br/>
+            <small>Disclaimer: Results may vary. Our herbal treatments complement, not replace, modern medical care. Always consult your physician.</small>
+          </p>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <p class="footer-bottom mb-0" style="margin-top:0.5rem;">
+            BNYS · Masters TCM · Karnataka Medical License
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert">
+      <div class="d-flex">
+        <div class="toast-body">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          <strong>Thank you!</strong> Your appointment request has been received. We'll contact you shortly.
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Form validation & submission
+    const form = document.getElementById('appointmentForm');
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+      }
+      const toast = new bootstrap.Toast(document.getElementById('successToast'), { delay: 5000 });
+      toast.show();
+      form.reset();
+      form.classList.remove('was-validated');
+    });
+
+    // Newsletter
+    function handleNewsletter(e) {
+      e.preventDefault();
+      const input = e.target.querySelector('input');
+      const btn = e.target.querySelector('button');
+      btn.textContent = 'Subscribed!';
+      btn.style.background = 'var(--green)';
+      btn.style.color = '#fff';
+      input.value = '';
+      setTimeout(() => {
+        btn.textContent = 'Subscribe';
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 3000);
+    }
+
+    // Set min date for appointment picker
+    const dateInput = document.getElementById('preferredDate');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+
+    // Smooth active nav highlight on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+      });
+    });
+  </script>
+</body>
+</html>
