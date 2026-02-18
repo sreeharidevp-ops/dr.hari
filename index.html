@@ -278,9 +278,19 @@
       right: -20px;
     }
     .float-badge.bottom-left {
-      bottom: 20px;
-      left: -20px;
-    }
+		bottom: -10px;
+		left: -20px;
+	}
+	.doc-avatar .img-box img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.doc-avatar .img-box {
+		border-radius: 50%;
+		overflow: hidden;
+		margin-bottom: 0rem;
+	}
     .float-badge i { color: var(--gold); }
 
     /* ── SECTION HEADERS ── */
@@ -714,8 +724,8 @@
   <nav class="navbar navbar-expand-lg" aria-label="Main navigation">
     <div class="container">
       <a class="navbar-brand" href="#">
-        KIN
-        <span>Krishna Institute of Naturopathy</span>
+        Dr.Harikrishnan
+        <span>Specialises in Naturopathy</span>
       </a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
         <span class="navbar-toggler-icon"></span>
@@ -750,9 +760,12 @@
             With an 800-year family legacy in Ayurveda and 12+ years of clinical practice, Dr. Harikrishna specialises in treating Cancer, Parkinson's Disease, and Kidney Disorders using time-tested herbal medicine.
           </p>
           <div class="d-flex flex-wrap gap-3 fade-up delay-3">
-            <a href="#appointment" class="btn-hero-primary">
+           <!-- <a href="#appointment" class="btn-hero-primary">
               <i class="bi bi-calendar3"></i> Book an Appointment
-            </a>
+            </a> -->
+			<a href="token-patient.html" class="btn-hero-primary">
+			  <i class="bi bi-ticket-perforated"></i> Book an Appointment
+			</a>
             <a href="#specialties" class="btn-hero-outline">
               <i class="bi bi-arrow-right-circle"></i> Our Specialties
             </a>
@@ -779,7 +792,9 @@
           <div class="hero-img-wrap">
             <div class="hero-img-card">
               <div class="doc-avatar">
-                <i class="bi bi-person-circle"></i>
+                <div class="img-box">
+					  <img src="img/dr-hari.png" alt="Harikrishna">
+				</div>
               </div>
               <div class="doc-name">Dr. Harikrishna</div>
               <div class="doc-title">BNYS · Masters TCM · Naturopathy Specialist</div>
@@ -1005,9 +1020,9 @@
     <div class="container">
       <div class="text-center mb-5">
         <div class="section-label">Get in Touch</div>
-        <h2 class="section-title">Book an Appointment</h2>
+        <h2 class="section-title">Patient Support & Appointmentst</h2>
         <div class="title-underline center"></div>
-        <p class="text-muted" style="font-size:0.95rem;">Fill in the form below and we'll confirm your appointment at the earliest.</p>
+        <p class="text-muted" style="font-size:0.95rem;">Reach out for appointment assistance, consultation details, or help with your clinic visit.</p>
       </div>
 
       <div class="appt-card">
@@ -1046,87 +1061,70 @@
                   Mon–Sat: 9:00 AM – 6:00 PM
                 </div>
               </div>
-              <div style="margin-top:2rem; padding:1rem; background:rgba(255,255,255,0.08); border-radius:12px; border:1px solid rgba(255,255,255,0.12);">
+             <!-- <div style="margin-top:2rem; padding:1rem; background:rgba(255,255,255,0.08); border-radius:12px; border:1px solid rgba(255,255,255,0.12);">
                 <p style="font-size:0.8rem; color:rgba(255,255,255,0.65); margin:0; line-height:1.6;">
                   <i class="bi bi-info-circle me-1" style="color:#f5d08a;"></i>
                   Patients from outside Karnataka are welcome. Online consultations may be arranged.
                 </p>
-              </div>
+              </div> -->
             </div>
           </div>
 
           <!-- Form side -->
           <div class="col-lg-8">
             <div class="appt-form-wrap">
-              <form id="appointmentForm" novalidate>
-                <div class="row g-3">
-                  <div class="col-md-6">
-                    <label class="form-label" for="fullName">Full Name</label>
-                    <input type="text" class="form-control" id="fullName" placeholder="Your full name" required />
-                    <div class="invalid-feedback">Please enter your name.</div>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="phone">Phone Number</label>
-                    <input type="tel" class="form-control" id="phone" placeholder="+91 00000 00000" required />
-                    <div class="invalid-feedback">Please enter a valid phone number.</div>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="email">Email Address</label>
-                    <input type="email" class="form-control" id="email" placeholder="you@email.com" />
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="location">Your Location</label>
-                    <input type="text" class="form-control" id="location" placeholder="City, State" />
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="condition">Condition / Concern</label>
-                    <select class="form-select" id="condition" required>
-                      <option value="" disabled selected>Select a condition</option>
-                      <option>Cancer Treatment</option>
-                      <option>Parkinson's Disease</option>
-                      <option>Kidney Disease / CKD</option>
-                      <option>Kidney Stones</option>
-                      <option>Dementia / Memory Loss</option>
-                      <option>Neurological Disorder</option>
-                      <option>General Consultation</option>
-                      <option>Other</option>
-                    </select>
-                    <div class="invalid-feedback">Please select a condition.</div>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="preferredDate">Preferred Date</label>
-                    <input type="date" class="form-control" id="preferredDate" />
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="clinic">Preferred Clinic</label>
-                    <select class="form-select" id="clinic">
-                      <option>Mangalore Hospital</option>
-                      <option>Bangalore City Clinic</option>
-                      <option>Online Consultation</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="referral">How did you hear about us?</label>
-                    <select class="form-select" id="referral">
-                      <option value="" disabled selected>Select</option>
-                      <option>Doctor Referral</option>
-                      <option>Family / Friend</option>
-                      <option>Search Engine</option>
-                      <option>Social Media</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label" for="message">Brief Description of Condition</label>
-                    <textarea class="form-control" id="message" rows="4" placeholder="Please briefly describe your medical history or current condition..."></textarea>
-                  </div>
-                  <div class="col-12">
-                    <button type="submit" class="btn-submit">
-                      <i class="bi bi-calendar-check me-2"></i>Submit Appointment Request
-                    </button>
-                  </div>
-                </div>
-              </form>
+             <form id="contactForm">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="firstName" class="form-label">First Name *</label>
+            <input type="text" class="form-control" id="firstName" name="entry.1187242773" required="">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="lastName" name="entry.669705997">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="phone" class="form-label">Phone Number *</label>
+            <input type="tel" class="form-control" id="phone" name="entry.1482108621" required="">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="email" class="form-label">Email Address *</label>
+            <input type="email" class="form-control" id="email" name="entry.282511779" required="">
+        </div>
+    </div>
+   <!-- <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="company" class="form-label">Company Name (Optional)</label>
+            <input type="text" class="form-control" id="company" name="entry.1661793573">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="location" class="form-label">Project Location *</label>
+            <input type="text" class="form-control" id="location" name="entry.2058470920" required="">
+        </div>
+    </div> 
+    <div class="mb-3">
+        <label for="serviceType" class="form-label">Service Required *</label>
+        <select class="form-select" id="serviceType" name="entry.1984077597" required="">
+            <option value="">Select a service...</option>
+            <option value="Generator Sales">Generator Sales</option>
+            <option value="Generator Rental">Generator Rental</option>
+            <option value="Service and Maintenance">Service and Maintenance</option>
+            <option value="Emergency Breakdown Support">Emergency Breakdown Support</option>
+            <option value="Repair &amp; Technical Support">Repair &amp; Technical Support</option>
+            <option value="Contracting Services">Contracting Services</option>
+            <option value="__other_option__">Other</option>
+        </select>
+    </div> -->
+    <div class="mb-3">
+        <label for="message" class="form-label">Message / Details *</label>
+        <textarea class="form-control" id="message" name="entry.2049076023" rows="5" required="" placeholder="Please describe your requirements..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-submit">
+        <i class="fas fa-paper-plane me-2"></i>SEND MESSAGE
+    </button>
+</form>
             </div>
           </div>
         </div>

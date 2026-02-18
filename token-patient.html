@@ -1,175 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Get Your Token | Dr. Harikrishna – KIN</title>
-  <meta name="description" content="Book your queue token for Dr. Harikrishna's clinic online. See live queue status."/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
-  <style>
-    :root {
-      --green:#1a6b4a; --green-d:#0e4730; --green-l:#2a8c62;
-      --gold:#c8963e; --gold-l:#f5d08a;
-      --cream:#faf7f2; --dark:#1a1a1a; --text:#3a3a3a; --muted:#7a7a7a;
-      --radius:16px;
-    }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
-    h1,h2,h3,h4{font-family:'Playfair Display',serif;}
-
-    /* TOP BAR */
-    .topbar{background:linear-gradient(135deg,var(--green-d),var(--green));padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.2);}
-    .topbar .brand{font-family:'Playfair Display',serif;color:#fff;font-size:1.1rem;font-weight:700;text-decoration:none;}
-    .topbar .brand span{display:block;font-family:'DM Sans',sans-serif;font-weight:400;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-l);margin-top:1px;}
-    .topbar .nav-links a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem;font-weight:500;margin-left:1.2rem;transition:color .2s;}
-    .topbar .nav-links a:hover{color:#fff;}
-    .topbar .nav-links a.active{color:var(--gold-l);font-weight:600;}
-
-    /* LIVE QUEUE BANNER */
-    .queue-banner{background:#fff;border-bottom:1px solid rgba(26,107,74,.1);padding:.9rem 1.5rem;}
-    .queue-banner .inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
-    .live-dot{width:10px;height:10px;background:#22c55e;border-radius:50%;animation:pulse 1.5s infinite;}
-    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5);}50%{box-shadow:0 0 0 6px rgba(34,197,94,0);}}
-    .queue-stat{display:flex;align-items:center;gap:.5rem;font-size:.88rem;}
-    .queue-stat .val{font-weight:700;font-size:1.1rem;color:var(--green);font-family:'Playfair Display',serif;}
-    .queue-stat .lbl{color:var(--muted);}
-    .divider-v{width:1px;height:28px;background:#e5e5e5;}
-    .now-serving{display:flex;align-items:center;gap:.6rem;}
-    .now-token{background:var(--green);color:#fff;font-weight:700;font-size:1.2rem;font-family:'Playfair Display',serif;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
-    .now-text{font-size:.8rem;color:var(--muted);}
-    .now-text strong{display:block;font-size:1rem;color:var(--dark);}
-
-    /* MAIN */
-    main{max-width:900px;margin:2rem auto;padding:0 1.5rem 4rem;}
-    .page-title{font-size:clamp(1.8rem,4vw,2.4rem);line-height:1.2;margin-bottom:.4rem;}
-    .page-sub{color:var(--muted);font-size:.95rem;margin-bottom:2rem;}
-
-    /* STEP INDICATOR */
-    .steps{display:flex;gap:0;margin-bottom:2.5rem;position:relative;}
-    .steps::before{content:'';position:absolute;top:20px;left:20px;right:20px;height:2px;background:#e5e5e5;z-index:0;}
-    .step{flex:1;text-align:center;position:relative;z-index:1;}
-    .step-circle{width:40px;height:40px;border-radius:50%;border:2px solid #e5e5e5;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;font-weight:700;font-size:.85rem;color:var(--muted);transition:all .3s;}
-    .step.active .step-circle{border-color:var(--green);background:var(--green);color:#fff;}
-    .step.done .step-circle{border-color:var(--green);background:var(--green);color:#fff;}
-    .step.done .step-circle::after{content:'✓';}
-    .step.done .step-circle span{display:none;}
-    .step-label{font-size:.75rem;color:var(--muted);font-weight:500;}
-    .step.active .step-label{color:var(--green);font-weight:600;}
-
-    /* CARDS */
-    .card{background:#fff;border-radius:var(--radius);border:1px solid rgba(26,107,74,.1);padding:2rem;box-shadow:0 4px 24px rgba(26,107,74,.06);margin-bottom:1.5rem;}
-    .card-title{font-size:1.1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:.6rem;}
-    .card-title i{color:var(--green);font-size:1.2rem;}
-
-    /* SESSION SLOTS */
-    .session-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;}
-    .session-btn{border:1.5px solid #e5e5e5;background:#fff;border-radius:12px;padding:1rem;cursor:pointer;transition:all .2s;text-align:left;width:100%;}
-    .session-btn:hover{border-color:var(--green);background:var(--cream);}
-    .session-btn.selected{border-color:var(--green);background:linear-gradient(135deg,rgba(26,107,74,.08),rgba(26,107,74,.03));box-shadow:0 0 0 3px rgba(26,107,74,.12);}
-    .session-btn.full{opacity:.5;cursor:not-allowed;background:#f5f5f5;}
-    .session-name{font-weight:700;font-size:.9rem;color:var(--dark);margin-bottom:.25rem;}
-    .session-time{font-size:.78rem;color:var(--muted);}
-    .session-slots{font-size:.75rem;margin-top:.4rem;font-weight:600;}
-    .session-slots.ok{color:#16a34a;}
-    .session-slots.low{color:#d97706;}
-    .session-slots.full{color:#dc2626;}
-    .session-check{float:right;color:var(--green);font-size:1.1rem;opacity:0;transition:opacity .2s;}
-    .session-btn.selected .session-check{opacity:1;}
-
-    /* FORM */
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-    @media(max-width:600px){.form-row{grid-template-columns:1fr;}}
-    .form-group{display:flex;flex-direction:column;gap:.35rem;}
-    label{font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text);}
-    input,select,textarea{border:1.5px solid #e5e5e5;border-radius:10px;padding:.65rem 1rem;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--text);transition:border-color .2s,box-shadow .2s;background:#fff;}
-    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(26,107,74,.1);}
-    .input-icon{position:relative;}
-    .input-icon i{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.95rem;}
-    .input-icon input,.input-icon select{padding-left:2.4rem;}
-
-    /* PRIORITY BADGES */
-    .priority-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.6rem;}
-    .priority-btn{border:1.5px solid #e5e5e5;background:#fff;border-radius:10px;padding:.7rem .9rem;cursor:pointer;transition:all .2s;text-align:center;font-size:.82rem;font-weight:600;color:var(--muted);}
-    .priority-btn:hover{border-color:var(--green);}
-    .priority-btn.selected{border-color:var(--green);background:var(--green);color:#fff;}
-    .priority-btn i{display:block;font-size:1.3rem;margin-bottom:.3rem;}
-
-    /* REVIEW BOX */
-    .review-box{background:linear-gradient(135deg,var(--green-d),var(--green));border-radius:var(--radius);padding:2rem;color:#fff;}
-    .review-box h3{color:#fff;font-size:1.3rem;margin-bottom:1.2rem;}
-    .review-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.1);}
-    .review-row:last-child{border:none;}
-    .review-row .key{font-size:.82rem;color:rgba(255,255,255,.65);}
-    .review-row .val{font-weight:600;font-size:.92rem;}
-    .token-preview{background:rgba(255,255,255,.12);border:2px solid rgba(200,150,62,.5);border-radius:12px;padding:1.2rem;text-align:center;margin-top:1rem;}
-    .token-num-big{font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:var(--gold-l);line-height:1;}
-    .token-label{font-size:.75rem;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.1em;margin-top:.3rem;}
-
-    /* BUTTONS */
-    .btn-primary{background:var(--green);color:#fff;border:none;border-radius:50px;padding:.8rem 2rem;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:.5rem;}
-    .btn-primary:hover{background:var(--green-l);transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,107,74,.3);}
-    .btn-outline{background:transparent;color:var(--green);border:2px solid var(--green);border-radius:50px;padding:.75rem 2rem;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;gap:.5rem;}
-    .btn-outline:hover{background:var(--green);color:#fff;}
-    .btn-row{display:flex;gap:1rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1.5rem;}
-
-    /* SUCCESS */
-    #step-success{display:none;}
-    .success-card{background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 8px 64px rgba(26,107,74,.12);border:1px solid rgba(26,107,74,.1);}
-    .success-header{background:linear-gradient(135deg,var(--green-d),var(--green));padding:3rem 2rem;text-align:center;}
-    .success-icon{width:80px;height:80px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2rem;color:#fff;}
-    .success-header h2{color:#fff;font-size:1.8rem;margin-bottom:.5rem;}
-    .success-header p{color:rgba(255,255,255,.75);font-size:.9rem;}
-    .big-token{font-family:'Playfair Display',serif;font-size:5rem;font-weight:700;color:var(--gold-l);line-height:1;margin:.5rem 0;}
-    .success-body{padding:2rem;}
-    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
-    @media(max-width:500px){.info-grid{grid-template-columns:1fr;}}
-    .info-cell{background:var(--cream);border-radius:12px;padding:1rem;}
-    .info-cell .cell-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.3rem;}
-    .info-cell .cell-val{font-size:.95rem;font-weight:600;color:var(--dark);}
-    .wait-estimate{background:linear-gradient(135deg,rgba(26,107,74,.08),rgba(26,107,74,.03));border:1px solid rgba(26,107,74,.15);border-radius:12px;padding:1rem 1.2rem;display:flex;align-items:center;gap:.8rem;margin-bottom:1.5rem;}
-    .wait-estimate i{font-size:1.5rem;color:var(--green);}
-    .wait-estimate .wait-text{font-size:.85rem;color:var(--muted);}
-    .wait-estimate .wait-time{font-size:1.1rem;font-weight:700;color:var(--green);}
-    .action-row{display:flex;gap:.75rem;flex-wrap:wrap;}
-    .btn-print{background:var(--green);color:#fff;border:none;border-radius:50px;padding:.75rem 1.5rem;font-size:.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;transition:all .2s;}
-    .btn-print:hover{background:var(--green-l);}
-    .btn-new{background:transparent;color:var(--green);border:2px solid var(--green);border-radius:50px;padding:.7rem 1.5rem;font-size:.88rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;transition:all .2s;}
-    .btn-new:hover{background:var(--green);color:#fff;}
-
-    /* PRINT TOKEN SLIP */
-    .print-slip{display:none;}
-    @media print{
-      body>*{display:none!important;}
-      .print-slip{display:block!important;font-family:'DM Sans',sans-serif;padding:2cm;}
-      .slip-border{border:3px solid #1a6b4a;border-radius:12px;padding:1.5rem;max-width:320px;margin:0 auto;}
-      .slip-header{text-align:center;border-bottom:2px dashed #ccc;padding-bottom:1rem;margin-bottom:1rem;}
-      .slip-big{font-size:4rem;font-weight:700;color:#1a6b4a;font-family:serif;}
-      .slip-row{display:flex;justify-content:space-between;font-size:.85rem;padding:.25rem 0;border-bottom:1px solid #eee;}
-      .slip-footer{text-align:center;margin-top:1rem;font-size:.75rem;color:#888;}
-    }
-
-    /* TRACK TOKEN */
-    .track-form{display:flex;gap:.5rem;flex-wrap:wrap;}
-    .track-form input{flex:1;min-width:140px;}
-    .track-result{background:var(--cream);border:1.5px solid rgba(26,107,74,.2);border-radius:12px;padding:1.2rem;margin-top:1rem;display:none;}
-
-    @media(max-width:600px){
-      main{padding:0 1rem 3rem;}
-      .card{padding:1.5rem;}
-      .btn-row{justify-content:stretch;}
-      .btn-primary,.btn-outline{width:100%;justify-content:center;}
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Get Your Token | Dr. Harikrishna - KIN</title>
+<meta name="description" content="Book your queue token for Dr. Harikrishna's clinic online."/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+<style>
+:root{--green:#1a6b4a;--gd:#0e4730;--gl:#2a8c62;--gold:#c8963e;--gold-l:#f5d08a;--cream:#faf7f2;--dark:#1a1a1a;--text:#3a3a3a;--muted:#7a7a7a;--r:16px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;}
+.topbar{background:linear-gradient(135deg,var(--gd),var(--green));padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.2);}
+.brand{font-family:'Playfair Display',serif;color:#fff;font-size:1.1rem;font-weight:700;text-decoration:none;}
+.brand span{display:block;font-family:'DM Sans',sans-serif;font-weight:400;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-l);margin-top:1px;}
+.nav-links a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem;font-weight:500;margin-left:1.2rem;}
+.nav-links a.active{color:var(--gold-l);font-weight:600;}
+.banner{background:#fff;border-bottom:1px solid rgba(26,107,74,.1);padding:.8rem 1.5rem;}
+.b-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;}
+.live-dot{width:9px;height:9px;background:#22c55e;border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.5);}50%{box-shadow:0 0 0 6px rgba(34,197,94,0);}}
+.bval{font-weight:700;font-size:1rem;color:var(--green);font-family:'Playfair Display',serif;}
+.blbl{color:var(--muted);font-size:.75rem;}
+.dvdr{width:1px;height:26px;background:#e5e5e5;}
+.ntok{background:var(--green);color:#fff;font-weight:700;font-size:1rem;font-family:'Playfair Display',serif;min-width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 .5rem;}
+.ntxt{font-size:.76rem;color:var(--muted);}
+.ntxt strong{display:block;font-size:.9rem;color:var(--dark);}
+main{max-width:960px;margin:2rem auto;padding:0 1.5rem 4rem;}
+.page-title{font-size:clamp(1.8rem,4vw,2.4rem);line-height:1.2;margin-bottom:.4rem;}
+.page-sub{color:var(--muted);font-size:.95rem;margin-bottom:2rem;}
+.steps{display:flex;margin-bottom:2.5rem;position:relative;}
+.steps::before{content:'';position:absolute;top:20px;left:20px;right:20px;height:2px;background:#e5e5e5;z-index:0;}
+.step{flex:1;text-align:center;position:relative;z-index:1;}
+.step-circle{width:40px;height:40px;border-radius:50%;border:2px solid #e5e5e5;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;font-weight:700;font-size:.85rem;color:var(--muted);transition:all .3s;}
+.step.active .step-circle{border-color:var(--green);background:var(--green);color:#fff;}
+.step.done .step-circle{border-color:var(--green);background:var(--green);color:#fff;}
+.step.done .step-circle span{display:none;}
+.step.done .step-circle::after{content:'checkmark';}
+.step-label{font-size:.75rem;color:var(--muted);font-weight:500;}
+.step.active .step-label{color:var(--green);font-weight:600;}
+.card{background:#fff;border-radius:var(--r);border:1px solid rgba(26,107,74,.1);padding:2rem;box-shadow:0 4px 24px rgba(26,107,74,.06);margin-bottom:1.5rem;}
+.card-title{font-size:1.05rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.6rem;color:var(--dark);}
+.card-title i{color:var(--green);font-size:1.2rem;}
+.track-row{display:flex;gap:.5rem;flex-wrap:wrap;}
+.track-row input{flex:1;min-width:150px;border:1.5px solid #e5e5e5;border-radius:10px;padding:.6rem 1rem;font-size:.9rem;font-family:'DM Sans',sans-serif;}
+.track-row input:focus{outline:none;border-color:var(--green);}
+.track-result{background:var(--cream);border:1.5px solid rgba(26,107,74,.2);border-radius:12px;padding:1rem;margin-top:.8rem;display:none;font-size:.87rem;}
+/* ---- CALENDAR ---- */
+.cal-layout{display:grid;grid-template-columns:300px 1fr;gap:1.5rem;align-items:start;}
+@media(max-width:680px){.cal-layout{grid-template-columns:1fr;}}
+.cal-box{border-radius:14px;overflow:hidden;border:1.5px solid #e0e0e0;background:#fff;box-shadow:0 2px 16px rgba(26,107,74,.08);}
+.cal-hdr{background:linear-gradient(135deg,var(--gd),var(--green));padding:.9rem 1rem;display:flex;align-items:center;justify-content:space-between;}
+.cal-hdr-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff;}
+.cal-nav{background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.cal-nav:hover{background:rgba(255,255,255,.3);}
+.cal-nav:disabled{opacity:.25;pointer-events:none;}
+.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);background:rgba(26,107,74,.05);border-bottom:1px solid #efefef;}
+.cal-dow span{text-align:center;padding:.4rem 0;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);}
+.cal-dow .sun{color:#ef4444;}
+.cal-dates{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:.5rem;}
+.cd{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;border-radius:8px;border:none;background:transparent;font-size:.83rem;font-weight:500;color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;position:relative;transition:background .12s,color .12s;width:100%;}
+.cd:hover:not([disabled]){background:rgba(26,107,74,.1);}
+.cd.other{color:#ccc;pointer-events:none;}
+.cd.unavail{opacity:.28;pointer-events:none;}
+.cd.sun-day{color:#f87171;}
+.cd.today{color:var(--green);font-weight:700;}
+.cd.today::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--green);}
+.cd.has-slot::before{content:'';position:absolute;top:2px;right:2px;width:5px;height:5px;border-radius:50%;background:var(--gold);}
+.cd.chosen{background:var(--green)!important;color:#fff!important;font-weight:700;}
+.cd.chosen.today::after{background:#fff;}
+.cd.chosen.has-slot::before{background:var(--gold-l);}
+.cal-legend{display:flex;gap:.9rem;padding:.5rem .8rem .7rem;border-top:1px solid #f3f3f3;flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:.3rem;font-size:.67rem;color:var(--muted);}
+.leg-dot{width:7px;height:7px;border-radius:50%;}
+/* ---- SLOT PANEL ---- */
+.slot-panel{min-height:280px;}
+.slot-prompt{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 1rem;text-align:center;min-height:260px;gap:.5rem;}
+.slot-prompt .ico{width:60px;height:60px;background:rgba(26,107,74,.07);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:var(--green);opacity:.4;margin-bottom:.5rem;}
+.slot-prompt strong{font-size:.95rem;color:var(--dark);}
+.slot-prompt p{font-size:.85rem;color:var(--muted);line-height:1.6;}
+.date-bar{background:rgba(26,107,74,.06);border:1.5px solid rgba(26,107,74,.14);border-radius:11px;padding:.8rem 1rem;display:flex;align-items:center;gap:.7rem;margin-bottom:1rem;}
+.date-bar i{color:var(--green);font-size:1.1rem;}
+.date-bar .dname{font-family:'Playfair Display',serif;font-size:.98rem;font-weight:700;color:var(--dark);}
+.date-bar .dsub{font-size:.73rem;color:var(--muted);margin-top:1px;}
+.slots-list{display:flex;flex-direction:column;gap:.55rem;}
+.slot-card{display:flex;align-items:center;gap:.85rem;border:1.5px solid #e5e5e5;background:#fff;border-radius:12px;padding:.85rem 1rem;cursor:pointer;transition:border-color .18s,box-shadow .18s,background .18s;position:relative;overflow:hidden;}
+.slot-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#e5e5e5;border-radius:3px 0 0 3px;transition:background .18s;}
+.slot-card:hover{border-color:var(--gl);background:rgba(26,107,74,.02);}
+.slot-card:hover::before{background:var(--gl);}
+.slot-card.chosen{border-color:var(--green);background:rgba(26,107,74,.05);box-shadow:0 0 0 3px rgba(26,107,74,.1);}
+.slot-card.chosen::before{background:var(--green);}
+.slot-card.is-full{opacity:.5;cursor:not-allowed;}
+.slot-card.is-full:hover{border-color:#e5e5e5;background:#fff;}
+.slot-card.is-full:hover::before{background:#e5e5e5;}
+.slot-icon{width:40px;height:40px;border-radius:9px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--green);flex-shrink:0;transition:all .18s;}
+.slot-card.chosen .slot-icon{background:var(--green);color:#fff;}
+.slot-info{flex:1;min-width:0;}
+.slot-name{font-weight:700;font-size:.88rem;color:var(--dark);}
+.slot-time{font-size:.76rem;color:var(--muted);margin-top:2px;}
+.slot-right{text-align:right;flex-shrink:0;}
+.slot-badge{font-size:.7rem;font-weight:700;padding:.18rem .55rem;border-radius:50px;}
+.b-ok{background:#dcfce7;color:#15803d;}
+.b-low{background:#fef3c7;color:#b45309;}
+.b-full{background:#fee2e2;color:#b91c1c;}
+.slot-meta{font-size:.68rem;color:var(--muted);margin-top:2px;}
+.slot-check{color:var(--green);font-size:1rem;opacity:0;transition:opacity .18s;margin-left:.3rem;}
+.slot-card.chosen .slot-check{opacity:1;}
+.no-slots{text-align:center;padding:2rem;color:var(--muted);}
+.no-slots i{font-size:1.8rem;display:block;margin-bottom:.5rem;opacity:.3;}
+/* ---- FORM ---- */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:.35rem;}
+.fg label{font-size:.77rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
+.fi{position:relative;}
+.fi i{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.88rem;pointer-events:none;}
+.fi input,.fi select{padding-left:2.3rem;}
+input,select,textarea{width:100%;border:1.5px solid #e5e5e5;border-radius:10px;padding:.62rem 1rem;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--text);background:#fff;transition:border-color .18s;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(26,107,74,.1);}
+textarea{resize:none;}
+/* ---- PRIORITY ---- */
+.pri-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:.6rem;}
+.pri-btn{border:1.5px solid #e5e5e5;background:#fff;border-radius:10px;padding:.65rem .8rem;cursor:pointer;transition:all .18s;text-align:center;font-size:.81rem;font-weight:600;color:var(--muted);font-family:'DM Sans',sans-serif;}
+.pri-btn:hover{border-color:var(--green);}
+.pri-btn.chosen{border-color:var(--green);background:var(--green);color:#fff;}
+.pri-btn i{display:block;font-size:1.25rem;margin-bottom:.3rem;}
+/* ---- REVIEW ---- */
+.review-box{background:linear-gradient(135deg,var(--gd),var(--green));border-radius:var(--r);padding:2rem;color:#fff;}
+.review-box h3{color:#fff;font-size:1.25rem;margin-bottom:1.2rem;}
+.rv-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,.1);}
+.rv-row:last-child{border:none;}
+.rv-row .k{font-size:.81rem;color:rgba(255,255,255,.6);flex-shrink:0;margin-right:1rem;}
+.rv-row .v{font-weight:600;font-size:.9rem;text-align:right;}
+.tok-preview{background:rgba(255,255,255,.12);border:2px solid rgba(200,150,62,.5);border-radius:12px;padding:1.2rem;text-align:center;margin-top:1rem;}
+.tok-big{font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:var(--gold-l);line-height:1;}
+.tok-lbl{font-size:.72rem;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.1em;margin-top:.3rem;}
+/* ---- BUTTONS ---- */
+.btn-green{background:var(--green);color:#fff;border:none;border-radius:50px;padding:.78rem 1.9rem;font-size:.93rem;font-weight:600;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;gap:.45rem;font-family:'DM Sans',sans-serif;}
+.btn-green:hover{background:var(--gl);transform:translateY(-1px);box-shadow:0 8px 20px rgba(26,107,74,.28);}
+.btn-outline{background:transparent;color:var(--green);border:2px solid var(--green);border-radius:50px;padding:.72rem 1.9rem;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .22s;display:inline-flex;align-items:center;gap:.45rem;font-family:'DM Sans',sans-serif;}
+.btn-outline:hover{background:var(--green);color:#fff;}
+.btn-sm{background:var(--green);color:#fff;border:none;border-radius:50px;padding:.55rem 1.2rem;font-size:.82rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;font-family:'DM Sans',sans-serif;}
+.btn-sm:hover{background:var(--gl);}
+.btn-row{display:flex;gap:1rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1.5rem;}
+/* ---- SUCCESS ---- */
+#step-success{display:none;}
+.suc-card{background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 8px 64px rgba(26,107,74,.12);border:1px solid rgba(26,107,74,.1);}
+.suc-head{background:linear-gradient(135deg,var(--gd),var(--green));padding:3rem 2rem;text-align:center;}
+.suc-icon{width:76px;height:76px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-size:1.9rem;color:#fff;}
+.suc-head h2{color:#fff;font-size:1.7rem;margin-bottom:.4rem;}
+.suc-head p{color:rgba(255,255,255,.7);font-size:.88rem;}
+.suc-token{font-family:'Playfair Display',serif;font-size:5rem;font-weight:700;color:var(--gold-l);line-height:1;margin:.4rem 0;}
+.suc-body{padding:2rem;}
+.wait-bar{background:rgba(26,107,74,.06);border:1px solid rgba(26,107,74,.14);border-radius:12px;padding:.9rem 1.1rem;display:flex;align-items:center;gap:.8rem;margin-bottom:1.4rem;}
+.wait-bar i{font-size:1.4rem;color:var(--green);}
+.wait-time{font-size:1.05rem;font-weight:700;color:var(--green);}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.4rem;}
+@media(max-width:480px){.info-grid{grid-template-columns:1fr;}}
+.info-cell{background:var(--cream);border-radius:12px;padding:.9rem;}
+.ic-lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.3rem;}
+.ic-val{font-size:.93rem;font-weight:600;color:var(--dark);}
+.act-row{display:flex;gap:.7rem;flex-wrap:wrap;}
+/* ---- PRINT ---- */
+.print-slip{display:none;}
+@media print{
+  body>*{display:none!important;}
+  .print-slip{display:block!important;font-family:sans-serif;padding:1.5cm;}
+  .slip-box{border:3px solid #1a6b4a;border-radius:10px;padding:1.5rem;max-width:300px;margin:0 auto;}
+  .slip-top{text-align:center;border-bottom:2px dashed #ccc;padding-bottom:1rem;margin-bottom:.8rem;}
+  .slip-tok{font-size:3.5rem;font-weight:700;color:#1a6b4a;font-family:serif;line-height:1;}
+  .slip-row{display:flex;justify-content:space-between;font-size:.83rem;padding:.25rem 0;border-bottom:1px solid #eee;}
+  .slip-foot{text-align:center;margin-top:.8rem;font-size:.7rem;color:#888;}
+}
+@media(max-width:600px){
+  main{padding:0 1rem 3rem;}
+  .card{padding:1.2rem;}
+  .btn-row{justify-content:stretch;}
+  .btn-green,.btn-outline{width:100%;justify-content:center;}
+}
+</style>
 </head>
 <body>
 
-<!-- TOPBAR -->
 <nav class="topbar">
-  <a class="brand" href="index.html">
-    KIN
-    <span>Krishna Institute of Naturopathy</span>
-  </a>
+  <a class="brand" href="index.html">Dr.Harikrishnan<span>Specialises in Naturopathy</span></a>
   <div class="nav-links">
     <a href="index.html">Home</a>
     <a href="token-patient.html" class="active">Get Token</a>
@@ -177,257 +192,174 @@
   </div>
 </nav>
 
-<!-- LIVE QUEUE BANNER -->
-<div class="queue-banner">
-  <div class="inner">
-    <div style="display:flex;align-items:center;gap:.6rem;">
+<div class="banner">
+  <div class="b-inner">
+    <div style="display:flex;align-items:center;gap:.5rem;">
       <div class="live-dot"></div>
-      <span style="font-size:.8rem;font-weight:600;color:var(--green);">LIVE QUEUE</span>
+      <span style="font-size:.74rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.08em;">Live</span>
     </div>
-    <div class="queue-stat">
-      <div class="now-serving">
-        <div class="now-token" id="banner-current">—</div>
-        <div class="now-text">
-          Now Serving
-          <strong id="banner-name">—</strong>
-        </div>
-      </div>
+    <div style="display:flex;align-items:center;gap:.6rem;">
+      <div class="ntok" id="b-cur">--</div>
+      <div class="ntxt">Now Serving<strong id="b-name">--</strong></div>
     </div>
-    <div class="divider-v"></div>
-    <div class="queue-stat">
-      <div>
-        <div class="val" id="banner-waiting">0</div>
-        <div class="lbl">Waiting</div>
-      </div>
-    </div>
-    <div class="divider-v"></div>
-    <div class="queue-stat">
-      <div>
-        <div class="val" id="banner-next">—</div>
-        <div class="lbl">Next Token</div>
-      </div>
-    </div>
-    <div class="divider-v"></div>
-    <div class="queue-stat">
-      <div>
-        <div class="val" id="banner-wait">0 min</div>
-        <div class="lbl">Est. Wait</div>
-      </div>
-    </div>
+    <div class="dvdr"></div>
+    <div><div class="bval" id="b-wait">0</div><div class="blbl">Waiting</div></div>
+    <div class="dvdr"></div>
+    <div><div class="bval" id="b-next">--</div><div class="blbl">Next</div></div>
+    <div class="dvdr"></div>
+    <div><div class="bval" id="b-est">--</div><div class="blbl">Est. Wait</div></div>
   </div>
 </div>
 
-<!-- PRINT SLIP (hidden, shown on print) -->
-<div class="print-slip" id="printSlip">
-  <div class="slip-border">
-    <div class="slip-header">
-      <div style="font-size:1rem;font-weight:700;">Krishna Institute of Naturopathy</div>
-      <div style="font-size:.75rem;color:#666;">Dr. Harikrishna | Mangalore</div>
-      <div class="slip-big" id="slip-token">—</div>
-      <div style="font-size:.8rem;color:#1a6b4a;font-weight:600;">YOUR TOKEN NUMBER</div>
+<div class="print-slip">
+  <div class="slip-box">
+    <div class="slip-top">
+      <div style="font-size:.9rem;font-weight:700;">Krishna Institute of Naturopathy</div>
+      <div style="font-size:.7rem;color:#666;margin:.2rem 0 .6rem;">Dr. Harikrishna - Mangalore</div>
+      <div class="slip-tok" id="sl-tok">--</div>
+      <div style="font-size:.75rem;color:#1a6b4a;font-weight:700;margin-top:.3rem;">TOKEN NUMBER</div>
     </div>
-    <div class="slip-row"><span>Patient</span><span id="slip-name">—</span></div>
-    <div class="slip-row"><span>Session</span><span id="slip-session">—</span></div>
-    <div class="slip-row"><span>Date</span><span id="slip-date">—</span></div>
-    <div class="slip-row"><span>Est. Time</span><span id="slip-time">—</span></div>
-    <div class="slip-row"><span>Condition</span><span id="slip-condition">—</span></div>
-    <div class="slip-footer">Please arrive 10 mins before your estimated slot.<br/>+91 96114 11652</div>
+    <div class="slip-row"><span>Patient</span><span id="sl-name">--</span></div>
+    <div class="slip-row"><span>Date</span><span id="sl-date">--</span></div>
+    <div class="slip-row"><span>Session</span><span id="sl-sess">--</span></div>
+    <div class="slip-row"><span>Est. Time</span><span id="sl-time">--</span></div>
+    <div class="slip-row"><span>Condition</span><span id="sl-cond">--</span></div>
+    <div class="slip-foot">Arrive 10 min early - +91 96114 11652</div>
   </div>
 </div>
 
-<!-- MAIN -->
 <main>
   <h1 class="page-title">Get Your Queue Token</h1>
-  <p class="page-sub">Book your slot in 3 simple steps. No waiting at the reception.</p>
+  <p class="page-sub">Pick a date, choose your session, fill your details - done in 3 steps.</p>
 
-  <!-- STEPS -->
   <div class="steps">
-    <div class="step active" id="s1">
-      <div class="step-circle"><span>1</span></div>
-      <div class="step-label">Session</div>
-    </div>
-    <div class="step" id="s2">
-      <div class="step-circle"><span>2</span></div>
-      <div class="step-label">Details</div>
-    </div>
-    <div class="step" id="s3">
-      <div class="step-circle"><span>3</span></div>
-      <div class="step-label">Confirm</div>
-    </div>
+    <div class="step active" id="si1"><div class="step-circle"><span>1</span></div><div class="step-label">Date &amp; Slot</div></div>
+    <div class="step"        id="si2"><div class="step-circle"><span>2</span></div><div class="step-label">Your Details</div></div>
+    <div class="step"        id="si3"><div class="step-circle"><span>3</span></div><div class="step-label">Confirm</div></div>
   </div>
 
-  <!-- STEP 1: SESSION -->
   <div id="step-1">
-    <!-- Track existing token -->
-    <div class="card" style="border-color:rgba(200,150,62,.3);background:rgba(200,150,62,.04);">
-      <div class="card-title"><i class="bi bi-search"></i> Already have a token? Track it</div>
-      <div class="track-form">
-        <div class="input-icon" style="flex:1;min-width:160px;">
-          <i class="bi bi-ticket-perforated"></i>
-          <input type="text" id="trackInput" placeholder="Enter token number e.g. T-042" maxlength="6"/>
-        </div>
-        <button class="btn-primary" onclick="trackToken()" style="padding:.65rem 1.5rem;">
-          <i class="bi bi-search"></i> Track
-        </button>
+    <div class="card" style="border-color:rgba(200,150,62,.3);background:rgba(200,150,62,.03);padding:1.4rem;">
+      <div class="card-title" style="margin-bottom:.9rem;"><i class="bi bi-search"></i>Already have a token?</div>
+      <div class="track-row">
+        <input type="text" id="trackIn" placeholder="Enter token e.g. T-042" maxlength="6"/>
+        <button class="btn-sm" id="trackBtn"><i class="bi bi-search"></i> Track</button>
       </div>
-      <div class="track-result" id="trackResult"></div>
+      <div class="track-result" id="trackOut"></div>
     </div>
-
     <div class="card">
-      <div class="card-title"><i class="bi bi-calendar3"></i> Select a Session</div>
-      <div class="session-grid" id="sessionGrid"></div>
+      <div class="card-title"><i class="bi bi-calendar3"></i>Select Date &amp; Session</div>
+      <div class="cal-layout">
+        <div>
+          <div class="cal-box">
+            <div class="cal-hdr">
+              <button class="cal-nav" id="prevBtn"><i class="bi bi-chevron-left"></i></button>
+              <span class="cal-hdr-title" id="calTitle">Loading...</span>
+              <button class="cal-nav" id="nextBtn"><i class="bi bi-chevron-right"></i></button>
+            </div>
+            <div class="cal-dow">
+              <span class="sun">Su</span><span>Mo</span><span>Tu</span>
+              <span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+            </div>
+            <div class="cal-dates" id="calDates"></div>
+            <div class="cal-legend">
+              <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>Has slots</div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Selected</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#ccc"></div>Unavailable</div>
+            </div>
+          </div>
+        </div>
+        <div class="slot-panel" id="slotPanel">
+          <div class="slot-prompt">
+            <div class="ico"><i class="bi bi-calendar-event"></i></div>
+            <strong>Select a date to see sessions</strong>
+            <p>Tap any date. Gold dot means open slots available.</p>
+          </div>
+        </div>
+      </div>
     </div>
-
     <div class="btn-row">
-      <button class="btn-primary" onclick="goStep(2)"><i class="bi bi-arrow-right"></i> Continue</button>
+      <button class="btn-green" id="step1Next"><i class="bi bi-arrow-right"></i> Continue</button>
     </div>
   </div>
 
-  <!-- STEP 2: PATIENT DETAILS -->
-  <div id="step-2" style="display:none;">
+  <div id="step-2" style="display:none">
     <div class="card">
-      <div class="card-title"><i class="bi bi-person-lines-fill"></i> Patient Information</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="patName">Full Name *</label>
-          <div class="input-icon">
-            <i class="bi bi-person"></i>
-            <input type="text" id="patName" placeholder="Patient's full name" required/>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="patPhone">Phone Number *</label>
-          <div class="input-icon">
-            <i class="bi bi-telephone"></i>
-            <input type="tel" id="patPhone" placeholder="+91 00000 00000" required/>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="patAge">Age</label>
-          <div class="input-icon">
-            <i class="bi bi-calendar-event"></i>
-            <input type="number" id="patAge" placeholder="Age" min="1" max="120"/>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="patGender">Gender</label>
-          <div class="input-icon">
-            <i class="bi bi-gender-ambiguous"></i>
-            <select id="patGender">
-              <option value="">Select</option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="patCondition">Primary Condition *</label>
-          <div class="input-icon">
-            <i class="bi bi-clipboard2-pulse"></i>
-            <select id="patCondition" required>
-              <option value="">Select condition</option>
-              <option>Cancer Treatment</option>
-              <option>Parkinson's Disease</option>
-              <option>Kidney Disease / CKD</option>
-              <option>Kidney Stones</option>
-              <option>Dementia / Neurological</option>
-              <option>General Consultation</option>
-              <option>Follow-up Visit</option>
-              <option>Other</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="patType">Visit Type</label>
-          <div class="input-icon">
-            <i class="bi bi-arrow-repeat"></i>
-            <select id="patType">
-              <option>New Patient</option>
-              <option>Follow-up</option>
-              <option>Emergency</option>
-            </select>
-          </div>
-        </div>
+      <div class="card-title"><i class="bi bi-person-lines-fill"></i>Patient Information</div>
+      <div class="form-grid">
+        <div class="fg"><label for="pName">Full Name *</label><div class="fi"><i class="bi bi-person"></i><input type="text" id="pName" placeholder="Patient full name"/></div></div>
+        <div class="fg"><label for="pPhone">Phone *</label><div class="fi"><i class="bi bi-telephone"></i><input type="tel" id="pPhone" placeholder="+91 00000 00000"/></div></div>
+        <div class="fg"><label for="pAge">Age</label><div class="fi"><i class="bi bi-calendar-event"></i><input type="number" id="pAge" placeholder="Age" min="1" max="120"/></div></div>
+        <div class="fg"><label for="pGender">Gender</label><div class="fi"><i class="bi bi-gender-ambiguous"></i><select id="pGender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option></select></div></div>
+        <div class="fg"><label for="pCond">Condition *</label><div class="fi"><i class="bi bi-clipboard2-pulse"></i><select id="pCond"><option value="">Select condition</option><option>Cancer Treatment</option><option>Parkinson's Disease</option><option>Kidney Disease / CKD</option><option>Kidney Stones</option><option>Dementia / Neurological</option><option>General Consultation</option><option>Follow-up Visit</option><option>Other</option></select></div></div>
+        <div class="fg"><label for="pType">Visit Type</label><div class="fi"><i class="bi bi-arrow-repeat"></i><select id="pType"><option>New Patient</option><option>Follow-up</option><option>Emergency</option></select></div></div>
       </div>
     </div>
-
     <div class="card">
-      <div class="card-title"><i class="bi bi-star"></i> Priority Status <span style="font-size:.78rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;">(optional)</span></div>
-      <div class="priority-grid">
-        <button class="priority-btn" onclick="togglePriority(this,'None')"><i class="bi bi-dash-circle"></i>None</button>
-        <button class="priority-btn" onclick="togglePriority(this,'Senior Citizen')"><i class="bi bi-person-fill"></i>Senior 60+</button>
-        <button class="priority-btn" onclick="togglePriority(this,'Differently Abled')"><i class="bi bi-wheelchair"></i>Differently Abled</button>
-        <button class="priority-btn" onclick="togglePriority(this,'Pregnant')"><i class="bi bi-heart-fill"></i>Pregnant</button>
-        <button class="priority-btn" onclick="togglePriority(this,'Child')"><i class="bi bi-emoji-smile"></i>Child &lt;12</button>
-        <button class="priority-btn" onclick="togglePriority(this,'Critical')"><i class="bi bi-exclamation-triangle-fill"></i>Critical</button>
+      <div class="card-title"><i class="bi bi-star"></i>Priority <span style="font-size:.77rem;font-weight:400;color:var(--muted)">(optional)</span></div>
+      <div class="pri-grid" id="priGrid">
+        <button class="pri-btn" data-val="None"><i class="bi bi-dash-circle"></i>None</button>
+        <button class="pri-btn" data-val="Senior Citizen"><i class="bi bi-person-fill"></i>Senior 60+</button>
+        <button class="pri-btn" data-val="Differently Abled"><i class="bi bi-wheelchair"></i>Differently Abled</button>
+        <button class="pri-btn" data-val="Pregnant"><i class="bi bi-heart-fill"></i>Pregnant</button>
+        <button class="pri-btn" data-val="Child"><i class="bi bi-emoji-smile"></i>Child &lt;12</button>
+        <button class="pri-btn" data-val="Critical"><i class="bi bi-exclamation-triangle-fill"></i>Critical</button>
       </div>
     </div>
-
     <div class="card">
-      <div class="card-title"><i class="bi bi-chat-text"></i> Brief Notes <span style="font-size:.78rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;">(optional)</span></div>
-      <textarea id="patNotes" rows="3" placeholder="Any additional information for the doctor..."></textarea>
+      <div class="card-title"><i class="bi bi-chat-text"></i>Notes <span style="font-size:.77rem;font-weight:400;color:var(--muted)">(optional)</span></div>
+      <textarea id="pNotes" rows="3" placeholder="Any extra info for the doctor..."></textarea>
     </div>
-
     <div class="btn-row">
-      <button class="btn-outline" onclick="goStep(1)"><i class="bi bi-arrow-left"></i> Back</button>
-      <button class="btn-primary" onclick="goStep(3)"><i class="bi bi-arrow-right"></i> Review & Confirm</button>
+      <button class="btn-outline" id="step2Back"><i class="bi bi-arrow-left"></i> Back</button>
+      <button class="btn-green"   id="step2Next"><i class="bi bi-arrow-right"></i> Review</button>
     </div>
   </div>
 
-  <!-- STEP 3: REVIEW -->
-  <div id="step-3" style="display:none;">
+  <div id="step-3" style="display:none">
     <div class="review-box">
-      <h3><i class="bi bi-clipboard2-check me-2"></i>Review Your Booking</h3>
-      <div class="review-row"><span class="key">Patient Name</span><span class="val" id="rv-name">—</span></div>
-      <div class="review-row"><span class="key">Phone</span><span class="val" id="rv-phone">—</span></div>
-      <div class="review-row"><span class="key">Age / Gender</span><span class="val" id="rv-age">—</span></div>
-      <div class="review-row"><span class="key">Session</span><span class="val" id="rv-session">—</span></div>
-      <div class="review-row"><span class="key">Condition</span><span class="val" id="rv-condition">—</span></div>
-      <div class="review-row"><span class="key">Visit Type</span><span class="val" id="rv-type">—</span></div>
-      <div class="review-row"><span class="key">Priority</span><span class="val" id="rv-priority">—</span></div>
-      <div class="review-row"><span class="key">Estimated Time</span><span class="val" id="rv-time">—</span></div>
-      <div class="token-preview">
-        <div style="font-size:.7rem;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.1em;">Your token will be</div>
-        <div class="token-num-big" id="rv-token">—</div>
-        <div class="token-label">Token Number</div>
+      <h3><i class="bi bi-clipboard2-check" style="margin-right:.5rem"></i>Review Booking</h3>
+      <div class="rv-row"><span class="k">Name</span><span class="v" id="rv-name">--</span></div>
+      <div class="rv-row"><span class="k">Phone</span><span class="v" id="rv-phone">--</span></div>
+      <div class="rv-row"><span class="k">Age / Gender</span><span class="v" id="rv-age">--</span></div>
+      <div class="rv-row"><span class="k">Date</span><span class="v" id="rv-date">--</span></div>
+      <div class="rv-row"><span class="k">Session</span><span class="v" id="rv-sess">--</span></div>
+      <div class="rv-row"><span class="k">Condition</span><span class="v" id="rv-cond">--</span></div>
+      <div class="rv-row"><span class="k">Visit Type</span><span class="v" id="rv-type">--</span></div>
+      <div class="rv-row"><span class="k">Priority</span><span class="v" id="rv-pri">--</span></div>
+      <div class="rv-row"><span class="k">Est. Slot</span><span class="v" id="rv-time">--</span></div>
+      <div class="tok-preview">
+        <div style="font-size:.68rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.12em;">Your token will be</div>
+        <div class="tok-big" id="rv-tok">--</div>
+        <div class="tok-lbl">Token Number</div>
       </div>
     </div>
     <div class="btn-row">
-      <button class="btn-outline" onclick="goStep(2)"><i class="bi bi-arrow-left"></i> Back</button>
-      <button class="btn-primary" onclick="confirmBooking()"><i class="bi bi-check-circle"></i> Confirm & Get Token</button>
+      <button class="btn-outline" id="step3Back"><i class="bi bi-arrow-left"></i> Back</button>
+      <button class="btn-green"   id="step3Confirm"><i class="bi bi-check-circle"></i> Confirm &amp; Get Token</button>
     </div>
   </div>
 
-  <!-- SUCCESS -->
   <div id="step-success">
-    <div class="success-card">
-      <div class="success-header">
-        <div class="success-icon"><i class="bi bi-check-lg"></i></div>
+    <div class="suc-card">
+      <div class="suc-head">
+        <div class="suc-icon"><i class="bi bi-check-lg"></i></div>
         <h2>Token Confirmed!</h2>
-        <div class="big-token" id="suc-token">—</div>
-        <p>Show this number at the reception</p>
+        <div class="suc-token" id="sc-tok">--</div>
+        <p>Show this at the reception desk</p>
       </div>
-      <div class="success-body">
-        <div class="wait-estimate">
-          <i class="bi bi-clock-history"></i>
-          <div>
-            <div class="wait-text">Estimated wait time</div>
-            <div class="wait-time" id="suc-wait">Calculating…</div>
-          </div>
-        </div>
+      <div class="suc-body">
+        <div class="wait-bar"><i class="bi bi-clock-history"></i><div><div style="font-size:.8rem;color:var(--muted)">Estimated wait</div><div class="wait-time" id="sc-wait">--</div></div></div>
         <div class="info-grid">
-          <div class="info-cell"><div class="cell-label">Patient</div><div class="cell-val" id="suc-name">—</div></div>
-          <div class="info-cell"><div class="cell-label">Session</div><div class="cell-val" id="suc-session">—</div></div>
-          <div class="info-cell"><div class="cell-label">Condition</div><div class="cell-val" id="suc-condition">—</div></div>
-          <div class="info-cell"><div class="cell-label">Est. Slot</div><div class="cell-val" id="suc-time">—</div></div>
+          <div class="info-cell"><div class="ic-lbl">Patient</div><div class="ic-val" id="sc-name">--</div></div>
+          <div class="info-cell"><div class="ic-lbl">Date</div><div class="ic-val" id="sc-date">--</div></div>
+          <div class="info-cell"><div class="ic-lbl">Session</div><div class="ic-val" id="sc-sess">--</div></div>
+          <div class="info-cell"><div class="ic-lbl">Est. Slot</div><div class="ic-val" id="sc-time">--</div></div>
         </div>
-        <div class="action-row">
-          <button class="btn-print" onclick="printToken()"><i class="bi bi-printer"></i> Print Token</button>
-          <button class="btn-new" onclick="newBooking()"><i class="bi bi-plus-circle"></i> New Token</button>
-          <a href="token-display.html" style="text-decoration:none;">
-            <button class="btn-outline" style="border-radius:50px;padding:.7rem 1.5rem;font-size:.88rem;"><i class="bi bi-display"></i> Live Queue</button>
-          </a>
+        <div class="act-row">
+          <button class="btn-green" id="printBtn"><i class="bi bi-printer"></i> Print</button>
+          <button class="btn-outline" id="resetBtn"><i class="bi bi-plus-circle"></i> New Token</button>
+          <a href="token-display.html" style="text-decoration:none"><button class="btn-outline"><i class="bi bi-display"></i> Live Queue</button></a>
         </div>
       </div>
     </div>
@@ -435,242 +367,510 @@
 </main>
 
 <script>
-// ─── STATE ───────────────────────────────────
-const STORAGE_KEY = 'kin_tokens';
-const SESSION_KEY = 'kin_sessions';
-let selectedSession = null;
-let selectedPriority = 'None';
+(function() {
 
-const DEFAULT_SESSIONS = [
-  { id:'AM1', name:'Morning Session 1', time:'9:00 AM – 11:00 AM', capacity:30, avgMin:4 },
-  { id:'AM2', name:'Morning Session 2', time:'11:00 AM – 1:00 PM', capacity:25, avgMin:5 },
-  { id:'PM1', name:'Afternoon Session', time:'2:00 PM – 4:00 PM', capacity:25, avgMin:5 },
-  { id:'PM2', name:'Evening Session',   time:'4:00 PM – 6:00 PM', capacity:20, avgMin:6 },
+/* =============================================
+   CONFIG & DATA
+   ============================================= */
+var TKEY = 'kin_tokens';
+var SKEY = 'kin_sessions';
+var MAX_AHEAD = 30;
+var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+var DEFAULT_SESSIONS = [
+  {id:'AM1', name:'Morning Session 1', time:'9:00 AM - 11:00 AM', icon:'bi-brightness-high-fill', cap:30, avg:4},
+  {id:'AM2', name:'Morning Session 2', time:'11:00 AM - 1:00 PM',  icon:'bi-sun-fill',             cap:25, avg:5},
+  {id:'PM1', name:'Afternoon Session', time:'2:00 PM - 4:00 PM',   icon:'bi-cloud-sun-fill',       cap:25, avg:5},
+  {id:'PM2', name:'Evening Session',   time:'4:00 PM - 6:00 PM',   icon:'bi-moon-stars-fill',      cap:20, avg:6}
 ];
 
-function getSessions(){ return JSON.parse(localStorage.getItem(SESSION_KEY)||'null') || DEFAULT_SESSIONS; }
-function getTokens(){  return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }
-function saveTokens(t){ localStorage.setItem(STORAGE_KEY, JSON.stringify(t)); }
+function getSessions() {
+  try { return JSON.parse(localStorage.getItem(SKEY)) || DEFAULT_SESSIONS; }
+  catch(e) { return DEFAULT_SESSIONS; }
+}
+function getTokens() {
+  try { return JSON.parse(localStorage.getItem(TKEY)) || []; }
+  catch(e) { return []; }
+}
+function saveTokens(arr) { localStorage.setItem(TKEY, JSON.stringify(arr)); }
 
-function countBySession(sid){
-  return getTokens().filter(t=>t.sessionId===sid && t.date===today()).length;
+function fmtDate(d) {
+  return d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
 }
-function today(){
-  return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-}
-function nextTokenNum(sid){
-  const tokens = getTokens().filter(t=>t.sessionId===sid && t.date===today());
-  const nums = tokens.map(t=>parseInt(t.tokenNum.replace(/\D/g,''))|| 0);
-  return (nums.length ? Math.max(...nums) : 0) + 1;
-}
+function todayStr() { return fmtDate(new Date()); }
 
-// ─── RENDER SESSIONS ─────────────────────────
-function renderSessions(){
-  const grid = document.getElementById('sessionGrid');
-  const sessions = getSessions();
-  grid.innerHTML = sessions.map(s=>{
-    const used = countBySession(s.id);
-    const rem  = s.capacity - used;
-    const full = rem <= 0;
-    const slotsClass = full?'full': rem<=5?'low':'ok';
-    const slotsText  = full?'Full': rem<=5?`Only ${rem} left`:`${rem} slots`;
-    return `<button class="session-btn${full?' full':''}" onclick="selectSession('${s.id}')" ${full?'disabled':''} id="sbtn-${s.id}">
-      <i class="bi bi-check-circle-fill session-check"></i>
-      <div class="session-name">${s.name}</div>
-      <div class="session-time">${s.time}</div>
-      <div class="session-slots ${slotsClass}">${slotsText}</div>
-    </button>`;
-  }).join('');
+function parseTime(str) {
+  var m = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return [9, 0];
+  var h = parseInt(m[1]), mn = parseInt(m[2]);
+  if (m[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+  if (m[3].toUpperCase() === 'AM' && h === 12) h = 0;
+  return [h, mn];
 }
 
-function selectSession(id){
-  selectedSession = getSessions().find(s=>s.id===id);
-  document.querySelectorAll('.session-btn').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('sbtn-'+id)?.classList.add('selected');
+function countBooked(sid, dateStr) {
+  return getTokens().filter(function(t) { return t.sessionId === sid && t.date === dateStr; }).length;
+}
+function nextTokNum(sid, dateStr) {
+  var nums = getTokens()
+    .filter(function(t) { return t.sessionId === sid && t.date === dateStr; })
+    .map(function(t) { return parseInt(t.tokenNum.replace(/\D/g,'')) || 0; });
+  return (nums.length ? Math.max.apply(null, nums) : 0) + 1;
+}
+function hasOpenSlot(dateStr) {
+  return getSessions().some(function(s) { return countBooked(s.id, dateStr) < s.cap; });
+}
+function isDayAvailable(dt) {
+  if (dt.getDay() === 0) return false;
+  var today = new Date(); today.setHours(0,0,0,0);
+  if (dt < today) return false;
+  var limit = new Date(today); limit.setDate(limit.getDate() + MAX_AHEAD);
+  return dt <= limit;
 }
 
-// ─── PRIORITY ────────────────────────────────
-function togglePriority(btn, val){
-  document.querySelectorAll('.priority-btn').forEach(b=>b.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedPriority = val;
-}
+/* =============================================
+   STATE
+   ============================================= */
+var calYear  = new Date().getFullYear();
+var calMonth = new Date().getMonth();
+var selDate     = null;
+var selSession  = null;
+var selPriority = 'None';
 
-// ─── STEPS ───────────────────────────────────
-function goStep(n){
-  if(n===2 && !selectedSession){ alert('Please select a session first.'); return; }
-  if(n===3){
-    const name = document.getElementById('patName').value.trim();
-    const phone = document.getElementById('patPhone').value.trim();
-    const cond  = document.getElementById('patCondition').value;
-    if(!name||!phone||!cond){ alert('Please fill in Name, Phone and Condition.'); return; }
-    fillReview();
+/* =============================================
+   CALENDAR
+   ============================================= */
+function buildCalendar() {
+  var now = new Date(); now.setHours(0,0,0,0);
+  var isCurMonth = (calYear === now.getFullYear() && calMonth === now.getMonth());
+
+  document.getElementById('calTitle').textContent = MONTH_NAMES[calMonth] + ' ' + calYear;
+  document.getElementById('prevBtn').disabled = isCurMonth;
+
+  var firstDow   = new Date(calYear, calMonth, 1).getDay();
+  var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  var daysInPrev  = new Date(calYear, calMonth, 0).getDate();
+
+  var grid = document.getElementById('calDates');
+  // Remove all existing children
+  while (grid.firstChild) { grid.removeChild(grid.firstChild); }
+
+  // Previous month padding
+  for (var p = 0; p < firstDow; p++) {
+    var pad = document.createElement('div');
+    pad.className = 'cd other';
+    pad.textContent = String(daysInPrev - firstDow + 1 + p);
+    grid.appendChild(pad);
   }
-  document.querySelectorAll('[id^="step-"]').forEach(el=>el.style.display='none');
-  const target = document.getElementById('step-'+n) || document.getElementById('step-success');
-  if(target) target.style.display='block';
-  [1,2,3].forEach(i=>{
-    const el=document.getElementById('s'+i);
-    el.classList.remove('active','done');
-    if(i<n) el.classList.add('done');
-    if(i===n) el.classList.add('active');
+
+  // Current month days
+  for (var d = 1; d <= daysInMonth; d++) {
+    var dt      = new Date(calYear, calMonth, d);
+    var dtStr   = fmtDate(dt);
+    var avail   = isDayAvailable(dt);
+    var isTod   = (dtStr === todayStr());
+    var isSel   = selDate !== null && fmtDate(selDate) === dtStr;
+    var isSun   = (dt.getDay() === 0);
+    var hasSlt  = avail && hasOpenSlot(dtStr);
+
+    var cls = 'cd';
+    if (!avail)  cls += ' unavail';
+    if (isSun)   cls += ' sun-day';
+    if (isTod)   cls += ' today';
+    if (hasSlt)  cls += ' has-slot';
+    if (isSel)   cls += ' chosen';
+
+    var cell;
+    if (avail) {
+      cell = document.createElement('button');
+      cell.type = 'button';
+      // Closure to capture the correct date values
+      cell.addEventListener('click', (function(y, mo, dy) {
+        return function() {
+          selDate    = new Date(y, mo, dy);
+          selSession = null;
+          buildCalendar();
+          renderSlots();
+        };
+      })(calYear, calMonth, d));
+    } else {
+      cell = document.createElement('div');
+    }
+
+    cell.className   = cls;
+    cell.textContent = String(d);
+    grid.appendChild(cell);
+  }
+
+  // Next month padding
+  var filled = firstDow + daysInMonth;
+  var rem    = filled % 7;
+  if (rem !== 0) {
+    for (var e = 1; e <= 7 - rem; e++) {
+      var ep = document.createElement('div');
+      ep.className   = 'cd other';
+      ep.textContent = String(e);
+      grid.appendChild(ep);
+    }
+  }
+}
+
+/* =============================================
+   SLOT PANEL
+   ============================================= */
+function renderSlots() {
+  var panel = document.getElementById('slotPanel');
+  while (panel.firstChild) { panel.removeChild(panel.firstChild); }
+
+  if (!selDate) {
+    var prompt = document.createElement('div');
+    prompt.className = 'slot-prompt';
+    prompt.innerHTML = '<div class="ico"><i class="bi bi-calendar-event"></i></div>' +
+      '<strong>Select a date to see sessions</strong>' +
+      '<p>Tap any date on the calendar.<br>Gold dot means open slots.</p>';
+    panel.appendChild(prompt);
+    return;
+  }
+
+  var dateStr = fmtDate(selDate);
+  var isToday = (dateStr === todayStr());
+  var nowH    = new Date().getHours();
+  var sessions = getSessions();
+
+  // Filter out past sessions for today
+  var available = sessions.filter(function(s) {
+    if (isToday) {
+      var sh = parseTime(s.time.split('-')[0].trim())[0];
+      if (nowH >= sh) return false;
+    }
+    return true;
   });
-  window.scrollTo({top:0,behavior:'smooth'});
+
+  // Date bar
+  var bar = document.createElement('div');
+  bar.className = 'date-bar';
+  var iconEl = document.createElement('i');
+  iconEl.className = 'bi bi-calendar-check-fill';
+  var textDiv = document.createElement('div');
+  var nameDiv = document.createElement('div');
+  nameDiv.className = 'dname';
+  nameDiv.textContent = selDate.toLocaleDateString('en-IN', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  var subDiv = document.createElement('div');
+  subDiv.className = 'dsub';
+  subDiv.textContent = (isToday ? 'Today - ' : '') + 'Pick a session below';
+  textDiv.appendChild(nameDiv);
+  textDiv.appendChild(subDiv);
+  bar.appendChild(iconEl);
+  bar.appendChild(textDiv);
+  panel.appendChild(bar);
+
+  if (available.length === 0) {
+    var noSess = document.createElement('div');
+    noSess.className = 'no-slots';
+    noSess.innerHTML = '<i class="bi bi-clock-history"></i><p>All sessions today have ended.<br>Please select a future date.</p>';
+    panel.appendChild(noSess);
+    return;
+  }
+
+  var list = document.createElement('div');
+  list.className = 'slots-list';
+
+  available.forEach(function(s) {
+    var booked  = countBooked(s.id, dateStr);
+    var rem     = s.cap - booked;
+    var isFull  = rem <= 0;
+    var isSel   = selSession !== null && selSession.id === s.id;
+
+    var badgeCls = isFull ? 'b-full' : (rem <= 5 ? 'b-low' : 'b-ok');
+    var badgeTxt = isFull ? 'Full'   : (rem <= 5 ? rem + ' left' : 'Available');
+    var metaTxt  = isFull ? 'No spots' : ('~' + s.avg + ' min/patient');
+
+    var card = document.createElement('div');
+    card.className = 'slot-card' + (isFull ? ' is-full' : '') + (isSel ? ' chosen' : '');
+
+    // Icon
+    var iconWrap = document.createElement('div');
+    iconWrap.className = 'slot-icon';
+    var sIcon = document.createElement('i');
+    sIcon.className = 'bi ' + (s.icon || 'bi-clock-fill');
+    iconWrap.appendChild(sIcon);
+
+    // Info
+    var info = document.createElement('div');
+    info.className = 'slot-info';
+    var sName = document.createElement('div');
+    sName.className = 'slot-name';
+    sName.textContent = s.name;
+    var sTime = document.createElement('div');
+    sTime.className = 'slot-time';
+    var tIcon = document.createElement('i');
+    tIcon.className = 'bi bi-clock';
+    tIcon.style.marginRight = '3px';
+    sTime.appendChild(tIcon);
+    sTime.appendChild(document.createTextNode(s.time));
+    info.appendChild(sName);
+    info.appendChild(sTime);
+
+    // Right
+    var right = document.createElement('div');
+    right.className = 'slot-right';
+    var badge = document.createElement('span');
+    badge.className = 'slot-badge ' + badgeCls;
+    badge.textContent = badgeTxt;
+    var meta = document.createElement('div');
+    meta.className = 'slot-meta';
+    meta.textContent = metaTxt;
+    right.appendChild(badge);
+    right.appendChild(meta);
+
+    // Check icon
+    var chk = document.createElement('i');
+    chk.className = 'bi bi-check-circle-fill slot-check';
+
+    card.appendChild(iconWrap);
+    card.appendChild(info);
+    card.appendChild(right);
+    card.appendChild(chk);
+
+    if (!isFull) {
+      card.addEventListener('click', (function(session) {
+        return function() {
+          selSession = session;
+          renderSlots();
+        };
+      })(s));
+    }
+
+    list.appendChild(card);
+  });
+
+  panel.appendChild(list);
 }
 
-function fillReview(){
-  const s = selectedSession;
-  const used = countBySession(s.id);
-  const tokNum = nextTokenNum(s.id);
-  const waitMins = used * s.avgMin;
-  // Estimate slot time
-  const [startH, startM] = parseTime(s.time.split('–')[0].trim());
-  const slotDate = new Date(); slotDate.setHours(startH, startM + waitMins);
-  const estTime = slotDate.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+/* =============================================
+   STEP NAVIGATION
+   ============================================= */
+function showStep(n) {
+  ['step-1','step-2','step-3','step-success'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  var target = document.getElementById('step-' + n);
+  if (target) target.style.display = 'block';
 
-  document.getElementById('rv-name').textContent     = document.getElementById('patName').value;
-  document.getElementById('rv-phone').textContent    = document.getElementById('patPhone').value;
-  const age = document.getElementById('patAge').value;
-  const gen = document.getElementById('patGender').value;
-  document.getElementById('rv-age').textContent      = [age?age+'yrs':'',gen].filter(Boolean).join(' / ')||'—';
-  document.getElementById('rv-session').textContent  = `${s.name} (${s.time})`;
-  document.getElementById('rv-condition').textContent= document.getElementById('patCondition').value;
-  document.getElementById('rv-type').textContent     = document.getElementById('patType').value;
-  document.getElementById('rv-priority').textContent = selectedPriority;
-  document.getElementById('rv-time').textContent     = estTime;
-  document.getElementById('rv-token').textContent    = 'T-'+String(tokNum).padStart(3,'0');
+  for (var i = 1; i <= 3; i++) {
+    var si = document.getElementById('si' + i);
+    si.classList.remove('active', 'done');
+    if (i < n)  si.classList.add('done');
+    if (i === n) si.classList.add('active');
+  }
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
-function parseTime(str){
-  const m = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
-  if(!m) return [9,0];
-  let h=parseInt(m[1]), mn=parseInt(m[2]);
-  if(m[3].toUpperCase()==='PM'&&h!==12) h+=12;
-  if(m[3].toUpperCase()==='AM'&&h===12) h=0;
-  return [h,mn];
+function goToStep2() {
+  if (!selDate)    { alert('Please select a date on the calendar.'); return; }
+  if (!selSession) { alert('Please select a session slot.'); return; }
+  showStep(2);
 }
 
-// ─── CONFIRM ─────────────────────────────────
-function confirmBooking(){
-  const s = selectedSession;
-  const used = countBySession(s.id);
-  const tokNum = nextTokenNum(s.id);
-  const waitMins = used * s.avgMin;
-  const [startH, startM] = parseTime(s.time.split('–')[0].trim());
-  const slotDate = new Date(); slotDate.setHours(startH, startM + waitMins);
-  const estTime = slotDate.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+function goToStep3() {
+  var name  = document.getElementById('pName').value.trim();
+  var phone = document.getElementById('pPhone').value.trim();
+  var cond  = document.getElementById('pCond').value;
+  if (!name || !phone || !cond) { alert('Please fill in Name, Phone and Condition.'); return; }
 
-  const token = {
-    id: Date.now(),
-    tokenNum: 'T-'+String(tokNum).padStart(3,'0'),
-    sessionId: s.id,
-    sessionName: s.name,
-    sessionTime: s.time,
-    date: today(),
-    name: document.getElementById('patName').value.trim(),
-    phone: document.getElementById('patPhone').value.trim(),
-    age: document.getElementById('patAge').value,
-    gender: document.getElementById('patGender').value,
-    condition: document.getElementById('patCondition').value,
-    visitType: document.getElementById('patType').value,
-    priority: selectedPriority,
-    notes: document.getElementById('patNotes').value.trim(),
+  var s       = selSession;
+  var dateStr = fmtDate(selDate);
+  var booked  = countBooked(s.id, dateStr);
+  var tokNum  = nextTokNum(s.id, dateStr);
+  var waitMin = booked * s.avg;
+  var tp      = parseTime(s.time.split('-')[0].trim());
+  var slotDt  = new Date(selDate.getFullYear(), selDate.getMonth(), selDate.getDate(), tp[0], tp[1] + waitMin);
+  var estTime = slotDt.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+  var age     = document.getElementById('pAge').value;
+  var gen     = document.getElementById('pGender').value;
+
+  document.getElementById('rv-name').textContent  = name;
+  document.getElementById('rv-phone').textContent = phone;
+  var ageParts = [];
+  if (age) ageParts.push(age + ' yrs');
+  if (gen) ageParts.push(gen);
+  document.getElementById('rv-age').textContent   = ageParts.length ? ageParts.join(' / ') : '--';
+  document.getElementById('rv-date').textContent  = selDate.toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'long', year:'numeric'});
+  document.getElementById('rv-sess').textContent  = s.name + ' (' + s.time + ')';
+  document.getElementById('rv-cond').textContent  = cond;
+  document.getElementById('rv-type').textContent  = document.getElementById('pType').value;
+  document.getElementById('rv-pri').textContent   = selPriority;
+  document.getElementById('rv-time').textContent  = estTime;
+  document.getElementById('rv-tok').textContent   = 'T-' + String(tokNum).padStart(3, '0');
+
+  showStep(3);
+}
+
+function doConfirm() {
+  var s       = selSession;
+  var dateStr = fmtDate(selDate);
+  var booked  = countBooked(s.id, dateStr);
+  var tokNum  = nextTokNum(s.id, dateStr);
+  var waitMin = booked * s.avg;
+  var tp      = parseTime(s.time.split('-')[0].trim());
+  var slotDt  = new Date(selDate.getFullYear(), selDate.getMonth(), selDate.getDate(), tp[0], tp[1] + waitMin);
+  var estTime = slotDt.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+
+  var token = {
+    id:            Date.now(),
+    tokenNum:      'T-' + String(tokNum).padStart(3, '0'),
+    sessionId:     s.id,
+    sessionName:   s.name,
+    sessionTime:   s.time,
+    date:          dateStr,
+    name:          document.getElementById('pName').value.trim(),
+    phone:         document.getElementById('pPhone').value.trim(),
+    age:           document.getElementById('pAge').value,
+    gender:        document.getElementById('pGender').value,
+    condition:     document.getElementById('pCond').value,
+    visitType:     document.getElementById('pType').value,
+    priority:      selPriority,
+    notes:         document.getElementById('pNotes').value.trim(),
     estimatedTime: estTime,
-    status: 'waiting',
-    bookedAt: new Date().toISOString()
+    status:        'waiting',
+    bookedAt:      new Date().toISOString()
   };
 
-  // Priority boost — re-sort later in admin
-  const tokens = getTokens();
+  var tokens = getTokens();
   tokens.push(token);
   saveTokens(tokens);
 
-  // Fill success
-  document.getElementById('suc-token').textContent    = token.tokenNum;
-  document.getElementById('suc-name').textContent     = token.name;
-  document.getElementById('suc-session').textContent  = token.sessionName;
-  document.getElementById('suc-condition').textContent= token.condition;
-  document.getElementById('suc-time').textContent     = token.estimatedTime;
-  document.getElementById('suc-wait').textContent     = waitMins > 0 ? `~${waitMins} minutes` : 'You are first!';
+  document.getElementById('sc-tok').textContent  = token.tokenNum;
+  document.getElementById('sc-name').textContent = token.name;
+  document.getElementById('sc-date').textContent = selDate.toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'long', year:'numeric'});
+  document.getElementById('sc-sess').textContent = token.sessionName;
+  document.getElementById('sc-time').textContent = token.estimatedTime;
+  document.getElementById('sc-wait').textContent = waitMin > 0 ? ('~' + waitMin + ' minutes') : 'You are first!';
 
-  // Fill print slip
-  document.getElementById('slip-token').textContent   = token.tokenNum;
-  document.getElementById('slip-name').textContent    = token.name;
-  document.getElementById('slip-session').textContent = token.sessionName;
-  document.getElementById('slip-date').textContent    = token.date;
-  document.getElementById('slip-time').textContent    = token.estimatedTime;
-  document.getElementById('slip-condition').textContent= token.condition;
+  document.getElementById('sl-tok').textContent  = token.tokenNum;
+  document.getElementById('sl-name').textContent = token.name;
+  document.getElementById('sl-date').textContent = token.date;
+  document.getElementById('sl-sess').textContent = token.sessionName;
+  document.getElementById('sl-time').textContent = token.estimatedTime;
+  document.getElementById('sl-cond').textContent = token.condition;
 
-  document.querySelectorAll('[id^="step-"]').forEach(el=>el.style.display='none');
-  document.getElementById('step-success').style.display='block';
-  [1,2,3].forEach(i=>{ const el=document.getElementById('s'+i); el.classList.remove('active'); el.classList.add('done'); });
-  window.scrollTo({top:0,behavior:'smooth'});
+  ['step-1','step-2','step-3'].forEach(function(id) { document.getElementById(id).style.display = 'none'; });
+  document.getElementById('step-success').style.display = 'block';
+  for (var i = 1; i <= 3; i++) { var si = document.getElementById('si' + i); si.classList.remove('active'); si.classList.add('done'); }
+  window.scrollTo({top: 0, behavior: 'smooth'});
   updateBanner();
 }
 
-function printToken(){ window.print(); }
-
-function newBooking(){
-  selectedSession=null; selectedPriority='None';
-  document.querySelectorAll('.session-btn').forEach(b=>b.classList.remove('selected'));
-  document.querySelectorAll('.priority-btn').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('patName').value='';
-  document.getElementById('patPhone').value='';
-  document.getElementById('patAge').value='';
-  document.getElementById('patGender').value='';
-  document.getElementById('patCondition').value='';
-  document.getElementById('patNotes').value='';
-  renderSessions(); goStep(1);
+function doReset() {
+  selDate     = null;
+  selSession  = null;
+  selPriority = 'None';
+  document.querySelectorAll('.pri-btn').forEach(function(b) { b.classList.remove('chosen'); });
+  ['pName','pPhone','pAge','pNotes'].forEach(function(id) { document.getElementById(id).value = ''; });
+  document.getElementById('pGender').value = '';
+  document.getElementById('pCond').value   = '';
+  buildCalendar();
+  renderSlots();
+  showStep(1);
 }
 
-// ─── TRACK TOKEN ─────────────────────────────
-function trackToken(){
-  const q = document.getElementById('trackInput').value.trim().toUpperCase();
-  const res = document.getElementById('trackResult');
-  if(!q){ alert('Enter a token number.'); return; }
-  const token = getTokens().find(t=>t.tokenNum.toUpperCase()===q && t.date===today());
-  if(!token){
-    res.style.display='block';
-    res.innerHTML=`<i class="bi bi-exclamation-circle" style="color:#dc2626;"></i> Token <strong>${q}</strong> not found for today. Check the number and try again.`;
+/* =============================================
+   PRIORITY BUTTONS
+   ============================================= */
+document.getElementById('priGrid').addEventListener('click', function(e) {
+  var btn = e.target.closest('.pri-btn');
+  if (!btn) return;
+  document.querySelectorAll('.pri-btn').forEach(function(b) { b.classList.remove('chosen'); });
+  btn.classList.add('chosen');
+  selPriority = btn.getAttribute('data-val');
+});
+
+/* =============================================
+   TRACK TOKEN
+   ============================================= */
+function doTrack() {
+  var q   = document.getElementById('trackIn').value.trim().toUpperCase();
+  var out = document.getElementById('trackOut');
+  if (!q) { alert('Enter a token number.'); return; }
+  var tokens = getTokens();
+  var token  = null;
+  for (var i = 0; i < tokens.length; i++) {
+    if (tokens[i].tokenNum.toUpperCase() === q) { token = tokens[i]; break; }
+  }
+  out.style.display = 'block';
+  if (!token) {
+    out.textContent = 'Token ' + q + ' not found.';
     return;
   }
-  const statusColors={waiting:'#d97706',serving:'#16a34a',done:'#6b7280',skipped:'#dc2626'};
-  const col=statusColors[token.status]||'#888';
-  const tokens=getTokens().filter(t=>t.date===today()&&t.sessionId===token.sessionId&&t.status==='waiting');
-  const myPos=tokens.findIndex(t=>t.id===token.id)+1;
-  const waitLeft=myPos*((getSessions().find(s=>s.id===token.sessionId)||{avgMin:5}).avgMin);
-  res.style.display='block';
-  res.innerHTML=`
-    <div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;">
-      <div style="background:${col};color:#fff;border-radius:10px;padding:.6rem 1rem;font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;">${token.tokenNum}</div>
-      <div>
-        <div style="font-weight:700;font-size:.95rem;">${token.name}</div>
-        <div style="font-size:.8rem;color:var(--muted);">${token.sessionName} · ${token.condition}</div>
-        <div style="font-size:.82rem;margin-top:.3rem;">Status: <strong style="color:${col};text-transform:capitalize;">${token.status}</strong>
-          ${token.status==='waiting'?`· Position <strong>${myPos}</strong> in queue · Est. wait <strong>~${waitLeft} min</strong>`:''}
-        </div>
-      </div>
-    </div>`;
+  var cols = {waiting:'#d97706', serving:'#16a34a', done:'#6b7280', skipped:'#dc2626'};
+  var col  = cols[token.status] || '#888';
+  var sess = null;
+  var ss   = getSessions();
+  for (var j = 0; j < ss.length; j++) { if (ss[j].id === token.sessionId) { sess = ss[j]; break; } }
+  if (!sess) sess = {avg: 5};
+  var wlist = getTokens().filter(function(t) { return t.date === token.date && t.sessionId === token.sessionId && t.status === 'waiting'; });
+  var pos   = -1;
+  for (var k = 0; k < wlist.length; k++) { if (wlist[k].id === token.id) { pos = k + 1; break; } }
+
+  out.innerHTML = '<strong>' + token.tokenNum + '</strong> &mdash; ' + token.name +
+    ' &mdash; Status: <span style="color:' + col + ';font-weight:700;text-transform:capitalize">' + token.status + '</span>' +
+    (token.status === 'waiting' && pos > 0 ? ' &mdash; Queue #' + pos + ', ~' + (pos * sess.avg) + ' min wait' : '') +
+    '<br><small style="color:var(--muted)">' + token.date + ' &middot; ' + token.sessionName + '</small>';
 }
 
-// ─── BANNER ──────────────────────────────────
-function updateBanner(){
-  const tokens = getTokens().filter(t=>t.date===today());
-  const serving = tokens.find(t=>t.status==='serving');
-  const waiting  = tokens.filter(t=>t.status==='waiting').length;
-  const next     = tokens.find(t=>t.status==='waiting');
-  document.getElementById('banner-current').textContent = serving ? serving.tokenNum : '—';
-  document.getElementById('banner-name').textContent    = serving ? serving.name.split(' ')[0] : '—';
-  document.getElementById('banner-waiting').textContent = waiting;
-  document.getElementById('banner-next').textContent    = next ? next.tokenNum : '—';
-  const sess = selectedSession || getSessions()[0];
-  document.getElementById('banner-wait').textContent    = waiting ? `~${waiting*sess.avgMin} min` : '0 min';
+/* =============================================
+   LIVE BANNER
+   ============================================= */
+function updateBanner() {
+  var toks    = getTokens().filter(function(t) { return t.date === todayStr(); });
+  var serving = null;
+  var waiting = [];
+  for (var i = 0; i < toks.length; i++) {
+    if (toks[i].status === 'serving') serving = toks[i];
+    if (toks[i].status === 'waiting') waiting.push(toks[i]);
+  }
+  var next = waiting.length > 0 ? waiting[0] : null;
+  var sess = selSession || getSessions()[0];
+
+  document.getElementById('b-cur').textContent  = serving ? serving.tokenNum : '--';
+  document.getElementById('b-name').textContent = serving ? serving.name.split(' ')[0] : '--';
+  document.getElementById('b-wait').textContent = waiting.length;
+  document.getElementById('b-next').textContent = next ? next.tokenNum : '--';
+  document.getElementById('b-est').textContent  = waiting.length ? ('~' + (waiting.length * sess.avg) + ' min') : '0 min';
 }
 
-// ─── INIT ─────────────────────────────────────
-renderSessions();
+/* =============================================
+   WIRE UP BUTTONS
+   ============================================= */
+document.getElementById('prevBtn').addEventListener('click', function() {
+  calMonth--;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  buildCalendar();
+});
+document.getElementById('nextBtn').addEventListener('click', function() {
+  calMonth++;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  buildCalendar();
+});
+document.getElementById('trackBtn').addEventListener('click', doTrack);
+document.getElementById('step1Next').addEventListener('click', goToStep2);
+document.getElementById('step2Back').addEventListener('click', function() { showStep(1); });
+document.getElementById('step2Next').addEventListener('click', goToStep3);
+document.getElementById('step3Back').addEventListener('click', function() { showStep(2); });
+document.getElementById('step3Confirm').addEventListener('click', doConfirm);
+document.getElementById('printBtn').addEventListener('click', function() { window.print(); });
+document.getElementById('resetBtn').addEventListener('click', doReset);
+
+/* =============================================
+   INIT
+   ============================================= */
+buildCalendar();
+renderSlots();
 updateBanner();
-setInterval(()=>{ updateBanner(); renderSessions(); }, 10000);
+setInterval(updateBanner, 10000);
+
+})(); // end IIFE
 </script>
 </body>
 </html>
