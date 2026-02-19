@@ -666,59 +666,117 @@ h1,h2,h3,.serif{font-family:'Playfair Display',serif;}
 
 <script>
 /* ================================================================
-   KIN CLOUD SYNC — replaces localStorage-only storage
+   KIN CLOUD SYNC v2 — GET-only, CORS-safe
    ================================================================ */
 var KIN_CONFIG = {
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxl4feNbV8AxAvSzj-4vq2BmkfMurQRYDsk-MDRMF9CXzfrn8s2RknUyL1XETJETWmK/exec', // ← PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxl4feNbV8AxAvSzj-4vq2BmkfMurQRYDsk-MDRMF9CXzfrn8s2RknUyL1XETJETWmK/exec',
   SYNC_INTERVAL: 6000,
 };
-var _KIN={tokens:null,sessions:null,online:false};
-function _kinShowStatus(msg,type){var el=document.getElementById('kin-sync-status');if(!el)return;el.textContent=msg;el.className='kin-status kin-status-'+(type||'info');}
-function _kinFetch(url,opts){return fetch(url,opts).then(function(r){return r.json();}).catch(function(e){return{error:e.toString()};});}
-function getTokens(){if(_KIN.tokens!==null)return _KIN.tokens;try{return JSON.parse(localStorage.getItem('kin_tokens'))||[];}catch(e){return[];}}
-function getSessions(){if(_KIN.sessions!==null)return _KIN.sessions;var D=[{id:'AM1',name:'Morning Session 1',time:'9:00 AM - 11:00 AM',icon:'bi-brightness-high-fill',cap:30,avg:4},{id:'AM2',name:'Morning Session 2',time:'11:00 AM - 1:00 PM',icon:'bi-sun-fill',cap:25,avg:5},{id:'PM1',name:'Afternoon Session',time:'2:00 PM - 4:00 PM',icon:'bi-cloud-sun-fill',cap:25,avg:5},{id:'PM2',name:'Evening Session',time:'4:00 PM - 6:00 PM',icon:'bi-moon-stars-fill',cap:20,avg:6}];try{return JSON.parse(localStorage.getItem('kin_sessions'))||D;}catch(e){return D;}}
-function saveTokens(arr){_KIN.tokens=arr;localStorage.setItem('kin_tokens',JSON.stringify(arr));}
-function saveSessLocal(arr){_KIN.sessions=arr;localStorage.setItem('kin_sessions',JSON.stringify(arr));}
+var _KIN = { tokens:null, sessions:null, online:false };
 
-function kinPull(cb){
-  if(!KIN_CONFIG.SCRIPT_URL){_kinShowStatus('Local only — no URL set','warn');if(cb)cb();return;}
-  _KIN.online=true;_kinShowStatus('Syncing…','info');
-  Promise.all([_kinFetch(KIN_CONFIG.SCRIPT_URL+'?action=getTokens'),_kinFetch(KIN_CONFIG.SCRIPT_URL+'?action=getSessions')]).then(function(res){
-    if(res[0]&&res[0].ok){_KIN.tokens=res[0].tokens||[];localStorage.setItem('kin_tokens',JSON.stringify(_KIN.tokens));}
-    if(res[1]&&res[1].ok&&res[1].sessions&&res[1].sessions.length){_KIN.sessions=res[1].sessions;localStorage.setItem('kin_sessions',JSON.stringify(_KIN.sessions));}
-    _kinShowStatus('Synced '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),'ok');
-    if(cb)cb();
-  }).catch(function(){_kinShowStatus('Sync error — using local data','err');if(cb)cb();});
+function _kinShowStatus(msg, type) {
+  var el = document.getElementById('kin-sync-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'kin-status kin-status-' + (type || 'info');
 }
-function kinAddToken(token,cb){
-  var toks=getTokens();toks.push(token);saveTokens(toks);if(cb)cb();
-  if(!_KIN.online||!KIN_CONFIG.SCRIPT_URL)return;
-  _kinFetch(KIN_CONFIG.SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'addToken',token:token})});
+
+/* All calls are GET — this sidesteps CORS entirely */
+function _kinCall(params) {
+  var qs = Object.keys(params).map(function(k){
+    return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+  }).join('&');
+  return fetch(KIN_CONFIG.SCRIPT_URL + '?' + qs)
+    .then(function(r) { return r.json(); })
+    .catch(function(e) { return { ok:false, error: e.toString() }; });
 }
-function kinUpdateToken(id,fields,cb){
-  var toks=getTokens();
-  for(var i=0;i<toks.length;i++){if(String(toks[i].id)===String(id)){Object.keys(fields).forEach(function(k){toks[i][k]=fields[k];});break;}}
-  saveTokens(toks);if(cb)cb();
-  if(!_KIN.online||!KIN_CONFIG.SCRIPT_URL)return;
-  _kinFetch(KIN_CONFIG.SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'updateToken',id:id,fields:fields})});
+
+function getTokens() {
+  if (_KIN.tokens !== null) return _KIN.tokens;
+  try { return JSON.parse(localStorage.getItem('kin_tokens')) || []; } catch(e) { return []; }
 }
-function kinDeleteToken(id,cb){
-  saveTokens(getTokens().filter(function(t){return String(t.id)!==String(id);}));if(cb)cb();
-  if(!_KIN.online||!KIN_CONFIG.SCRIPT_URL)return;
-  _kinFetch(KIN_CONFIG.SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'deleteToken',id:id})});
+function getSessions() {
+  if (_KIN.sessions !== null) return _KIN.sessions;
+  var D = [
+    {id:'AM1',name:'Morning Session 1',time:'9:00 AM - 11:00 AM',icon:'bi-brightness-high-fill',cap:30,avg:4},
+    {id:'AM2',name:'Morning Session 2',time:'11:00 AM - 1:00 PM', icon:'bi-sun-fill',            cap:25,avg:5},
+    {id:'PM1',name:'Afternoon Session', time:'2:00 PM - 4:00 PM', icon:'bi-cloud-sun-fill',      cap:25,avg:5},
+    {id:'PM2',name:'Evening Session',   time:'4:00 PM - 6:00 PM', icon:'bi-moon-stars-fill',     cap:20,avg:6}
+  ];
+  try { return JSON.parse(localStorage.getItem('kin_sessions')) || D; } catch(e) { return D; }
 }
-function kinBulkDelete(ids,cb){
-  var s={};ids.forEach(function(id){s[String(id)]=true;});
-  saveTokens(getTokens().filter(function(t){return!s[String(t.id)];}));if(cb)cb();
-  if(!_KIN.online||!KIN_CONFIG.SCRIPT_URL)return;
-  _kinFetch(KIN_CONFIG.SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'bulkDeleteTokens',ids:ids})});
+function saveTokens(arr) {
+  _KIN.tokens = arr;
+  localStorage.setItem('kin_tokens', JSON.stringify(arr));
+  localStorage.setItem('kin_ts', Date.now()); /* cross-tab signal */
 }
-function kinSaveSessions(sessions,cb){
-  saveSessLocal(sessions);if(cb)cb();
-  if(!_KIN.online||!KIN_CONFIG.SCRIPT_URL)return;
-  _kinFetch(KIN_CONFIG.SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'saveSessions',sessions:sessions})});
+function saveSessLocal(arr) {
+  _KIN.sessions = arr;
+  localStorage.setItem('kin_sessions', JSON.stringify(arr));
 }
-/* ── END SYNC LAYER ─── */
+
+/* Pull latest data from cloud */
+function kinPull(cb) {
+  if (!KIN_CONFIG.SCRIPT_URL) { _kinShowStatus('Local only', 'warn'); if (cb) cb(); return; }
+  _KIN.online = true;
+  _kinShowStatus('Syncing\u2026', 'info');
+  Promise.all([
+    _kinCall({ action:'getTokens' }),
+    _kinCall({ action:'getSessions' })
+  ]).then(function(res) {
+    if (res[0] && res[0].ok) {
+      _KIN.tokens = res[0].tokens || [];
+      localStorage.setItem('kin_tokens', JSON.stringify(_KIN.tokens));
+    }
+    if (res[1] && res[1].ok && res[1].sessions && res[1].sessions.length) {
+      _KIN.sessions = res[1].sessions;
+      localStorage.setItem('kin_sessions', JSON.stringify(_KIN.sessions));
+    }
+    var t = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+    _kinShowStatus('Synced ' + t, 'ok');
+    if (cb) cb();
+  }).catch(function() {
+    _kinShowStatus('Sync error \u2014 using local', 'err');
+    if (cb) cb();
+  });
+}
+
+/* Write operations — all GET with JSON-encoded data param */
+function kinAddToken(token, cb) {
+  var toks = getTokens(); toks.push(token); saveTokens(toks);
+  if (cb) cb();
+  if (!_KIN.online) return;
+  _kinCall({ action:'addToken', data: JSON.stringify(token) });
+}
+function kinUpdateToken(id, fields, cb) {
+  var toks = getTokens();
+  for (var i = 0; i < toks.length; i++) {
+    if (String(toks[i].id) === String(id)) { Object.keys(fields).forEach(function(k){ toks[i][k]=fields[k]; }); break; }
+  }
+  saveTokens(toks); if (cb) cb();
+  if (!_KIN.online) return;
+  _kinCall({ action:'updateToken', id: id, data: JSON.stringify(fields) });
+}
+function kinDeleteToken(id, cb) {
+  saveTokens(getTokens().filter(function(t){ return String(t.id) !== String(id); }));
+  if (cb) cb();
+  if (!_KIN.online) return;
+  _kinCall({ action:'deleteToken', id: id });
+}
+function kinBulkDelete(ids, cb) {
+  var s = {}; ids.forEach(function(id){ s[String(id)]=true; });
+  saveTokens(getTokens().filter(function(t){ return !s[String(t.id)]; }));
+  if (cb) cb();
+  if (!_KIN.online) return;
+  _kinCall({ action:'bulkDelete', ids: JSON.stringify(ids) });
+}
+function kinSaveSessions(sessions, cb) {
+  saveSessLocal(sessions); if (cb) cb();
+  if (!_KIN.online) return;
+  _kinCall({ action:'saveSessions', data: JSON.stringify(sessions) });
+}
+/* ── END KIN SYNC v2 ─────────────────────────────────────── */
+
 
 (function(){
 var TKEY='kin_tokens', SKEY='kin_sessions';
