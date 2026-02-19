@@ -374,197 +374,669 @@ textarea{resize:none;}
     </div>
   </div>
 </main>
+
 <script>
 /* ================================================================
-   KIN CLOUD SYNC — Google Sheets via Apps Script
+   KIN CLOUD SYNC v4 — JSONP reads + no-cors POST writes
+   This approach works from ANY hosting (Netlify, GitHub, file://)
    ================================================================ */
-
 var KIN_CONFIG = {
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxl4feNbV8AxAvSzj-4vq2BmkfMurQRYDsk-MDRMF9CXzfrn8s2RknUyL1XETJETWmK/exec',
-  SYNC_INTERVAL: 15000
+  SYNC_INTERVAL: 7000,
 };
+var _KIN = { tokens:null, sessions:null };
 
-var _KIN = { tokens:null, sessions:null, online:false };
-
-var DEFAULT_SESSIONS = [
-  {id:'AM1',name:'Morning Session 1',time:'9:00 AM - 11:00 AM',icon:'bi-brightness-high-fill',cap:30,avg:4},
-  {id:'AM2',name:'Morning Session 2',time:'11:00 AM - 1:00 PM',icon:'bi-sun-fill',cap:25,avg:5},
-  {id:'PM1',name:'Afternoon Session',time:'2:00 PM - 4:00 PM',icon:'bi-cloud-sun-fill',cap:25,avg:5},
-  {id:'PM2',name:'Evening Session',time:'4:00 PM - 6:00 PM',icon:'bi-moon-stars-fill',cap:20,avg:6}
-];
-
-/* =========================
-   STORAGE HELPERS
-   ========================= */
-
-function getTokens(){
-  if(_KIN.tokens!==null) return _KIN.tokens;
-  try { return JSON.parse(localStorage.getItem('kin_tokens')) || []; }
-  catch(e){ return []; }
+function _kinShowStatus(msg, type) {
+  var el = document.getElementById('kin-sync-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'kin-status kin-status-' + (type||'info');
 }
 
-function getSessions(){
-  if(_KIN.sessions!==null) return _KIN.sessions;
-  try { return JSON.parse(localStorage.getItem('kin_sessions')) || DEFAULT_SESSIONS; }
-  catch(e){ return DEFAULT_SESSIONS; }
+/* READ via JSONP — works from any origin, no CORS issues */
+function _kinJsonp(action, callback) {
+  var cbName = '_kinCb_' + action + '_' + Date.now();
+  var script  = document.createElement('script');
+  var done    = false;
+
+  var timer = setTimeout(function() {
+    if (done) return;
+    done = true;
+    script.remove();
+    try { delete window[cbName]; } catch(e) {}
+    callback({ ok:false, error:'Timeout' });
+  }, 12000);
+
+  window[cbName] = function(data) {
+    if (done) return;
+    done = true;
+    clearTimeout(timer);
+    script.remove();
+    try { delete window[cbName]; } catch(e) {}
+    callback(data);
+  };
+
+  script.src = KIN_CONFIG.SCRIPT_URL
+    + '?action=' + encodeURIComponent(action)
+    + '&callback=' + encodeURIComponent(cbName);
+  script.onerror = function() {
+    if (done) return;
+    done = true;
+    clearTimeout(timer);
+    try { delete window[cbName]; } catch(e) {}
+    callback({ ok:false, error:'Script load error' });
+  };
+  document.head.appendChild(script);
 }
 
-function saveTokens(arr){
+/* WRITE via no-cors POST — fire and forget */
+function _kinPost(body) {
+  if (!KIN_CONFIG.SCRIPT_URL) return;
+  fetch(KIN_CONFIG.SCRIPT_URL, {
+    method: 'POST',
+    mode:   'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body:   JSON.stringify(body)
+  }).catch(function(e){ console.warn('KIN write:', e); });
+}
+
+/* ── Local cache helpers ── */
+function getTokens() {
+  if (_KIN.tokens !== null) return _KIN.tokens;
+  try { return JSON.parse(localStorage.getItem('kin_tokens')) || []; } catch(e) { return []; }
+}
+function getSessions() {
+  if (_KIN.sessions !== null) return _KIN.sessions;
+  var D = [
+    {id:'AM1',name:'Morning Session 1',time:'9:00 AM - 11:00 AM',icon:'bi-brightness-high-fill',cap:30,avg:4},
+    {id:'AM2',name:'Morning Session 2',time:'11:00 AM - 1:00 PM', icon:'bi-sun-fill',            cap:25,avg:5},
+    {id:'PM1',name:'Afternoon Session', time:'2:00 PM - 4:00 PM', icon:'bi-cloud-sun-fill',      cap:25,avg:5},
+    {id:'PM2',name:'Evening Session',   time:'4:00 PM - 6:00 PM', icon:'bi-moon-stars-fill',     cap:20,avg:6}
+  ];
+  try { return JSON.parse(localStorage.getItem('kin_sessions')) || D; } catch(e) { return D; }
+}
+function saveTokens(arr) {
   _KIN.tokens = arr;
   localStorage.setItem('kin_tokens', JSON.stringify(arr));
+  localStorage.setItem('kin_ts', Date.now());
+}
+function saveSessLocal(arr) {
+  _KIN.sessions = arr;
+  localStorage.setItem('kin_sessions', JSON.stringify(arr));
 }
 
-function _kinFetch(url,opts){
-  return fetch(url,opts)
-    .then(r => r.ok ? r.json() : {error:'network'})
-    .catch(() => ({error:'fetch'}));
-}
+/* Pull latest from cloud using JSONP */
+function kinPull(cb) {
+  if (!KIN_CONFIG.SCRIPT_URL) { _kinShowStatus('Local only', 'warn'); if (cb) cb(); return; }
+  _kinShowStatus('Syncing…', 'info');
+  var got = { tokens: false, sessions: false };
 
-/* =========================
-   CLOUD SYNC
-   ========================= */
+  function check() {
+    if (!got.tokens || !got.sessions) return;
+    var t = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    _kinShowStatus('Synced ' + t, 'ok');
+    if (cb) cb();
+  }
 
-function kinPull(cb){
-  if(!KIN_CONFIG.SCRIPT_URL){ if(cb)cb(); return; }
-  _KIN.online=true;
-
-  Promise.all([
-    _kinFetch(KIN_CONFIG.SCRIPT_URL+'?action=getTokens'),
-    _kinFetch(KIN_CONFIG.SCRIPT_URL+'?action=getSessions')
-  ]).then(res=>{
-    if(res[0].ok){
-      _KIN.tokens = res[0].tokens || [];
+  _kinJsonp('getTokens', function(res) {
+    if (res && res.ok) {
+      _KIN.tokens = res.tokens || [];
       localStorage.setItem('kin_tokens', JSON.stringify(_KIN.tokens));
+    } else {
+      _kinShowStatus('Sync error', 'err');
+      console.warn('getTokens error:', res);
     }
-    if(res[1].ok && res[1].sessions){
-      _KIN.sessions = res[1].sessions;
+    got.tokens = true; check();
+  });
+
+  _kinJsonp('getSessions', function(res) {
+    if (res && res.ok && res.sessions && res.sessions.length) {
+      _KIN.sessions = res.sessions;
       localStorage.setItem('kin_sessions', JSON.stringify(_KIN.sessions));
     }
-    if(cb)cb();
-  }).catch(()=>{ if(cb)cb(); });
-}
-
-function kinAddToken(token){
-  var toks=getTokens();
-  toks.push(token);
-  saveTokens(toks);
-
-  if(!KIN_CONFIG.SCRIPT_URL || !_KIN.online) return;
-
-  _kinFetch(KIN_CONFIG.SCRIPT_URL,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'addToken',token:token})
+    got.sessions = true; check();
   });
 }
 
-/* ================================================================
-   APP LOGIC
-   ================================================================ */
+/* Write helpers — optimistic local update + cloud POST */
+function kinAddToken(token, cb) {
+  var toks = getTokens(); toks.push(token); saveTokens(toks);
+  if (cb) cb();
+  _kinPost({ action:'addToken', token:token });
+}
+function kinUpdateToken(id, fields, cb) {
+  var toks = getTokens();
+  for (var i = 0; i < toks.length; i++) {
+    if (String(toks[i].id) === String(id)) {
+      Object.keys(fields).forEach(function(k){ toks[i][k] = fields[k]; });
+      break;
+    }
+  }
+  saveTokens(toks);
+  if (cb) cb();
+  _kinPost({ action:'updateToken', id:id, fields:fields });
+}
+function kinDeleteToken(id, cb) {
+  saveTokens(getTokens().filter(function(t){ return String(t.id) !== String(id); }));
+  if (cb) cb();
+  _kinPost({ action:'deleteToken', id:id });
+}
+function kinBulkDelete(ids, cb) {
+  var s = {}; ids.forEach(function(id){ s[String(id)] = true; });
+  saveTokens(getTokens().filter(function(t){ return !s[String(t.id)]; }));
+  if (cb) cb();
+  _kinPost({ action:'bulkDeleteTokens', ids:ids });
+}
+function kinSaveSessions(sessions, cb) {
+  saveSessLocal(sessions);
+  if (cb) cb();
+  _kinPost({ action:'saveSessions', sessions:sessions });
+}
+/* ── END KIN SYNC v4 ─────────────────────────────────────── */
 
-(function(){
 
+
+(function() {
+
+/* =============================================
+   CONFIG & DATA
+   ============================================= */
+var TKEY = 'kin_tokens';
+var SKEY = 'kin_sessions';
 var MAX_AHEAD = 30;
 var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-function fmtDate(d){
-  return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+var DEFAULT_SESSIONS = [
+  {id:'AM1', name:'Morning Session 1', time:'9:00 AM - 11:00 AM', icon:'bi-brightness-high-fill', cap:30, avg:4},
+  {id:'AM2', name:'Morning Session 2', time:'11:00 AM - 1:00 PM',  icon:'bi-sun-fill',             cap:25, avg:5},
+  {id:'PM1', name:'Afternoon Session', time:'2:00 PM - 4:00 PM',   icon:'bi-cloud-sun-fill',       cap:25, avg:5},
+  {id:'PM2', name:'Evening Session',   time:'4:00 PM - 6:00 PM',   icon:'bi-moon-stars-fill',      cap:20, avg:6}
+];
+
+function getSessions() {
+  try { return JSON.parse(localStorage.getItem(SKEY)) || DEFAULT_SESSIONS; }
+  catch(e) { return DEFAULT_SESSIONS; }
+}
+function getTokens() {
+  try { return JSON.parse(localStorage.getItem(TKEY)) || []; }
+  catch(e) { return []; }
+}
+function saveTokens(arr) { localStorage.setItem(TKEY, JSON.stringify(arr)); }
+
+function fmtDate(d) {
+  return d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+}
+function todayStr() { return fmtDate(new Date()); }
+
+function parseTime(str) {
+  var m = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return [9, 0];
+  var h = parseInt(m[1]), mn = parseInt(m[2]);
+  if (m[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+  if (m[3].toUpperCase() === 'AM' && h === 12) h = 0;
+  return [h, mn];
 }
 
-function todayStr(){
-  return fmtDate(new Date());
+function countBooked(sid, dateStr) {
+  return getTokens().filter(function(t) { return t.sessionId === sid && t.date === dateStr; }).length;
+}
+function nextTokNum(sid, dateStr) {
+  var nums = getTokens()
+    .filter(function(t) { return t.sessionId === sid && t.date === dateStr; })
+    .map(function(t) { return parseInt(t.tokenNum.replace(/\D/g,'')) || 0; });
+  return (nums.length ? Math.max.apply(null, nums) : 0) + 1;
+}
+function hasOpenSlot(dateStr) {
+  return getSessions().some(function(s) { return countBooked(s.id, dateStr) < s.cap; });
+}
+function isDayAvailable(dt) {
+  if (dt.getDay() === 0) return false;
+  var today = new Date(); today.setHours(0,0,0,0);
+  if (dt < today) return false;
+  var limit = new Date(today); limit.setDate(limit.getDate() + MAX_AHEAD);
+  return dt <= limit;
 }
 
-function parseTime(str){
-  var m=str.match(/(\d+):(\d+)\s*(AM|PM)/i);
-  if(!m) return [9,0];
-  var h=parseInt(m[1]), mn=parseInt(m[2]);
-  if(m[3].toUpperCase()==='PM' && h!==12) h+=12;
-  if(m[3].toUpperCase()==='AM' && h===12) h=0;
-  return [h,mn];
-}
-
-function countBooked(sid,dateStr){
-  return getTokens().filter(t=>t.sessionId===sid && t.date===dateStr).length;
-}
-
-function nextTokNum(sid,dateStr){
-  var nums=getTokens()
-    .filter(t=>t.sessionId===sid && t.date===dateStr)
-    .map(t=>parseInt(t.tokenNum.replace(/\D/g,''))||0);
-  return (nums.length?Math.max(...nums):0)+1;
-}
-
-function hasOpenSlot(dateStr){
-  return getSessions().some(s=>countBooked(s.id,dateStr)<s.cap);
-}
-
-function isDayAvailable(dt){
-  if(dt.getDay()===0) return false;
-  var today=new Date(); today.setHours(0,0,0,0);
-  if(dt<today) return false;
-  var limit=new Date(today); limit.setDate(limit.getDate()+MAX_AHEAD);
-  return dt<=limit;
-}
-
-/* =========================
+/* =============================================
    STATE
-   ========================= */
+   ============================================= */
+var calYear  = new Date().getFullYear();
+var calMonth = new Date().getMonth();
+var selDate     = null;
+var selSession  = null;
+var selPriority = 'None';
 
-var calYear=new Date().getFullYear();
-var calMonth=new Date().getMonth();
-var selDate=null;
-var selSession=null;
-var selPriority='None';
+/* =============================================
+   CALENDAR
+   ============================================= */
+function buildCalendar() {
+  var now = new Date(); now.setHours(0,0,0,0);
+  var isCurMonth = (calYear === now.getFullYear() && calMonth === now.getMonth());
 
-/* =========================
-   CONFIRM TOKEN
-   ========================= */
+  document.getElementById('calTitle').textContent = MONTH_NAMES[calMonth] + ' ' + calYear;
+  document.getElementById('prevBtn').disabled = isCurMonth;
 
-function doConfirm(){
+  var firstDow   = new Date(calYear, calMonth, 1).getDay();
+  var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  var daysInPrev  = new Date(calYear, calMonth, 0).getDate();
 
-  var s=selSession;
-  var dateStr=fmtDate(selDate);
-  var booked=countBooked(s.id,dateStr);
-  var tokNum=nextTokNum(s.id,dateStr);
-  var waitMin=booked*s.avg;
+  var grid = document.getElementById('calDates');
+  // Remove all existing children
+  while (grid.firstChild) { grid.removeChild(grid.firstChild); }
 
-  var tp=parseTime(s.time.split('-')[0].trim());
-  var slotDt=new Date(selDate.getFullYear(),selDate.getMonth(),selDate.getDate(),tp[0],tp[1]+waitMin);
-  var estTime=slotDt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  // Previous month padding
+  for (var p = 0; p < firstDow; p++) {
+    var pad = document.createElement('div');
+    pad.className = 'cd other';
+    pad.textContent = String(daysInPrev - firstDow + 1 + p);
+    grid.appendChild(pad);
+  }
 
-  var token={
-    id:Date.now(),
-    tokenNum:'T-'+String(tokNum).padStart(3,'0'),
-    sessionId:s.id,
-    sessionName:s.name,
-    sessionTime:s.time,
-    date:dateStr,
-    name:document.getElementById('pName').value.trim(),
-    phone:document.getElementById('pPhone').value.trim(),
-    age:document.getElementById('pAge').value,
-    gender:document.getElementById('pGender').value,
-    condition:document.getElementById('pCond').value,
-    visitType:document.getElementById('pType').value,
-    priority:selPriority,
-    notes:document.getElementById('pNotes').value.trim(),
-    estimatedTime:estTime,
-    status:'waiting',
-    bookedAt:new Date().toISOString()
+  // Current month days
+  for (var d = 1; d <= daysInMonth; d++) {
+    var dt      = new Date(calYear, calMonth, d);
+    var dtStr   = fmtDate(dt);
+    var avail   = isDayAvailable(dt);
+    var isTod   = (dtStr === todayStr());
+    var isSel   = selDate !== null && fmtDate(selDate) === dtStr;
+    var isSun   = (dt.getDay() === 0);
+    var hasSlt  = avail && hasOpenSlot(dtStr);
+
+    var cls = 'cd';
+    if (!avail)  cls += ' unavail';
+    if (isSun)   cls += ' sun-day';
+    if (isTod)   cls += ' today';
+    if (hasSlt)  cls += ' has-slot';
+    if (isSel)   cls += ' chosen';
+
+    var cell;
+    if (avail) {
+      cell = document.createElement('button');
+      cell.type = 'button';
+      // Closure to capture the correct date values
+      cell.addEventListener('click', (function(y, mo, dy) {
+        return function() {
+          selDate    = new Date(y, mo, dy);
+          selSession = null;
+          buildCalendar();
+          renderSlots();
+        };
+      })(calYear, calMonth, d));
+    } else {
+      cell = document.createElement('div');
+    }
+
+    cell.className   = cls;
+    cell.textContent = String(d);
+    grid.appendChild(cell);
+  }
+
+  // Next month padding
+  var filled = firstDow + daysInMonth;
+  var rem    = filled % 7;
+  if (rem !== 0) {
+    for (var e = 1; e <= 7 - rem; e++) {
+      var ep = document.createElement('div');
+      ep.className   = 'cd other';
+      ep.textContent = String(e);
+      grid.appendChild(ep);
+    }
+  }
+}
+
+/* =============================================
+   SLOT PANEL
+   ============================================= */
+function renderSlots() {
+  var panel = document.getElementById('slotPanel');
+  while (panel.firstChild) { panel.removeChild(panel.firstChild); }
+
+  if (!selDate) {
+    var prompt = document.createElement('div');
+    prompt.className = 'slot-prompt';
+    prompt.innerHTML = '<div class="ico"><i class="bi bi-calendar-event"></i></div>' +
+      '<strong>Select a date to see sessions</strong>' +
+      '<p>Tap any date on the calendar.<br>Gold dot means open slots.</p>';
+    panel.appendChild(prompt);
+    return;
+  }
+
+  var dateStr = fmtDate(selDate);
+  var isToday = (dateStr === todayStr());
+  var nowH    = new Date().getHours();
+  var sessions = getSessions();
+
+  // Filter out past sessions for today
+  var available = sessions.filter(function(s) {
+    if (isToday) {
+      var sh = parseTime(s.time.split('-')[0].trim())[0];
+      if (nowH >= sh) return false;
+    }
+    return true;
+  });
+
+  // Date bar
+  var bar = document.createElement('div');
+  bar.className = 'date-bar';
+  var iconEl = document.createElement('i');
+  iconEl.className = 'bi bi-calendar-check-fill';
+  var textDiv = document.createElement('div');
+  var nameDiv = document.createElement('div');
+  nameDiv.className = 'dname';
+  nameDiv.textContent = selDate.toLocaleDateString('en-IN', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  var subDiv = document.createElement('div');
+  subDiv.className = 'dsub';
+  subDiv.textContent = (isToday ? 'Today - ' : '') + 'Pick a session below';
+  textDiv.appendChild(nameDiv);
+  textDiv.appendChild(subDiv);
+  bar.appendChild(iconEl);
+  bar.appendChild(textDiv);
+  panel.appendChild(bar);
+
+  if (available.length === 0) {
+    var noSess = document.createElement('div');
+    noSess.className = 'no-slots';
+    noSess.innerHTML = '<i class="bi bi-clock-history"></i><p>All sessions today have ended.<br>Please select a future date.</p>';
+    panel.appendChild(noSess);
+    return;
+  }
+
+  var list = document.createElement('div');
+  list.className = 'slots-list';
+
+  available.forEach(function(s) {
+    var booked  = countBooked(s.id, dateStr);
+    var rem     = s.cap - booked;
+    var isFull  = rem <= 0;
+    var isSel   = selSession !== null && selSession.id === s.id;
+
+    var badgeCls = isFull ? 'b-full' : (rem <= 5 ? 'b-low' : 'b-ok');
+    var badgeTxt = isFull ? 'Full'   : (rem <= 5 ? rem + ' left' : 'Available');
+    var metaTxt  = isFull ? 'No spots' : ('~' + s.avg + ' min/patient');
+
+    var card = document.createElement('div');
+    card.className = 'slot-card' + (isFull ? ' is-full' : '') + (isSel ? ' chosen' : '');
+
+    // Icon
+    var iconWrap = document.createElement('div');
+    iconWrap.className = 'slot-icon';
+    var sIcon = document.createElement('i');
+    sIcon.className = 'bi ' + (s.icon || 'bi-clock-fill');
+    iconWrap.appendChild(sIcon);
+
+    // Info
+    var info = document.createElement('div');
+    info.className = 'slot-info';
+    var sName = document.createElement('div');
+    sName.className = 'slot-name';
+    sName.textContent = s.name;
+    var sTime = document.createElement('div');
+    sTime.className = 'slot-time';
+    var tIcon = document.createElement('i');
+    tIcon.className = 'bi bi-clock';
+    tIcon.style.marginRight = '3px';
+    sTime.appendChild(tIcon);
+    sTime.appendChild(document.createTextNode(s.time));
+    info.appendChild(sName);
+    info.appendChild(sTime);
+
+    // Right
+    var right = document.createElement('div');
+    right.className = 'slot-right';
+    var badge = document.createElement('span');
+    badge.className = 'slot-badge ' + badgeCls;
+    badge.textContent = badgeTxt;
+    var meta = document.createElement('div');
+    meta.className = 'slot-meta';
+    meta.textContent = metaTxt;
+    right.appendChild(badge);
+    right.appendChild(meta);
+
+    // Check icon
+    var chk = document.createElement('i');
+    chk.className = 'bi bi-check-circle-fill slot-check';
+
+    card.appendChild(iconWrap);
+    card.appendChild(info);
+    card.appendChild(right);
+    card.appendChild(chk);
+
+    if (!isFull) {
+      card.addEventListener('click', (function(session) {
+        return function() {
+          selSession = session;
+          renderSlots();
+        };
+      })(s));
+    }
+
+    list.appendChild(card);
+  });
+
+  panel.appendChild(list);
+}
+
+/* =============================================
+   STEP NAVIGATION
+   ============================================= */
+function showStep(n) {
+  ['step-1','step-2','step-3','step-success'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  var target = document.getElementById('step-' + n);
+  if (target) target.style.display = 'block';
+
+  for (var i = 1; i <= 3; i++) {
+    var si = document.getElementById('si' + i);
+    si.classList.remove('active', 'done');
+    if (i < n)  si.classList.add('done');
+    if (i === n) si.classList.add('active');
+  }
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function goToStep2() {
+  if (!selDate)    { alert('Please select a date on the calendar.'); return; }
+  if (!selSession) { alert('Please select a session slot.'); return; }
+  showStep(2);
+}
+
+function goToStep3() {
+  var name  = document.getElementById('pName').value.trim();
+  var phone = document.getElementById('pPhone').value.trim();
+  var cond  = document.getElementById('pCond').value;
+  if (!name || !phone || !cond) { alert('Please fill in Name, Phone and Condition.'); return; }
+
+  var s       = selSession;
+  var dateStr = fmtDate(selDate);
+  var booked  = countBooked(s.id, dateStr);
+  var tokNum  = nextTokNum(s.id, dateStr);
+  var waitMin = booked * s.avg;
+  var tp      = parseTime(s.time.split('-')[0].trim());
+  var slotDt  = new Date(selDate.getFullYear(), selDate.getMonth(), selDate.getDate(), tp[0], tp[1] + waitMin);
+  var estTime = slotDt.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+  var age     = document.getElementById('pAge').value;
+  var gen     = document.getElementById('pGender').value;
+
+  document.getElementById('rv-name').textContent  = name;
+  document.getElementById('rv-phone').textContent = phone;
+  var ageParts = [];
+  if (age) ageParts.push(age + ' yrs');
+  if (gen) ageParts.push(gen);
+  document.getElementById('rv-age').textContent   = ageParts.length ? ageParts.join(' / ') : '--';
+  document.getElementById('rv-date').textContent  = selDate.toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'long', year:'numeric'});
+  document.getElementById('rv-sess').textContent  = s.name + ' (' + s.time + ')';
+  document.getElementById('rv-cond').textContent  = cond;
+  document.getElementById('rv-type').textContent  = document.getElementById('pType').value;
+  document.getElementById('rv-pri').textContent   = selPriority;
+  document.getElementById('rv-time').textContent  = estTime;
+  document.getElementById('rv-tok').textContent   = 'T-' + String(tokNum).padStart(3, '0');
+
+  showStep(3);
+}
+
+function doConfirm() {
+  var s       = selSession;
+  var dateStr = fmtDate(selDate);
+  var booked  = countBooked(s.id, dateStr);
+  var tokNum  = nextTokNum(s.id, dateStr);
+  var waitMin = booked * s.avg;
+  var tp      = parseTime(s.time.split('-')[0].trim());
+  var slotDt  = new Date(selDate.getFullYear(), selDate.getMonth(), selDate.getDate(), tp[0], tp[1] + waitMin);
+  var estTime = slotDt.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+
+  var token = {
+    id:            Date.now(),
+    tokenNum:      'T-' + String(tokNum).padStart(3, '0'),
+    sessionId:     s.id,
+    sessionName:   s.name,
+    sessionTime:   s.time,
+    date:          dateStr,
+    name:          document.getElementById('pName').value.trim(),
+    phone:         document.getElementById('pPhone').value.trim(),
+    age:           document.getElementById('pAge').value,
+    gender:        document.getElementById('pGender').value,
+    condition:     document.getElementById('pCond').value,
+    visitType:     document.getElementById('pType').value,
+    priority:      selPriority,
+    notes:         document.getElementById('pNotes').value.trim(),
+    estimatedTime: estTime,
+    status:        'waiting',
+    bookedAt:      new Date().toISOString()
   };
 
   kinAddToken(token);
+
+  document.getElementById('sc-tok').textContent  = token.tokenNum;
+  document.getElementById('sc-name').textContent = token.name;
+  document.getElementById('sc-date').textContent = selDate.toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'long', year:'numeric'});
+  document.getElementById('sc-sess').textContent = token.sessionName;
+  document.getElementById('sc-time').textContent = token.estimatedTime;
+  document.getElementById('sc-wait').textContent = waitMin > 0 ? ('~' + waitMin + ' minutes') : 'You are first!';
+
+  document.getElementById('sl-tok').textContent  = token.tokenNum;
+  document.getElementById('sl-name').textContent = token.name;
+  document.getElementById('sl-date').textContent = token.date;
+  document.getElementById('sl-sess').textContent = token.sessionName;
+  document.getElementById('sl-time').textContent = token.estimatedTime;
+  document.getElementById('sl-cond').textContent = token.condition;
+
+  ['step-1','step-2','step-3'].forEach(function(id) { document.getElementById(id).style.display = 'none'; });
+  document.getElementById('step-success').style.display = 'block';
+  for (var i = 1; i <= 3; i++) { var si = document.getElementById('si' + i); si.classList.remove('active'); si.classList.add('done'); }
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  updateBanner();
 }
 
-/* =========================
+function doReset() {
+  selDate     = null;
+  selSession  = null;
+  selPriority = 'None';
+  document.querySelectorAll('.pri-btn').forEach(function(b) { b.classList.remove('chosen'); });
+  ['pName','pPhone','pAge','pNotes'].forEach(function(id) { document.getElementById(id).value = ''; });
+  document.getElementById('pGender').value = '';
+  document.getElementById('pCond').value   = '';
+  buildCalendar();
+  renderSlots();
+  showStep(1);
+}
+
+/* =============================================
+   PRIORITY BUTTONS
+   ============================================= */
+document.getElementById('priGrid').addEventListener('click', function(e) {
+  var btn = e.target.closest('.pri-btn');
+  if (!btn) return;
+  document.querySelectorAll('.pri-btn').forEach(function(b) { b.classList.remove('chosen'); });
+  btn.classList.add('chosen');
+  selPriority = btn.getAttribute('data-val');
+});
+
+/* =============================================
+   TRACK TOKEN
+   ============================================= */
+function doTrack() {
+  var q   = document.getElementById('trackIn').value.trim().toUpperCase();
+  var out = document.getElementById('trackOut');
+  if (!q) { alert('Enter a token number.'); return; }
+  var tokens = getTokens();
+  var token  = null;
+  for (var i = 0; i < tokens.length; i++) {
+    if (tokens[i].tokenNum.toUpperCase() === q) { token = tokens[i]; break; }
+  }
+  out.style.display = 'block';
+  if (!token) {
+    out.textContent = 'Token ' + q + ' not found.';
+    return;
+  }
+  var cols = {waiting:'#d97706', serving:'#16a34a', done:'#6b7280', skipped:'#dc2626'};
+  var col  = cols[token.status] || '#888';
+  var sess = null;
+  var ss   = getSessions();
+  for (var j = 0; j < ss.length; j++) { if (ss[j].id === token.sessionId) { sess = ss[j]; break; } }
+  if (!sess) sess = {avg: 5};
+  var wlist = getTokens().filter(function(t) { return t.date === token.date && t.sessionId === token.sessionId && t.status === 'waiting'; });
+  var pos   = -1;
+  for (var k = 0; k < wlist.length; k++) { if (wlist[k].id === token.id) { pos = k + 1; break; } }
+
+  out.innerHTML = '<strong>' + token.tokenNum + '</strong> &mdash; ' + token.name +
+    ' &mdash; Status: <span style="color:' + col + ';font-weight:700;text-transform:capitalize">' + token.status + '</span>' +
+    (token.status === 'waiting' && pos > 0 ? ' &mdash; Queue #' + pos + ', ~' + (pos * sess.avg) + ' min wait' : '') +
+    '<br><small style="color:var(--muted)">' + token.date + ' &middot; ' + token.sessionName + '</small>';
+}
+
+/* =============================================
+   LIVE BANNER
+   ============================================= */
+function updateBanner() {
+  var toks    = getTokens().filter(function(t) { return t.date === todayStr(); });
+  var serving = null;
+  var waiting = [];
+  for (var i = 0; i < toks.length; i++) {
+    if (toks[i].status === 'serving') serving = toks[i];
+    if (toks[i].status === 'waiting') waiting.push(toks[i]);
+  }
+  var next = waiting.length > 0 ? waiting[0] : null;
+  var sess = selSession || getSessions()[0];
+
+  document.getElementById('b-cur').textContent  = serving ? serving.tokenNum : '--';
+  document.getElementById('b-name').textContent = serving ? serving.name.split(' ')[0] : '--';
+  document.getElementById('b-wait').textContent = waiting.length;
+  document.getElementById('b-next').textContent = next ? next.tokenNum : '--';
+  document.getElementById('b-est').textContent  = waiting.length ? ('~' + (waiting.length * sess.avg) + ' min') : '0 min';
+}
+
+/* =============================================
+   WIRE UP BUTTONS
+   ============================================= */
+document.getElementById('prevBtn').addEventListener('click', function() {
+  calMonth--;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  buildCalendar();
+});
+document.getElementById('nextBtn').addEventListener('click', function() {
+  calMonth++;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  buildCalendar();
+});
+document.getElementById('trackBtn').addEventListener('click', doTrack);
+document.getElementById('step1Next').addEventListener('click', goToStep2);
+document.getElementById('step2Back').addEventListener('click', function() { showStep(1); });
+document.getElementById('step2Next').addEventListener('click', goToStep3);
+document.getElementById('step3Back').addEventListener('click', function() { showStep(2); });
+document.getElementById('step3Confirm').addEventListener('click', doConfirm);
+document.getElementById('printBtn').addEventListener('click', function() { window.print(); });
+document.getElementById('resetBtn').addEventListener('click', doReset);
+
+/* =============================================
    INIT
-   ========================= */
+   ============================================= */
+kinPull(function(){ buildCalendar(); renderSlots(); updateBanner(); });
+setInterval(function(){ kinPull(function(){ buildCalendar(); renderSlots(); updateBanner(); }); }, 5000);
+setInterval(updateBanner, 10000);
 
-kinPull(()=>{});
-setInterval(()=>{ kinPull(()=>{}); }, KIN_CONFIG.SYNC_INTERVAL);
-
-})();
+})(); // end IIFE
 </script>
-
 </body>
 </html>
