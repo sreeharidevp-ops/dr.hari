@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KIN Cloud Sync Setup Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+<style>
+:root{--green:#1a6b4a;--gd:#0e4730;--gl:#2a8c62;--gold:#c8963e;--gold-l:#f5d08a;--cream:#faf7f2;--dark:#1a1a1a;--text:#3a3a3a;--muted:#7a7a7a;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);}
+h1,h2,h3{font-family:'Playfair Display',serif;}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--gd),var(--green));padding:2.5rem 2rem;text-align:center;position:relative;overflow:hidden;}
+.hdr::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+.hdr-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(200,150,62,.25);border:1px solid rgba(200,150,62,.4);border-radius:50px;padding:.3rem 1rem;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-l);margin-bottom:1rem;}
+.hdr h1{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:.5rem;}
+.hdr p{color:rgba(255,255,255,.65);font-size:.95rem;max-width:500px;margin:0 auto;}
+
+/* LAYOUT */
+.wrap{max-width:860px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+
+/* INTRO CARDS */
+.intro-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:2.5rem;}
+@media(max-width:620px){.intro-grid{grid-template-columns:1fr;}}
+.intro-card{background:#fff;border:1px solid rgba(26,107,74,.1);border-radius:14px;padding:1.2rem;text-align:center;box-shadow:0 2px 12px rgba(26,107,74,.05);}
+.ic-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem;font-size:1.3rem;}
+.ic-icon.green{background:rgba(26,107,74,.1);color:var(--green);}
+.ic-icon.gold{background:rgba(200,150,62,.1);color:var(--gold);}
+.ic-icon.blue{background:rgba(37,99,235,.08);color:#2563eb;}
+.ic-title{font-size:.85rem;font-weight:700;color:var(--dark);margin-bottom:.3rem;}
+.ic-desc{font-size:.74rem;color:var(--muted);line-height:1.5;}
+
+/* STEPS */
+.step-card{background:#fff;border:1px solid rgba(26,107,74,.12);border-radius:18px;padding:1.8rem;margin-bottom:1.2rem;box-shadow:0 2px 16px rgba(26,107,74,.05);position:relative;overflow:hidden;}
+.step-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--green);border-radius:4px 0 0 4px;}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;font-weight:700;font-size:.85rem;margin-bottom:.9rem;font-family:'DM Mono',monospace;}
+.step-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--dark);margin-bottom:.6rem;}
+.step-body{font-size:.875rem;color:var(--text);line-height:1.7;}
+.step-body ol,.step-body ul{padding-left:1.2rem;margin:.5rem 0;}
+.step-body li{margin-bottom:.35rem;}
+.step-body strong{color:var(--dark);}
+
+/* CODE BLOCK */
+.code-block{
+  background:#0f1923;border-radius:10px;padding:1rem 1.2rem;margin:.8rem 0;
+  font-family:'DM Mono',monospace;font-size:.8rem;color:#a8b4c0;
+  overflow-x:auto;position:relative;
+  border:1px solid rgba(255,255,255,.06);
+}
+.code-block .kw{color:#7dd3fc;}
+.code-block .str{color:#86efac;}
+.code-block .cmt{color:#64748b;font-style:italic;}
+.code-line{white-space:pre;}
+.copy-btn{
+  position:absolute;top:.6rem;right:.7rem;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+  color:#94a3b8;border-radius:7px;padding:.25rem .65rem;font-size:.68rem;
+  cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:all .2s;
+}
+.copy-btn:hover{background:rgba(255,255,255,.16);color:#fff;}
+.copy-btn.copied{background:rgba(34,197,94,.15);color:#4ade80;border-color:rgba(74,222,128,.3);}
+
+/* HIGHLIGHT BOX */
+.info-box{background:rgba(26,107,74,.06);border:1.5px solid rgba(26,107,74,.18);border-radius:12px;padding:1rem 1.2rem;margin:.8rem 0;font-size:.84rem;display:flex;gap:.8rem;align-items:flex-start;}
+.info-box i{color:var(--green);font-size:1.1rem;flex-shrink:0;margin-top:.1rem;}
+.warn-box{background:rgba(245,158,11,.06);border:1.5px solid rgba(245,158,11,.2);border-radius:12px;padding:1rem 1.2rem;margin:.8rem 0;font-size:.84rem;display:flex;gap:.8rem;align-items:flex-start;}
+.warn-box i{color:#d97706;font-size:1.1rem;flex-shrink:0;margin-top:.1rem;}
+
+/* SCREENSHOT PLACEHOLDER */
+.screen-placeholder{background:linear-gradient(135deg,#f8fafc,#f1f5f9);border:2px dashed #e2e8f0;border-radius:12px;padding:2rem;text-align:center;color:#94a3b8;margin:.8rem 0;font-size:.82rem;}
+.screen-placeholder i{display:block;font-size:2rem;margin-bottom:.5rem;opacity:.4;}
+
+/* DONE BANNER */
+.done-banner{background:linear-gradient(135deg,var(--gd),var(--green));border-radius:18px;padding:2rem;text-align:center;color:#fff;margin-top:2rem;}
+.done-banner h2{color:#fff;margin-bottom:.5rem;}
+.done-banner p{color:rgba(255,255,255,.7);font-size:.9rem;}
+.done-banner .tok{font-family:'Playfair Display',serif;font-size:3rem;color:var(--gold-l);line-height:1;margin:.5rem 0;}
+
+/* URL INPUT */
+.url-input-row{display:flex;gap:.6rem;margin:.8rem 0;flex-wrap:wrap;}
+.url-input-row input{flex:1;min-width:200px;border:1.5px solid rgba(26,107,74,.25);border-radius:9px;padding:.55rem .9rem;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--text);background:#fff;}
+.url-input-row input:focus{outline:none;border-color:var(--green);}
+.url-input-row button{background:var(--green);color:#fff;border:none;border-radius:9px;padding:.55rem 1.2rem;font-weight:700;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.url-input-row button:hover{background:var(--gl);}
+
+.section-label{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.8rem;margin-top:2rem;display:flex;align-items:center;gap:.5rem;}
+.section-label::after{content:'';flex:1;height:1px;background:#ebebeb;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-badge"><i class="bi bi-cloud-arrow-up"></i>One-Time Setup</div>
+  <h1>KIN Cloud Sync Setup</h1>
+  <p>Connect your queue system to Google Sheets — free, real-time sync across every device.</p>
+</div>
+
+<div class="wrap">
+
+  <!-- INTRO -->
+  <div class="intro-grid" style="margin-top:2rem;">
+    <div class="intro-card">
+      <div class="ic-icon green"><i class="bi bi-google"></i></div>
+      <div class="ic-title">Google Sheets</div>
+      <div class="ic-desc">All data lives in your own Google Sheet. You own it completely.</div>
+    </div>
+    <div class="intro-card">
+      <div class="ic-icon gold"><i class="bi bi-wifi"></i></div>
+      <div class="ic-title">All Devices</div>
+      <div class="ic-desc">Admin, Display, and Patient pages stay in sync — any phone, tablet, PC.</div>
+    </div>
+    <div class="intro-card">
+      <div class="ic-icon blue"><i class="bi bi-shield-check"></i></div>
+      <div class="ic-title">Completely Free</div>
+      <div class="ic-desc">Uses Google Apps Script — no monthly fees, no third-party servers.</div>
+    </div>
+  </div>
+
+  <div class="section-label"><i class="bi bi-list-check"></i>Setup Steps</div>
+
+  <!-- STEP 1 -->
+  <div class="step-card">
+    <div class="step-num">1</div>
+    <div class="step-title">Open Google Apps Script</div>
+    <div class="step-body">
+      <ol>
+        <li>Go to <strong><a href="https://script.google.com" target="_blank">script.google.com</a></strong></li>
+        <li>Click <strong>"New Project"</strong> (top left)</li>
+        <li>You'll see a code editor with a default <code>myFunction()</code> — delete all of it</li>
+      </ol>
+      <div class="info-box"><i class="bi bi-info-circle-fill"></i><div>Make sure you're signed in with the Google account you want to own the data. The spreadsheet will be created automatically in that account's Google Drive.</div></div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-card">
+    <div class="step-num">2</div>
+    <div class="step-title">Paste the Backend Code</div>
+    <div class="step-body">
+      <p>Open the file <strong>Code.gs</strong> (included in your download). Copy its entire contents and paste it into the Apps Script editor.</p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this,'// KIN Queue System — Google Apps Script Backend\n// Open Code.gs and copy its full contents here')">Copy hint</button>
+        <div class="code-line"><span class="cmt">// The file is called Code.gs in your download zip</span></div>
+        <div class="code-line"><span class="cmt">// Select All → Copy → Paste into Apps Script editor</span></div>
+        <div class="code-line"><span class="kw">function</span> <span class="str">doGet</span>(e) { ... }   <span class="cmt">// you'll see this</span></div>
+        <div class="code-line"><span class="kw">function</span> <span class="str">doPost</span>(e) { ... }  <span class="cmt">// and this</span></div>
+      </div>
+      <p>Click <strong>Save</strong> (Ctrl+S or ⌘+S). Give the project a name like <em>"KIN Queue Backend"</em>.</p>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-card">
+    <div class="step-num">3</div>
+    <div class="step-title">Deploy as a Web App</div>
+    <div class="step-body">
+      <ol>
+        <li>Click <strong>Deploy</strong> (top right) → <strong>New Deployment</strong></li>
+        <li>Click the ⚙️ gear icon next to "Type" → select <strong>Web App</strong></li>
+        <li>Set <strong>Execute as:</strong> <code>Me</code></li>
+        <li>Set <strong>Who has access:</strong> <code>Anyone</code></li>
+        <li>Click <strong>Deploy</strong></li>
+        <li>Google will ask you to <strong>Authorize</strong> — click through the permissions (this is safe, it's your own script)</li>
+        <li>Copy the <strong>Web App URL</strong> that appears — it looks like:<br>
+          <code style="font-size:.78rem;word-break:break-all;">https://script.google.com/macros/s/AKfyc.../exec</code>
+        </li>
+      </ol>
+      <div class="warn-box"><i class="bi bi-exclamation-triangle-fill"></i><div><strong>Important:</strong> When Google shows "This app isn't verified" — click <strong>Advanced</strong> → <strong>Go to KIN Queue Backend (unsafe)</strong>. This is your own script, it is safe.</div></div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step-card">
+    <div class="step-num">4</div>
+    <div class="step-title">Paste the URL into Your HTML Files</div>
+    <div class="step-body">
+      <p>In each of the 3 HTML files (<strong>token-patient.html</strong>, <strong>token-admin.html</strong>, <strong>token-display.html</strong>), find this line near the top of the <code>&lt;script&gt;</code> section:</p>
+
+      <div class="code-block" id="url-code-block">
+        <button class="copy-btn" onclick="copyCode(this, &quot;SCRIPT_URL: '',&quot;)">Copy</button>
+        <div class="code-line"><span class="kw">var</span> KIN_CONFIG = {</div>
+        <div class="code-line">  <span class="str">SCRIPT_URL</span>: <span class="str">''</span>,  <span class="cmt">// ← PASTE YOUR URL BETWEEN THE QUOTES</span></div>
+        <div class="code-line">  SYNC_INTERVAL: <span class="str">8000</span>,</div>
+        <div class="code-line">};</div>
+      </div>
+
+      <p>Replace the empty quotes with your Web App URL:</p>
+      <div class="code-block">
+        <div class="code-line"><span class="str">SCRIPT_URL</span>: <span class="str">'https://script.google.com/macros/s/YOUR_ID/exec'</span>,</div>
+      </div>
+
+      <div class="info-box"><i class="bi bi-lightbulb-fill"></i><div>Use the helper below — paste your URL once and it will show you the exact replacement text for all 3 files.</div></div>
+
+      <!-- URL helper -->
+      <div style="background:var(--cream);border-radius:12px;padding:1.2rem;margin:.8rem 0;border:1px solid rgba(26,107,74,.12);">
+        <div style="font-size:.78rem;font-weight:700;margin-bottom:.6rem;color:var(--dark);">URL Replacer Helper</div>
+        <div class="url-input-row">
+          <input type="text" id="url-inp" placeholder="Paste your Apps Script URL here…" oninput="updateHelper()"/>
+          <button onclick="copyHelper()"><i class="bi bi-clipboard"></i> Copy Line</button>
+        </div>
+        <div class="code-block" style="margin:0;" id="helper-out">
+          <div class="code-line" style="color:#64748b;font-style:italic">// Paste your URL above to see the replacement line</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step-card">
+    <div class="step-num">5</div>
+    <div class="step-title">Test It!</div>
+    <div class="step-body">
+      <ol>
+        <li>Open <strong>token-admin.html</strong> on your computer</li>
+        <li>Look for the <strong>green "Synced HH:MM" badge</strong> in the bottom-left corner</li>
+        <li>Open <strong>token-admin.html</strong> on your phone (or another device)</li>
+        <li>Add a patient on one device — it should appear on the other within ~6 seconds</li>
+        <li>Open your <strong>Google Drive</strong> — you'll find a new spreadsheet called <em>"KIN Queue System — Dr. Harikrishna"</em> with all the data</li>
+      </ol>
+      <div class="info-box"><i class="bi bi-check-circle-fill"></i><div>The sync indicator shows: <strong>🟢 Synced HH:MM</strong> = cloud connected · <strong>🟡 Local only</strong> = URL not set · <strong>🔴 Sync error</strong> = check URL or internet.</div></div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step-card">
+    <div class="step-num">6</div>
+    <div class="step-title">Host the HTML Files (Recommended)</div>
+    <div class="step-body">
+      <p>For the sync to work across different networks (not just the same WiFi), the HTML files need to be accessible via a URL — not just opened as local files. The easiest free options:</p>
+      <ul>
+        <li><strong>GitHub Pages</strong> — Free. Upload your 3 HTML files to a GitHub repo, enable Pages. Takes 2 minutes.</li>
+        <li><strong>Netlify Drop</strong> — Drag your folder to <a href="https://app.netlify.com/drop" target="_blank">app.netlify.com/drop</a>. Instant. Free.</li>
+        <li><strong>Google Sites</strong> — Embed each page as an iframe in a Google Site.</li>
+        <li><strong>Local network only</strong> — If all devices (admin PC, display TV, patient kiosk) are on the same clinic WiFi, opening files directly works fine.</li>
+      </ul>
+      <div class="warn-box"><i class="bi bi-exclamation-triangle-fill"></i><div>Browsers block <code>fetch()</code> calls from <code>file://</code> pages opened from a different device. Host your files somewhere for cross-device sync to work over the internet.</div></div>
+    </div>
+  </div>
+
+  <!-- DONE -->
+  <div class="done-banner">
+    <h2>You're All Set! 🎉</h2>
+    <div class="tok">KIN</div>
+    <p>Your queue system now syncs in real time across every device — phone, tablet, TV display, and reception PC — all through your own private Google Sheet.</p>
+    <div style="margin-top:1.2rem;display:flex;justify-content:center;gap:.8rem;flex-wrap:wrap;">
+      <a href="token-admin.html" style="background:var(--gold);color:#fff;text-decoration:none;padding:.65rem 1.5rem;border-radius:50px;font-weight:700;font-size:.88rem;display:inline-flex;align-items:center;gap:.4rem;"><i class="bi bi-person-gear"></i>Open Admin</a>
+      <a href="token-patient.html" style="background:rgba(255,255,255,.15);color:#fff;text-decoration:none;padding:.65rem 1.5rem;border-radius:50px;font-weight:700;font-size:.88rem;border:1px solid rgba(255,255,255,.3);display:inline-flex;align-items:center;gap:.4rem;"><i class="bi bi-ticket-perforated"></i>Patient Page</a>
+      <a href="token-display.html" style="background:rgba(255,255,255,.15);color:#fff;text-decoration:none;padding:.65rem 1.5rem;border-radius:50px;font-weight:700;font-size:.88rem;border:1px solid rgba(255,255,255,.3);display:inline-flex;align-items:center;gap:.4rem;"><i class="bi bi-display"></i>Queue Display</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function updateHelper(){
+  var url=document.getElementById('url-inp').value.trim();
+  var out=document.getElementById('helper-out');
+  if(!url){out.innerHTML='<div style="color:#64748b;font-style:italic">// Paste your URL above to see the replacement line</div>';return;}
+  out.innerHTML='<div><span style="color:#7dd3fc">SCRIPT_URL</span>: <span style="color:#86efac">\''+url+'\'</span>,   <span style="color:#64748b;font-style:italic">// paste this in all 3 HTML files</span></div>';
+}
+function copyHelper(){
+  var url=document.getElementById('url-inp').value.trim();
+  if(!url){alert('Paste your URL first');return;}
+  var text="SCRIPT_URL: '"+url+"',";
+  navigator.clipboard.writeText(text).then(function(){
+    var btn=event.target.closest('button');
+    btn.innerHTML='<i class="bi bi-check-lg"></i> Copied!';
+    setTimeout(function(){btn.innerHTML='<i class="bi bi-clipboard"></i> Copy Line';},2000);
+  });
+}
+function copyCode(btn,text){
+  navigator.clipboard.writeText(text).then(function(){
+    btn.textContent='Copied!';btn.classList.add('copied');
+    setTimeout(function(){btn.textContent='Copy';btn.classList.remove('copied');},2000);
+  });
+}
+</script>
+</body>
+</html>

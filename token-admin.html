@@ -305,12 +305,168 @@ h1,h2,h3,.serif{font-family:'Playfair Display',serif;}
   .queue-table th:nth-child(4),.queue-table td:nth-child(4),
   .queue-table th:nth-child(5),.queue-table td:nth-child(5){display:none;}
 }
+
+/* ─── VIEW SWITCHER ─── */
+.view-switcher{
+  display:flex;gap:.4rem;background:#fff;border:1.5px solid rgba(26,107,74,.15);
+  border-radius:50px;padding:.25rem;margin-bottom:1.5rem;
+  width:fit-content;box-shadow:0 2px 10px rgba(26,107,74,.06);
+}
+.vs-btn{
+  border:none;background:transparent;border-radius:50px;
+  padding:.4rem 1.1rem;font-size:.8rem;font-weight:600;cursor:pointer;
+  color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .2s;
+  display:inline-flex;align-items:center;gap:.4rem;
+}
+.vs-btn.active{background:var(--green);color:#fff;box-shadow:0 2px 10px rgba(26,107,74,.25);}
+.vs-btn:not(.active):hover{color:var(--green);}
+
+/* ─── CALENDAR VIEW ─── */
+#cal-view{display:none;}
+.cal-view-grid{
+  display:grid;grid-template-columns:340px 1fr;gap:1.5rem;align-items:start;
+}
+@media(max-width:860px){.cal-view-grid{grid-template-columns:1fr;}}
+
+/* Calendar widget */
+.cal-widget{
+  background:#fff;border-radius:18px;border:1px solid rgba(26,107,74,.12);
+  box-shadow:0 4px 24px rgba(26,107,74,.07);overflow:hidden;
+}
+.cal-w-hdr{
+  background:linear-gradient(135deg,var(--gd),var(--green));
+  padding:.9rem 1rem;display:flex;align-items:center;justify-content:space-between;
+}
+.cal-w-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff;}
+.cal-w-nav{
+  background:rgba(255,255,255,.15);border:none;color:#fff;
+  width:30px;height:30px;border-radius:8px;cursor:pointer;
+  font-size:.85rem;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+.cal-w-nav:hover{background:rgba(255,255,255,.28);}
+.cal-dow-row{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  background:rgba(26,107,74,.04);border-bottom:1px solid #f0f0f0;
+}
+.cal-dow-row span{
+  text-align:center;padding:.45rem 0;
+  font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);
+}
+.cal-dow-row .sun-h{color:#ef4444;}
+.cal-dates-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:.6rem;}
+.cday{
+  aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-radius:9px;border:none;background:transparent;
+  font-size:.8rem;font-weight:500;color:var(--text);cursor:pointer;
+  font-family:'DM Sans',sans-serif;position:relative;transition:background .12s,color .12s;
+  width:100%;gap:2px;
+}
+.cday:hover:not([disabled]):not(.other-m){background:rgba(26,107,74,.09);}
+.cday.other-m{color:#d0d0d0;pointer-events:none;}
+.cday.is-sun{color:#f87171;}
+.cday.is-today{color:var(--green);font-weight:700;}
+.cday.is-today::after{
+  content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--green);
+}
+.cday.has-appt .dot-row{display:flex;gap:2px;}
+.dot-row{display:flex;gap:2px;min-height:5px;}
+.appt-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);}
+.appt-dot.d{background:#94a3b8;}
+.cday.selected{background:var(--green)!important;color:#fff!important;font-weight:700;}
+.cday.selected.is-today::after{background:#fff;}
+.cday.selected .appt-dot{background:var(--gold-l);}
+.cday.selected .appt-dot.d{background:rgba(255,255,255,.4);}
+.cal-legend-row{
+  display:flex;gap:.9rem;padding:.5rem .8rem .7rem;
+  border-top:1px solid #f5f5f5;flex-wrap:wrap;
+}
+.leg-i{display:flex;align-items:center;gap:.3rem;font-size:.65rem;color:var(--muted);}
+.leg-dot{width:7px;height:7px;border-radius:50%;}
+
+/* Date detail panel */
+.date-detail{
+  background:#fff;border-radius:18px;border:1px solid rgba(26,107,74,.12);
+  box-shadow:0 4px 24px rgba(26,107,74,.07);overflow:hidden;
+}
+.dd-head{
+  padding:1rem 1.3rem;border-bottom:1px solid rgba(26,107,74,.08);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;
+}
+.dd-date{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--dark);}
+.dd-sub{font-size:.73rem;color:var(--muted);margin-top:2px;}
+.dd-summary{
+  display:flex;gap:1rem;padding:.75rem 1.3rem;
+  border-bottom:1px solid #f5f5f5;background:rgba(26,107,74,.02);
+  flex-wrap:wrap;
+}
+.dd-sum-item{text-align:center;flex:1;min-width:60px;}
+.dd-sum-val{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--dark);}
+.dd-sum-val.g{color:var(--green);}
+.dd-sum-val.a{color:var(--amber);}
+.dd-sum-val.r{color:var(--red);}
+.dd-sum-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-top:2px;}
+.dd-session-block{padding:.9rem 1.3rem;border-bottom:1px solid #f5f5f5;}
+.dd-session-block:last-child{border:none;}
+.dd-sess-title{
+  font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--green);margin-bottom:.7rem;display:flex;align-items:center;gap:.5rem;
+}
+.dd-sess-title::after{content:'';flex:1;height:1px;background:rgba(26,107,74,.1);}
+.dd-tok-row{
+  display:flex;align-items:center;gap:.8rem;padding:.55rem .7rem;
+  border:1px solid #f0f0f0;border-radius:10px;margin-bottom:.45rem;
+  transition:border-color .15s;background:#fff;
+}
+.dd-tok-row:last-child{margin:0;}
+.dd-tok-row:hover{border-color:rgba(26,107,74,.2);background:rgba(26,107,74,.01);}
+.dd-tok-num{
+  font-family:'DM Mono',monospace;font-size:.8rem;font-weight:500;
+  background:rgba(26,107,74,.08);color:var(--green);
+  border-radius:7px;padding:.15rem .5rem;flex-shrink:0;min-width:52px;text-align:center;
+}
+.dd-tok-info{flex:1;min-width:0;}
+.dd-tok-name{font-size:.83rem;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dd-tok-meta{font-size:.67rem;color:var(--muted);margin-top:1px;}
+.dd-tok-right{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+.dd-no-appt{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:3rem 1rem;color:var(--muted);gap:.5rem;text-align:center;
+}
+.dd-no-appt i{font-size:2rem;opacity:.2;}
+.dd-no-appt p{font-size:.85rem;}
+.dd-empty-prompt{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:3.5rem 1rem;color:var(--muted);gap:.6rem;text-align:center;
+}
+.dd-empty-prompt i{font-size:2.5rem;opacity:.15;}
+.dd-empty-prompt p{font-size:.85rem;line-height:1.6;}
+/* Month summary strip */
+.month-strip{
+  background:#fff;border-radius:14px;border:1px solid rgba(26,107,74,.1);
+  padding:1rem 1.3rem;margin-bottom:1.2rem;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.8rem;
+  box-shadow:0 2px 10px rgba(26,107,74,.05);
+}
+.ms-item{text-align:center;}
+.ms-val{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--dark);}
+.ms-lbl{font-size:.63rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+.ms-divider{width:1px;height:36px;background:#ebebeb;}
+
+.kin-status{position:fixed;bottom:1.2rem;left:1.2rem;z-index:9999;padding:.32rem .85rem;border-radius:50px;font-size:.7rem;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,.12);display:flex;align-items:center;gap:.4rem;}
+.kin-status::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;}
+.kin-status-ok{background:#dcfce7;color:#15803d;}
+.kin-status-info{background:#e0f2fe;color:#0369a1;}
+.kin-status-warn{background:#fef3c7;color:#b45309;}
+.kin-status-err{background:#fee2e2;color:#b91c1c;}
 </style>
 </head>
 <body>
 
 <!-- TOAST CONTAINER -->
 <div class="toast-wrap" id="toast-wrap"></div>
+<div id="kin-sync-status" class="kin-status kin-status-info">Connecting…</div>
 
 <!-- MANAGE SESSIONS MODAL -->
 <div class="modal-overlay" id="sess-modal">
@@ -342,6 +498,15 @@ h1,h2,h3,.serif{font-family:'Playfair Display',serif;}
 </nav>
 
 <div class="wrap">
+
+  <!-- VIEW SWITCHER -->
+  <div class="view-switcher">
+    <button class="vs-btn active" id="vs-queue" onclick="switchView('queue')"><i class="bi bi-list-ol"></i>Today's Queue</button>
+    <button class="vs-btn" id="vs-cal" onclick="switchView('cal')"><i class="bi bi-calendar3"></i>Appointments Calendar</button>
+  </div>
+
+  <!-- QUEUE VIEW -->
+  <div id="queue-view">
 
   <!-- STATS BAR -->
   <div class="stats-bar" id="stats-bar">
@@ -458,9 +623,103 @@ h1,h2,h3,.serif{font-family:'Playfair Display',serif;}
     </div>
 
   </div><!-- end body-grid -->
+  </div><!-- end queue-view -->
+
+  <!-- CALENDAR VIEW -->
+  <div id="cal-view" style="display:none">
+    <div class="month-strip">
+      <div class="ms-item"><div class="ms-val" id="ms-total">0</div><div class="ms-lbl">Appointments This Month</div></div>
+      <div class="ms-divider"></div>
+      <div class="ms-item"><div class="ms-val" id="ms-days">0</div><div class="ms-lbl">Days with Patients</div></div>
+      <div class="ms-divider"></div>
+      <div class="ms-item"><div class="ms-val" id="ms-done">0</div><div class="ms-lbl">Completed</div></div>
+      <div class="ms-divider"></div>
+      <div class="ms-item"><div class="ms-val" id="ms-skip">0</div><div class="ms-lbl">Skipped</div></div>
+    </div>
+    <div class="cal-view-grid">
+      <div class="cal-widget">
+        <div class="cal-w-hdr">
+          <button class="cal-w-nav" id="cal-prev" onclick="calNav(-1)"><i class="bi bi-chevron-left"></i></button>
+          <div class="cal-w-title" id="cal-month-title">Month Year</div>
+          <button class="cal-w-nav" id="cal-next" onclick="calNav(1)"><i class="bi bi-chevron-right"></i></button>
+        </div>
+        <div class="cal-dow-row">
+          <span class="sun-h">Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+        <div class="cal-dates-grid" id="cal-dates-grid"></div>
+        <div class="cal-legend-row">
+          <div class="leg-i"><div class="leg-dot" style="background:var(--gold)"></div>Has appointments</div>
+          <div class="leg-i"><div class="leg-dot" style="background:var(--green)"></div>Today</div>
+          <div class="leg-i"><div class="leg-dot" style="background:#94a3b8"></div>Past/completed</div>
+        </div>
+      </div>
+      <div class="date-detail" id="date-detail">
+        <div class="dd-empty-prompt">
+          <i class="bi bi-calendar2-event"></i>
+          <p>Select a date on the calendar<br>to view appointments for that day.</p>
+        </div>
+      </div>
+    </div>
+  </div><!-- end cal-view -->
+
 </div><!-- end wrap -->
 
 <script>
+/* ================================================================
+   KIN CLOUD SYNC — replaces localStorage-only storage
+   ================================================================ */
+var KIN_CONFIG = {
+  SCRIPT_URL: '', // ← PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+  SYNC_INTERVAL: 6000,
+};
+var _KIN={tokens:null,sessions:null,online:false};
+function _kinShowStatus(msg,type){var el=document.getElementById('kin-sync-status');if(!el)return;el.textContent=msg;el.className='kin-status kin-status-'+(type||'info');}
+function _kinFetch(url,opts){return fetch(url,opts).then(function(r){return r.json();}).catch(function(e){return{error:e.toString()};});}
+function getTokens(){if(_KIN.tokens!==null)return _KIN.tokens;try{return JSON.parse(localStorage.getItem('kin_tokens'))||[];}catch(e){return[];}}
+function getSessions(){if(_KIN.sessions!==null)return _KIN.sessions;var D=[{id:'AM1',name:'Morning Session 1',time:'9:00 AM - 11:00 AM',icon:'bi-brightness-high-fill',cap:30,avg:4},{id:'AM2',name:'Morning Session 2',time:'11:00 AM - 1:00 PM',icon:'bi-sun-fill',cap:25,avg:5},{id:'PM1',name:'Afternoon Session',time:'2:00 PM - 4:00 PM',icon:'bi-cloud-sun-fill',cap:25,avg:5},{id:'PM2',name:'Evening Session',time:'4:00 PM - 6:00 PM',icon:'bi-moon-stars-fill',cap:20,avg:6}];try{return JSON.parse(localStorage.getItem('kin_sessions'))||D;}catch(e){return D;}}
+function saveTokens(arr){_KIN.tokens=arr;localStorage.setItem('kin_tokens',JSON.stringify(arr));}
+function saveSessLocal(arr){_KIN.sessions=arr;localStorage.setItem('kin_sessions',JSON.stringify(arr));}
+
+function kinPull(cb){
+  if(!KIN_CONFIG.SCRIPT_URL){_kinShowStatus('Local only — no URL set','warn');if(cb)cb();return;}
+  _KIN.online=true;_kinShowStatus('Syncing…','info');
+  Promise.all([_kinFetch(KIN_CONFIG.SCRIPT_URL+'?action=getTokens'),_kinFetch(KIN_CONFIG.SCRIPT_URL+'?action=getSessions')]).then(function(res){
+    if(res[0]&&res[0].ok){_KIN.tokens=res[0].tokens||[];localStorage.setItem('kin_tokens',JSON.stringify(_KIN.tokens));}
+    if(res[1]&&res[1].ok&&res[1].sessions&&res[1].sessions.length){_KIN.sessions=res[1].sessions;localStorage.setItem('kin_sessions',JSON.stringify(_KIN.sessions));}
+    _kinShowStatus('Synced '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}),'ok');
+    if(cb)cb();
+  }).catch(function(){_kinShowStatus('Sync error — using local data','err');if(cb)cb();});
+}
+function kinAddToken(token,cb){
+  var toks=getTokens();toks.push(token);saveTokens(toks);if(cb)cb();
+  if(!_KIN.online||!KIN_CONFIG.SCRIPT_URL)return;
+  _kinFetch(KIN_CONFIG.SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'addToken',token:token})});
+}
+function kinUpdateToken(id,fields,cb){
+  var toks=getTokens();
+  for(var i=0;i<toks.length;i++){if(String(toks[i].id)===String(id)){Object.keys(fields).forEach(function(k){toks[i][k]=fields[k];});break;}}
+  saveTokens(toks);if(cb)cb();
+  if(!_KIN.online||!KIN_CONFIG.SCRIPT_URL)return;
+  _kinFetch(KIN_CONFIG.SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'updateToken',id:id,fields:fields})});
+}
+function kinDeleteToken(id,cb){
+  saveTokens(getTokens().filter(function(t){return String(t.id)!==String(id);}));if(cb)cb();
+  if(!_KIN.online||!KIN_CONFIG.SCRIPT_URL)return;
+  _kinFetch(KIN_CONFIG.SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'deleteToken',id:id})});
+}
+function kinBulkDelete(ids,cb){
+  var s={};ids.forEach(function(id){s[String(id)]=true;});
+  saveTokens(getTokens().filter(function(t){return!s[String(t.id)];}));if(cb)cb();
+  if(!_KIN.online||!KIN_CONFIG.SCRIPT_URL)return;
+  _kinFetch(KIN_CONFIG.SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'bulkDeleteTokens',ids:ids})});
+}
+function kinSaveSessions(sessions,cb){
+  saveSessLocal(sessions);if(cb)cb();
+  if(!_KIN.online||!KIN_CONFIG.SCRIPT_URL)return;
+  _kinFetch(KIN_CONFIG.SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'saveSessions',sessions:sessions})});
+}
+/* ── END SYNC LAYER ─── */
+
 (function(){
 var TKEY='kin_tokens', SKEY='kin_sessions';
 var DEFAULT_SESSIONS=[
@@ -470,10 +729,8 @@ var DEFAULT_SESSIONS=[
   {id:'PM2',name:'Evening Session',   time:'4:00 PM – 6:00 PM', icon:'bi-moon-stars-fill',     cap:20,avg:6}
 ];
 
-function getSessions(){try{return JSON.parse(localStorage.getItem(SKEY))||DEFAULT_SESSIONS;}catch(e){return DEFAULT_SESSIONS;}}
-function saveSessStore(arr){localStorage.setItem(SKEY,JSON.stringify(arr));}
-function getTokens(){try{return JSON.parse(localStorage.getItem(TKEY))||[];}catch(e){return[];}}
-function saveTokens(arr){localStorage.setItem(TKEY,JSON.stringify(arr));}
+/* getTokens/getSessions/saveTokens provided by KIN sync layer above */
+function saveSessStore(arr){ kinSaveSessions(arr, null); }
 function todayStr(){return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
 
 var activeSessId='all';
@@ -660,8 +917,8 @@ window.setStatus=function(id,status){
     var tday=todayStr();
     toks.forEach(function(t){if(t.date===tday&&t.status==='serving')t.status='waiting';});
   }
-  for(var i=0;i<toks.length;i++){if(toks[i].id===id){toks[i].status=status;break;}}
-  saveTokens(toks);
+  kinUpdateToken(id, {status:status}, null);
+  var toks=getTokens(); // re-read after update
   var msgs={serving:'Now serving token',done:'Marked as done',skipped:'Token skipped',waiting:'Returned to queue'};
   toast(msgs[status]||'Updated','green');
   refresh();
@@ -669,8 +926,7 @@ window.setStatus=function(id,status){
 
 window.removeToken=function(id){
   if(!confirm('Remove this token?')) return;
-  var toks=getTokens().filter(function(t){return t.id!==id;});
-  saveTokens(toks);
+  kinDeleteToken(id, null);
   toast('Token removed');
   refresh();
 };
@@ -707,8 +963,7 @@ window.quickAdd=function(){
     status:'waiting',
     createdAt:new Date().toISOString()
   };
-  toks.push(newToken);
-  saveTokens(toks);
+  kinAddToken(newToken, null);
   document.getElementById('qa-name').value='';
   document.getElementById('qa-phone').value='';
   document.getElementById('qa-sess').value='';
@@ -729,8 +984,8 @@ window.setFilter=function(f){
 /* ─── CLEAR DONE ─── */
 window.confirmClearDone=function(){
   if(!confirm('Remove all done & skipped tokens for today?')) return;
-  var toks=getTokens().filter(function(t){return t.date!==todayStr()||( t.status!=='done'&&t.status!=='skipped');});
-  saveTokens(toks);
+  var ids=getTokens().filter(function(t){return t.date===todayStr()&&(t.status==='done'||t.status==='skipped');}).map(function(t){return t.id;});
+  kinBulkDelete(ids,null);
   toast('Cleared completed tokens','green');
   refresh();
 };
@@ -738,8 +993,8 @@ window.confirmClearDone=function(){
 /* ─── RESET DAY ─── */
 window.confirmResetDay=function(){
   if(!confirm('Reset ALL tokens for today? This cannot be undone.')) return;
-  var toks=getTokens().filter(function(t){return t.date!==todayStr();});
-  saveTokens(toks);
+  var ids=getTokens().filter(function(t){return t.date===todayStr();}).map(function(t){return t.id;});
+  kinBulkDelete(ids,null);
   toast('Today\'s queue has been reset');
   refresh();
 };
@@ -777,7 +1032,7 @@ window.saveSessions=function(){
       else ss[i][f]=inp.value;
     });
   });
-  saveSessStore(ss);
+  kinSaveSessions(ss, null);
   closeSessModal();
   toast('Sessions saved','green');
   refresh();
@@ -852,11 +1107,182 @@ function speakAnnouncement(tokenNum,name,btn){
 }
 
 /* ─── STORAGE EVENTS (cross-tab) ─── */
-window.addEventListener('storage',function(e){if(e.key===TKEY||e.key===SKEY)refresh();});
+window.addEventListener('storage',function(e){
+  if(e.key===TKEY||e.key===SKEY){refresh();if(calViewActive)renderCalendar();}
+});
+
+/* ─── VIEW SWITCHER ─── */
+var calViewActive=false;
+window.switchView=function(v){
+  calViewActive=(v==='cal');
+  document.getElementById('queue-view').style.display=calViewActive?'none':'block';
+  document.getElementById('cal-view').style.display=calViewActive?'block':'none';
+  document.getElementById('vs-queue').classList.toggle('active',!calViewActive);
+  document.getElementById('vs-cal').classList.toggle('active',calViewActive);
+  if(calViewActive) renderCalendar();
+};
+
+/* ─── CALENDAR VIEW ─── */
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var calY=new Date().getFullYear(), calM=new Date().getMonth(), calSelDate=null;
+
+function fmtDateStr(y,m,d){
+  return new Date(y,m,d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+function todayDateStr(){return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+
+window.calNav=function(dir){
+  calM+=dir;
+  if(calM<0){calM=11;calY--;} if(calM>11){calM=0;calY++;}
+  renderCalendar();
+};
+
+function parseTokenDate(ds){
+  /* "19 Feb 2026" -> Date */
+  try{
+    var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var p=ds.split(' ');
+    return new Date(parseInt(p[2]),mo.indexOf(p[1]),parseInt(p[0]));
+  }catch(e){return null;}
+}
+
+function renderCalendar(){
+  var allToks=getTokens();
+
+  /* Month strip */
+  var monthToks=allToks.filter(function(t){
+    var d=parseTokenDate(t.date);
+    return d&&d.getFullYear()===calY&&d.getMonth()===calM;
+  });
+  document.getElementById('ms-total').textContent=monthToks.length;
+  var daysSet={};monthToks.forEach(function(t){daysSet[t.date]=1;});
+  document.getElementById('ms-days').textContent=Object.keys(daysSet).length;
+  document.getElementById('ms-done').textContent=monthToks.filter(function(t){return t.status==='done';}).length;
+  document.getElementById('ms-skip').textContent=monthToks.filter(function(t){return t.status==='skipped';}).length;
+
+  /* Date lookup */
+  var dateLookup={};
+  allToks.forEach(function(t){
+    if(!dateLookup[t.date]) dateLookup[t.date]={total:0,done:0};
+    dateLookup[t.date].total++;
+    if(t.status==='done'||t.status==='skipped') dateLookup[t.date].done++;
+  });
+
+  /* Grid */
+  document.getElementById('cal-month-title').textContent=MONTHS[calM]+' '+calY;
+  var grid=document.getElementById('cal-dates-grid');
+  grid.innerHTML='';
+  var firstDay=new Date(calY,calM,1).getDay();
+  var daysInMonth=new Date(calY,calM+1,0).getDate();
+  var today=new Date();
+  var tY=today.getFullYear(),tMo=today.getMonth(),tD=today.getDate();
+
+  for(var b=0;b<firstDay;b++){
+    var bl=document.createElement('button');
+    bl.className='cday other-m';
+    bl.textContent=new Date(calY,calM,1-firstDay+b).getDate();
+    grid.appendChild(bl);
+  }
+  for(var d=1;d<=daysInMonth;d++){
+    var ds=fmtDateStr(calY,calM,d);
+    var btn=document.createElement('button');
+    var cls=['cday'];
+    var dow=new Date(calY,calM,d).getDay();
+    if(dow===0) cls.push('is-sun');
+    if(calY===tY&&calM===tMo&&d===tD) cls.push('is-today');
+    var info=dateLookup[ds];
+    if(info&&info.total>0) cls.push('has-appt');
+    if(calSelDate===ds) cls.push('selected');
+    btn.className=cls.join(' ');
+    var dots='';
+    if(info&&info.total>0){
+      var act=Math.min(info.total-info.done,3);
+      var doneD=Math.min(info.done,2);
+      for(var ai=0;ai<act;ai++) dots+='<div class="appt-dot"></div>';
+      for(var di=0;di<doneD;di++) dots+='<div class="appt-dot d"></div>';
+    }
+    btn.innerHTML='<span>'+d+'</span><div class="dot-row">'+dots+'</div>';
+    (function(dateStr){btn.onclick=function(){calSelDate=dateStr;renderCalendar();renderDateDetail(dateStr);};})(ds);
+    grid.appendChild(btn);
+  }
+  var lastDay=new Date(calY,calM,daysInMonth).getDay();
+  for(var a=lastDay+1;a<7;a++){
+    var bl2=document.createElement('button');
+    bl2.className='cday other-m';
+    bl2.textContent=new Date(calY,calM+1,a-lastDay).getDate();
+    grid.appendChild(bl2);
+  }
+  if(calSelDate) renderDateDetail(calSelDate);
+}
+
+function renderDateDetail(dateStr){
+  var allToks=getTokens();
+  var ss=getSessions();
+  var toks=allToks.filter(function(t){return t.date===dateStr;});
+  var panel=document.getElementById('date-detail');
+  if(toks.length===0){
+    panel.innerHTML='<div class="dd-head"><div><div class="dd-date">'+dateStr+'</div></div></div>'+
+      '<div class="dd-no-appt"><i class="bi bi-calendar-x"></i><p>No appointments on this date.</p></div>';
+    return;
+  }
+  var wait=0,srv=0,done=0,skip=0;
+  toks.forEach(function(t){
+    if(t.status==='waiting')wait++;
+    else if(t.status==='serving')srv++;
+    else if(t.status==='done')done++;
+    else if(t.status==='skipped')skip++;
+  });
+  var isToday=(dateStr===todayDateStr());
+  var todayBadge=isToday?'<span style="background:rgba(26,107,74,.1);color:var(--green);font-size:.68rem;font-weight:700;padding:.2rem .7rem;border-radius:50px;border:1px solid rgba(26,107,74,.2)">Today</span>':'';
+  var html='<div class="dd-head"><div><div class="dd-date">'+dateStr+'</div><div class="dd-sub">'+toks.length+' appointment'+(toks.length!==1?'s':'')+' booked</div></div>'+todayBadge+'</div>'+
+    '<div class="dd-summary">'+
+      '<div class="dd-sum-item"><div class="dd-sum-val g">'+wait+'</div><div class="dd-sum-lbl">Waiting</div></div>'+
+      '<div class="dd-sum-item"><div class="dd-sum-val" style="color:var(--sky)">'+srv+'</div><div class="dd-sum-lbl">Serving</div></div>'+
+      '<div class="dd-sum-item"><div class="dd-sum-val a">'+done+'</div><div class="dd-sum-lbl">Done</div></div>'+
+      '<div class="dd-sum-item"><div class="dd-sum-val r">'+skip+'</div><div class="dd-sum-lbl">Skipped</div></div>'+
+    '</div>';
+
+  /* Group by session */
+  var sessOrder=ss.map(function(s){return s.id;});
+  var sessMap={};
+  toks.forEach(function(t){
+    var k=t.sessionId||'_other';
+    if(!sessMap[k]) sessMap[k]={name:t.sessionName||'Other',tokens:[]};
+    sessMap[k].tokens.push(t);
+  });
+  var sessKeys=Object.keys(sessMap).sort(function(a,b){
+    return (sessOrder.indexOf(a)<0?99:sessOrder.indexOf(a))-(sessOrder.indexOf(b)<0?99:sessOrder.indexOf(b));
+  });
+
+  var statusColors={waiting:'#b45309',serving:'#15803d',done:'#64748b',skipped:'#b91c1c'};
+  var statusBg={waiting:'#fef3c7',serving:'#dcfce7',done:'#f1f5f9',skipped:'#fee2e2'};
+
+  sessKeys.forEach(function(sk){
+    var sg=sessMap[sk];
+    html+='<div class="dd-session-block"><div class="dd-sess-title"><i class="bi bi-clock"></i>'+sg.name+' <span style="font-weight:400;color:var(--muted);">('+sg.tokens.length+')</span></div>';
+    sg.tokens.forEach(function(t){
+      var pri=t.priority&&t.priority!=='None';
+      var sc=statusColors[t.status]||'#888', sb=statusBg[t.status]||'#f5f5f5';
+      html+='<div class="dd-tok-row">'+
+        '<div class="dd-tok-num">'+t.tokenNum+'</div>'+
+        '<div class="dd-tok-info">'+
+          '<div class="dd-tok-name">'+t.name+'</div>'+
+          '<div class="dd-tok-meta">'+(t.age?t.age+' y &middot; ':'')+( t.condition||'')+(t.phone?' &middot; '+t.phone:'')+'</div>'+
+        '</div>'+
+        '<div class="dd-tok-right">'+
+          '<span style="font-size:.65rem;font-weight:700;padding:.14rem .5rem;border-radius:50px;background:'+sb+';color:'+sc+';">'+t.status+'</span>'+
+          (pri?'<span style="font-size:.6rem;font-weight:700;color:#b45309;background:#fef3c7;border-radius:50px;padding:.1rem .4rem;">'+t.priority+'</span>':'')+
+        '</div>'+
+      '</div>';
+    });
+    html+='</div>';
+  });
+  panel.innerHTML=html;
+}
 
 /* ─── INIT ─── */
-refresh();
-setInterval(refresh,8000);
+kinPull(refresh);
+setInterval(function(){kinPull(function(changed){if(changed)refresh();});},KIN_CONFIG.SYNC_INTERVAL);
 })();
 </script>
 </body>

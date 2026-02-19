@@ -253,6 +253,13 @@ header{
   header{padding:.7rem 1rem;}
   .ns-token{font-size:3.5rem;}
 }
+
+.kin-status{position:fixed;top:4.5rem;right:1rem;z-index:9999;padding:.28rem .75rem;border-radius:50px;font-size:.65rem;font-weight:600;box-shadow:0 2px 10px rgba(0,0,0,.25);display:flex;align-items:center;gap:.35rem;}
+.kin-status::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
+.kin-status-ok{background:rgba(22,163,74,.2);color:#4ade80;border:1px solid rgba(74,222,128,.2);}
+.kin-status-info{background:rgba(3,105,161,.2);color:#7dd3fc;border:1px solid rgba(125,211,252,.2);}
+.kin-status-warn{background:rgba(180,83,9,.2);color:#fcd34d;border:1px solid rgba(252,211,77,.2);}
+.kin-status-err{background:rgba(185,28,28,.2);color:#fca5a5;border:1px solid rgba(252,165,165,.2);}
 </style>
 </head>
 <body>
@@ -276,6 +283,7 @@ header{
       <div id="date-str">--</div>
     </div>
   </div>
+<div id="kin-sync-status" class="kin-status kin-status-info">Live</div>
 </header>
 
 <!-- MAIN STAGE -->
@@ -361,6 +369,28 @@ header{
 </div>
 
 <script>
+/* ── KIN CLOUD SYNC ─── */
+var KIN_CONFIG = {
+  SCRIPT_URL: '', // ← PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+  SYNC_INTERVAL: 5000,
+};
+var _KIN={tokens:null,sessions:null,online:false};
+function _kinShowStatus(msg,type){var el=document.getElementById('kin-sync-status');if(!el)return;el.textContent=msg;el.className='kin-status kin-status-'+(type||'info');}
+function _kinFetch(url,opts){return fetch(url,opts).then(function(r){return r.json();}).catch(function(e){return{error:e.toString()};});}
+function getTokens(){if(_KIN.tokens!==null)return _KIN.tokens;try{return JSON.parse(localStorage.getItem('kin_tokens'))||[];}catch(e){return[];}}
+function getSessions(){if(_KIN.sessions!==null)return _KIN.sessions;var D=[{id:'AM1',name:'Morning Session 1',time:'9:00 AM - 11:00 AM',icon:'bi-brightness-high-fill',cap:30,avg:4},{id:'AM2',name:'Morning Session 2',time:'11:00 AM - 1:00 PM',icon:'bi-sun-fill',cap:25,avg:5},{id:'PM1',name:'Afternoon Session',time:'2:00 PM - 4:00 PM',icon:'bi-cloud-sun-fill',cap:25,avg:5},{id:'PM2',name:'Evening Session',time:'4:00 PM - 6:00 PM',icon:'bi-moon-stars-fill',cap:20,avg:6}];try{return JSON.parse(localStorage.getItem('kin_sessions'))||D;}catch(e){return D;}}
+function saveTokens(arr){_KIN.tokens=arr;localStorage.setItem('kin_tokens',JSON.stringify(arr));}
+function kinPull(cb){
+  if(!KIN_CONFIG.SCRIPT_URL){if(cb)cb();return;}
+  _KIN.online=true;_kinShowStatus('Live','info');
+  Promise.all([_kinFetch(KIN_CONFIG.SCRIPT_URL+'?action=getTokens'),_kinFetch(KIN_CONFIG.SCRIPT_URL+'?action=getSessions')]).then(function(res){
+    if(res[0]&&res[0].ok){_KIN.tokens=res[0].tokens||[];localStorage.setItem('kin_tokens',JSON.stringify(_KIN.tokens));}
+    if(res[1]&&res[1].ok&&res[1].sessions&&res[1].sessions.length){_KIN.sessions=res[1].sessions;localStorage.setItem('kin_sessions',JSON.stringify(_KIN.sessions));}
+    _kinShowStatus('Live','ok');if(cb)cb();
+  }).catch(function(){_kinShowStatus('Offline','err');if(cb)cb();});
+}
+/* ── END SYNC ─── */
+
 (function(){
 var TKEY='kin_tokens', SKEY='kin_sessions';
 var DEFAULT_SESSIONS=[
@@ -371,8 +401,7 @@ var DEFAULT_SESSIONS=[
 ];
 var PRIORITY_COLORS={Critical:'#fca5a5',Pregnant:'#f9a8d4','Senior Citizen':'#fde68a','Differently Abled':'#93c5fd',Child:'#a5f3fc'};
 
-function getSessions(){try{return JSON.parse(localStorage.getItem(SKEY))||DEFAULT_SESSIONS;}catch(e){return DEFAULT_SESSIONS;}}
-function getTokens(){try{return JSON.parse(localStorage.getItem(TKEY))||[];}catch(e){return [];}}
+/* getSessions / getTokens provided by KIN sync layer */
 function todayStr(){return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
 
 /* Clock */
@@ -494,9 +523,9 @@ function showOverlay(token){
   setTimeout(function(){ov.classList.remove('show');},3600);
 }
 
-/* Poll for changes */
-render();
-setInterval(render,4000);
+/* Cloud-aware poll */
+kinPull(render);
+setInterval(function(){kinPull(render);},KIN_CONFIG.SYNC_INTERVAL);
 
 /* Also listen for storage events (cross-tab) */
 window.addEventListener('storage',function(e){
