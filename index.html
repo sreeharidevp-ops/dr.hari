@@ -760,7 +760,7 @@
                 <div class="icon"><i class="bi bi-envelope-fill"></i></div>
                 <div class="info-text">
                   <strong>Email</strong>
-                  <a href="/cdn-cgi/l/email-protection#3b5f49535a4952595542487b5c565a525715585456" style="color:rgba(255,255,255,0.75); text-decoration:none;" itemprop="email"><span class="__cf_email__" data-cfemail="a0c4d2c8c1d2c9c2ced9d3e0c7cdc1c9cc8ec3cfcd">[email&#160;protected]</span></a>
+                  <a href="mailto:drharibnys@gmail.com" style="color:rgba(255,255,255,0.75); text-decoration:none;">drharibnys@gmail.com</a>
                 </div>
               </div>
               <div class="appt-contact-item">
@@ -943,11 +943,9 @@
               <i class="bi bi-telephone-fill me-2" style="color:var(--gold);" aria-hidden="true"></i>
               <a href="tel:+919611411652" style="color:rgba(255,255,255,0.5); text-decoration:none;" itemprop="telephone">+91 96114 11652</a>
             </p>
-			<p style="margin-bottom:0.5rem;">
+			 <p style="margin-bottom:0.5rem;">
               <i class="bi bi-envelope-fill me-2" style="color:var(--gold);" aria-hidden="true"></i>
-              <a href="/cdn-cgi/l/email-protection#93f7e1fbf2e1faf1fdeae0d3f4fef2faffbdf0fcfe" style="color:rgba(255,255,255,0.5); text-decoration:none;" itemprop="email">
-			   <span class="__cf_email__" data-cfemail="b7d3c5dfd6c5ded5d9cec4f7d0dad6dedb99d4d8da">[email&#160;protected]</span>
-			</a>
+              <a href="mailto:drharibnys@gmail.com" style="color:rgba(255,255,255,0.5); text-decoration:none;" itemprop="envelope">drharibnys@gmail.com</a>
             </p>
             <p style="margin:0;">
               <i class="bi bi-clock me-2" style="color:var(--gold);" aria-hidden="true"></i>
@@ -1093,4 +1091,16 @@
 
     // Smooth active nav highlight on scroll
     const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelect
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+      });
+    });
+  </script>
+</body>
+</html>
